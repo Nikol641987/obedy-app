@@ -1,1 +1,95 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
+body {
+    margin: 0;
+    height: 100vh;
+    background: #f4f7fb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.container {
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+
+h1 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+
+.subtitle {
+    color: #777;
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+
+.menu {
+    display: grid;
+    gap: 15px;
+}
+
+
+.menu button {
+    padding: 20px;
+    font-size: 24px;
+    border: none;
+    border-radius: 15px;
+    background: #6EC6E8;
+    color: white;
+    cursor: pointer;
+}
+
+
+.menu button:hover {
+    opacity: 0.8;
+}
+
+
+.quantity {
+    margin-top: 30px;
+    font-size: 22px;
+}
+
+
+.quantity button {
+    width: 50px;
+    height: 50px;
+    font-size: 25px;
+    border-radius: 50%;
+    border: none;
+    background: #444;
+    color: white;
+}
+
+
+.quantity span {
+    margin: 0 20px;
+    font-size: 30px;
+}
+
+
+.confirm {
+    margin-top: 35px;
+    width: 100%;
+    padding: 20px;
+    font-size: 25px;
+    border: none;
+    border-radius: 15px;
+    background: #4CAF50;
+    color: white;
+}
