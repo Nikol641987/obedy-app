@@ -1,56 +1,72 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Výdaj obedov</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Obedy</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
 
 <body>
 
-<div class="container">
+<div class="login-wrapper">
 
-    <h1>🍽️ Výdaj obedov</h1>
+    <div class="login-card">
 
-    <p class="subtitle">
-        Vyberte si obed na ďalší deň
-    </p>
+        <img src="assets/TMV_B_modre.svg" class="logo" alt="TMV">
 
+        <h1>Obedy</h1>
 
-    <div class="menu">
+        <p class="subtitle">
+            Interný objednávkový systém
+        </p>
 
-        <button>Menu 1</button>
+        <div class="mt-5">
 
-        <button>Menu 2</button>
+            <label class="form-label">
+                Zamestnanec
+            </label>
 
-        <button>Menu 3</button>
+            <select class="form-select" id="employeeSelect">
 
-        <button>Menu 4</button>
+                <option>
+                    Načítavam zamestnancov...
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="mt-4">
+
+            <label class="form-label">
+                PIN
+            </label>
+
+            <input
+                type="password"
+                maxlength="4"
+                class="form-control"
+                placeholder="••••"
+            >
+
+        </div>
+
+        <button class="btn btn-primary mt-5 w-100">
+
+            Prihlásiť
+
+        </button>
 
     </div>
-
-
-    <div class="quantity">
-
-        <p>Počet obedov:</p>
-
-        <button>-</button>
-
-        <span>1</span>
-
-        <button>+</button>
-
-    </div>
-
-
-    <button class="confirm">
-        Objednať obed
-    </button>
-
 
 </div>
-
 
 <script src="script.js"></script>
 
