@@ -9,7 +9,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const select = document.getElementById("employeeSelect");
 
+    const loginButton = document.getElementById("loginButton");
+const pinInput = document.getElementById("pinInput");
+const loginMessage = document.getElementById("loginMessage");
+
     select.addEventListener("change", () => {
+
+        loginButton.addEventListener("click", () => {
+
+    const employeeId = select.value;
+    const pin = pinInput.value;
+
+
+    if (!employeeId) {
+
+        loginMessage.textContent =
+            "Vyberte zamestnanca.";
+
+        return;
+
+    }
+
+
+    if (!pin) {
+
+        loginMessage.textContent =
+            "Zadajte PIN.";
+
+        return;
+
+    }
+
+
+    if (pin === "1234") {
+
+        loginMessage.textContent =
+            "Prihlásenie úspešné.";
+
+    } else {
+
+        loginMessage.textContent =
+            "Nesprávny PIN.";
+
+    }
+
+});
 
         localStorage.setItem("lastEmployee", select.value);
 
