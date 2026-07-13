@@ -1,1 +1,17 @@
-
+[
+  {
+    "id": 1,
+    "name": "Kurací rezeň, ryža",
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "Cestoviny so syrom",
+    "active": true
+  },
+  {
+    "id": 3,
+    "name": "Šalát s kuracím mäsom",
+    "active": true
+  }
+]
