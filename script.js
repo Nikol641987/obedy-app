@@ -5,6 +5,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     loadEmployees();
+    loadMenus();
 
     const select = document.getElementById("employeeSelect");
 
@@ -73,6 +74,48 @@ async function loadEmployees() {
 
         select.innerHTML =
             "<option>Chyba pri načítaní zamestnancov</option>";
+
+    }
+
+}
+
+async function loadMenus() {
+
+    const container = document.getElementById("menuContainer");
+
+    try {
+
+        const response = await fetch("menus.json");
+
+        const menus = await response.json();
+
+
+        container.innerHTML = "";
+
+
+        menus.forEach(menu => {
+
+            if (!menu.active) return;
+
+
+            const button = document.createElement("button");
+
+            button.className = "btn btn-outline-primary w-100 mt-2";
+
+            button.textContent = menu.name;
+
+
+            container.appendChild(button);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        container.innerHTML =
+            "Chyba pri načítaní menu";
 
     }
 
