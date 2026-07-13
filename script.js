@@ -9,7 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const select = document.getElementById("employeeSelect");
 
     select.addEventListener("change", () => {
+
         localStorage.setItem("lastEmployee", select.value);
+
+        checkPin(select.value);
+
     });
 });
 
@@ -71,6 +75,45 @@ async function loadEmployees() {
 
         select.innerHTML =
             "<option>Chyba pri načítaní zamestnancov</option>";
+
+    }
+
+}
+
+function checkPin(employeeId) {
+
+    const savedPin = localStorage.getItem("pin_" + employeeId);
+
+    if (!savedPin) {
+
+        const newPin = prompt("Vytvorte si PIN (4 čísla):");
+
+        if (newPin && newPin.length === 4) {
+
+            localStorage.setItem(
+                "pin_" + employeeId,
+                newPin
+            );
+
+            alert("PIN bol nastavený.");
+
+        } else {
+
+            alert("PIN musí mať 4 čísla.");
+
+        }
+
+    } else {
+
+        const enteredPin = prompt("Zadajte PIN:");
+
+        if (enteredPin !== savedPin) {
+
+            alert("Nesprávny PIN.");
+
+            document.getElementById("employeeSelect").value = "";
+
+        }
 
     }
 
