@@ -5,7 +5,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     loadEmployees();
-    loadMenus();
+
 
     const select = document.getElementById("employeeSelect");
 
