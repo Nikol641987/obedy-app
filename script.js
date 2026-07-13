@@ -5,7 +5,14 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     loadEmployees();
+
+    const select = document.getElementById("employeeSelect");
+
+    select.addEventListener("change", () => {
+        localStorage.setItem("lastEmployee", select.value);
+    });
 });
+
 
 async function loadEmployees() {
 
@@ -33,6 +40,7 @@ async function loadEmployees() {
 
         select.appendChild(firstOption);
 
+
         employees.forEach(employee => {
 
             if (!employee.active) return;
@@ -47,6 +55,15 @@ async function loadEmployees() {
             select.appendChild(option);
 
         });
+
+
+        // načítanie posledného zamestnanca
+        const lastEmployee = localStorage.getItem("lastEmployee");
+
+        if (lastEmployee) {
+            select.value = lastEmployee;
+        }
+
 
     } catch (error) {
 
