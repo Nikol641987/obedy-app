@@ -50,10 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (pin === "1234") {
 
-            loginMessage.textContent =
-                "Prihlásenie úspešné.";
+            loginMessage.textContent = "";
 
-            loadMenus();
+document.querySelector(".login-card").classList.add("logged");
+
+loadMenus();
 
         } else {
 
