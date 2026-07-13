@@ -1,8 +1,9 @@
 [
-    {
-        "id": 1,
-        "surname": "Testovací",
-        "name": "Zamestnanec",
-        "active": true
-    }
+  {
+    "id": 1,
+    "name": "Test",
+    "surname": "Zamestnanec",
+    "active": true,
+    "pin": null
+  }
 ]
