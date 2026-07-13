@@ -48,13 +48,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        if (pin === "1234") {
+      if (pin === "1234") {
 
-            loginMessage.textContent = "";
+    loginMessage.textContent = "";
 
-document.querySelector(".login-card").classList.add("logged");
+    document.querySelector(".login-wrapper").innerHTML = `
+        <div class="login-card">
+            <h1>Vyberte obed</h1>
+            <div id="menuContainer" class="mt-4"></div>
+        </div>
+    `;
 
-loadMenus();
+    loadMenus();
+
+}
 
         } else {
 
