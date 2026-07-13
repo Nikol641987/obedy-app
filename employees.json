@@ -1,1 +1,8 @@
-
+[
+    {
+        "id": 1,
+        "surname": "Testovací",
+        "name": "Zamestnanec",
+        "active": true
+    }
+]
