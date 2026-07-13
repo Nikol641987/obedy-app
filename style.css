@@ -1,95 +1,158 @@
-* {
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+/* ===========================
+   OBEDY APP
+   Trenčianske minerálne vody
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-body {
-    margin: 0;
-    height: 100vh;
-    background: #f4f7fb;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+body{
+
+    font-family: Gotham, Arial, Helvetica, sans-serif;
+
+    background:#F4F8FB;
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#333;
+
 }
 
+/* Karta */
 
-.container {
-    background: white;
-    width: 90%;
-    max-width: 500px;
-    padding: 40px;
-    border-radius: 25px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+.login-card{
+
+    width:100%;
+    max-width:480px;
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:50px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.12);
+
 }
 
+/* Logo */
 
-h1 {
-    font-size: 36px;
-    color: #333;
-    margin-bottom: 10px;
+.logo{
+
+    width:220px;
+
+    display:block;
+
+    margin:auto;
+
+    margin-bottom:25px;
+
 }
 
+/* Nadpis */
 
-.subtitle {
-    color: #777;
-    font-size: 20px;
-    margin-bottom: 30px;
+h1{
+
+    text-align:center;
+
+    color:#0069B4;
+
+    font-size:38px;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
 }
 
+.subtitle{
 
-.menu {
-    display: grid;
-    gap: 15px;
+    text-align:center;
+
+    color:#666;
+
+    margin-bottom:25px;
+
 }
 
+/* Formulár */
 
-.menu button {
-    padding: 20px;
-    font-size: 24px;
-    border: none;
-    border-radius: 15px;
-    background: #6EC6E8;
-    color: white;
-    cursor: pointer;
+.form-label{
+
+    font-weight:600;
+
+    color:#444;
+
 }
 
+.form-control,
+.form-select{
 
-.menu button:hover {
-    opacity: 0.8;
+    height:55px;
+
+    border-radius:12px;
+
+    font-size:18px;
+
 }
 
+/* Button */
 
-.quantity {
-    margin-top: 30px;
-    font-size: 22px;
+.btn-primary{
+
+    background:#0099E5;
+
+    border:none;
+
+    border-radius:12px;
+
+    height:55px;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    transition:.25s;
+
 }
 
+.btn-primary:hover{
 
-.quantity button {
-    width: 50px;
-    height: 50px;
-    font-size: 25px;
-    border-radius: 50%;
-    border: none;
-    background: #444;
-    color: white;
+    background:#007DC1;
+
 }
 
+/* Tablet */
 
-.quantity span {
-    margin: 0 20px;
-    font-size: 30px;
+@media(max-width:700px){
+
+.login-card{
+
+    margin:20px;
+
+    padding:35px;
+
 }
 
+.logo{
 
-.confirm {
-    margin-top: 35px;
-    width: 100%;
-    padding: 20px;
-    font-size: 25px;
-    border: none;
-    border-radius: 15px;
-    background: #4CAF50;
-    color: white;
+    width:180px;
+
+}
+
+h1{
+
+    font-size:32px;
+
+}
+
 }
