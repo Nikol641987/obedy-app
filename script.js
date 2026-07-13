@@ -8,12 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadEmployees();
 
     const select = document.getElementById("employeeSelect");
-    const loginButton = document.getElementById("loginButton");
-    const pinInput = document.getElementById("pinInput");
-    const loginMessage = document.getElementById("loginMessage");
 
-
-    // zapamätanie posledného zamestnanca
     select.addEventListener("change", () => {
 
         localStorage.setItem("lastEmployee", select.value);
@@ -21,56 +16,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // prihlásenie
-    loginButton.addEventListener("click", () => {
+    const loginButton = document.getElementById("loginButton");
 
-        const employeeId = select.value;
-        const pin = pinInput.value;
+    if (loginButton) {
 
-
-        if (!employeeId) {
-
-            loginMessage.textContent =
-                "Vyberte zamestnanca.";
-
-            return;
-
-        }
+        const pinInput = document.getElementById("pinInput");
+        const loginMessage = document.getElementById("loginMessage");
 
 
-        if (!pin) {
+        loginButton.addEventListener("click", () => {
 
-            loginMessage.textContent =
-                "Zadajte PIN.";
-
-            return;
-
-        }
+            const employeeId = select.value;
+            const pin = pinInput.value;
 
 
-      if (pin === "1234") {
+            if (!employeeId) {
+                loginMessage.textContent = "Vyberte zamestnanca.";
+                return;
+            }
 
-    loginMessage.textContent = "";
 
-    document.querySelector(".login-wrapper").innerHTML = `
-        <div class="login-card">
-            <h1>Vyberte obed</h1>
-            <div id="menuContainer" class="mt-4"></div>
-        </div>
-    `;
+            if (pin === "1234") {
+                loginMessage.textContent = "Prihlásenie úspešné.";
+                loadMenus();
+            } else {
+                loginMessage.textContent = "Nesprávny PIN.";
+            }
 
-    loadMenus();
+        });
 
-}
-
-        } else {
-
-            loginMessage.textContent =
-                "Nesprávny PIN.";
-
-        }
-
-    });
+    }
 
 });
 
