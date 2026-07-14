@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loginButton) {
 
         const pinInput = document.getElementById("pinInput");
+        const rememberMe = document.getElementById("rememberMe");
         const loginMessage = document.getElementById("loginMessage");
 
 
