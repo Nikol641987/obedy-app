@@ -1,8 +1,334 @@
 [
   {
-    "id": 1,
-    "name": "Test",
-    "surname": "Zamestnanec",
+    "personalNumber": "ZAT000011",
+    "name": "Peter",
+    "surname": "Galko",
+    "chip": "01100007183651",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000134",
+    "name": "Alena",
+    "surname": "Máčiková",
+    "chip": "01100014339714",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000005",
+    "name": "Juraj",
+    "surname": "Červený",
+    "chip": "01100013775918",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000044",
+    "name": "Lubica",
+    "surname": "Prušková",
+    "chip": "01100013804750",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000021",
+    "name": "Martin",
+    "surname": "Kobida",
+    "chip": "01100013803008",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000056",
+    "name": "Martin",
+    "surname": "Skyta",
+    "chip": "01100014445187",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000068",
+    "name": "Rastislav",
+    "surname": "Zajaček",
+    "chip": "01100014447005",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000151",
+    "name": "Ľubomír",
+    "surname": "Lobotka",
+    "chip": "01100014027656",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000024",
+    "name": "Zuzana",
+    "surname": "Ilavská",
+    "chip": "00970004074493",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000181",
+    "name": "Marián",
+    "surname": "Hricko",
+    "chip": "01100013798302",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000065",
+    "name": "Monika",
+    "surname": "Valigová",
+    "chip": "00970012429877",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000092",
+    "name": "Marcel",
+    "surname": "Ondrejička",
+    "chip": "00010002766045",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000161",
+    "name": "Milan",
+    "surname": "Suja",
+    "chip": "00010002766905",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000185",
+    "name": "Ján",
+    "surname": "Gurín",
+    "chip": "00970003849866",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000139",
+    "name": "Milan",
+    "surname": "Pavle",
+    "chip": "01930011504483",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000193",
+    "name": "Tomáš",
+    "surname": "Koreň",
+    "chip": "01930001774939",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000201",
+    "name": "Milan",
+    "surname": "Žák",
+    "chip": "02030006377227",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000190",
+    "name": "Dušan",
+    "surname": "Panáček",
+    "chip": "00320014749632",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000203",
+    "name": "Adriana",
+    "surname": "Konečná",
+    "chip": "02030002307771",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000204",
+    "name": "Jozef",
+    "surname": "Obdržal",
+    "chip": "02030002315899",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000205",
+    "name": "Karol",
+    "surname": "Trnka",
+    "chip": "02030002316688",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000196",
+    "name": "Lucia",
+    "surname": "Marčoková",
+    "chip": "00430000474435",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000047",
+    "name": "Milan",
+    "surname": "Rehák",
+    "chip": "00450006419998",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000007",
+    "name": "Vladimír",
+    "surname": "Danáč",
+    "chip": "00450006906572",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000023",
+    "name": "Miroslav",
+    "surname": "Koreň",
+    "chip": "00360013022674",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000007",
+    "name": "Vladimír",
+    "surname": "Danáč",
+    "chip": "00450006943287",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000140",
+    "name": "Martin",
+    "surname": "Danáč",
+    "chip": "00360013517250",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000143",
+    "name": "Sebastián",
+    "surname": "Zahornacký",
+    "chip": "00330000628520",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "ZAT000183",
+    "name": "Tereza",
+    "surname": "Mikulová",
+    "chip": "00450006943423",
+    "hasChip": true,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "None",
+    "name": "Karol",
+    "surname": "Kaššovic",
+    "chip": "",
+    "hasChip": false,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "None",
+    "name": "Erik",
+    "surname": "Kaššovic",
+    "chip": "",
+    "hasChip": false,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "None",
+    "name": "Milan",
+    "surname": "Suja",
+    "chip": "",
+    "hasChip": false,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "None",
+    "name": "Nikola",
+    "surname": "Lukáčová",
+    "chip": "",
+    "hasChip": false,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "None",
+    "name": "Zuzana",
+    "surname": "Žideková",
+    "chip": "",
+    "hasChip": false,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "None",
+    "name": "Peter",
+    "surname": "Gažo",
+    "chip": "",
+    "hasChip": false,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "None",
+    "name": "Igor",
+    "surname": "Belko",
+    "chip": "",
+    "hasChip": false,
+    "active": true,
+    "pin": null
+  },
+  {
+    "personalNumber": "None",
+    "name": "Monika",
+    "surname": "Mišíková",
+    "chip": "",
+    "hasChip": false,
     "active": true,
     "pin": null
   }
