@@ -37,12 +37,35 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            if (pin === "1234") {
-                loginMessage.textContent = "Prihlásenie úspešné.";
-                loadMenus();
-            } else {
-                loginMessage.textContent = "Nesprávny PIN.";
-            }
+           if (pin === "1234") {
+
+    loginMessage.textContent = "";
+
+    document.querySelector(".login-card").classList.add("logged");
+
+    if (rememberMe.checked) {
+
+        localStorage.setItem(
+            "loggedEmployee",
+            employeeId
+        );
+
+    } else {
+
+        localStorage.removeItem(
+            "loggedEmployee"
+        );
+
+    }
+
+    loadMenus();
+
+} else {
+
+    loginMessage.textContent =
+        "Nesprávny PIN.";
+
+}
 
         });
 
