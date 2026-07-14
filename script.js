@@ -136,17 +136,23 @@ async function loadEmployees() {
 
 
 
-        // načítanie posledného zamestnanca
+        // načítanie zapamätaného prihlásenia
+const loggedEmployee = localStorage.getItem("loggedEmployee");
 
-        const lastEmployee =
-            localStorage.getItem("lastEmployee");
+if (loggedEmployee) {
 
+    select.value = loggedEmployee;
+    document.getElementById("rememberMe").checked = true;
 
-        if (lastEmployee) {
+} else {
 
-            select.value = lastEmployee;
+    const lastEmployee = localStorage.getItem("lastEmployee");
 
-        }
+    if (lastEmployee) {
+        select.value = lastEmployee;
+    }
+
+}
 
 
 
