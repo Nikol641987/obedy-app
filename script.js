@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
     loadEmployees();
     setupNavigation();
     setupLogin();
+    setupOrderButton();
+
+});
+
  function setupOrderButton() {
 
     const confirmOrderButton =
