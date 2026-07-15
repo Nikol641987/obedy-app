@@ -803,6 +803,44 @@ async function checkTodayOrder(employeeId) {
     const today =
         getTodayDate();
 
+    const orderMessage =
+        document.getElementById("orderMessage");
+
+    const confirmOrderButton =
+        document.getElementById("confirmOrderButton");
+
+    const noSoup =
+        document.getElementById("noSoup");
+
+
+    // Najprv vyčistíme všetky voľby
+    document
+        .querySelectorAll(".meal-choice")
+        .forEach(choice => {
+
+            choice.checked = false;
+            choice.disabled = false;
+
+        });
+
+
+    if (noSoup) {
+
+        noSoup.checked = false;
+        noSoup.disabled = false;
+
+    }
+
+
+    if (confirmOrderButton) {
+
+        confirmOrderButton.disabled = false;
+        confirmOrderButton.textContent =
+            "Potvrdiť objednávku";
+
+    }
+
+
     try {
 
         const { data, error } =
@@ -820,16 +858,90 @@ async function checkTodayOrder(employeeId) {
                     today
                 );
 
+
         if (error) {
             throw error;
         }
 
-        console.log(
-            "Dnešná objednávka:",
-            data
-        );
 
-        return data || [];
+        // Zamestnanec dnes ešte nemá objednávku
+        if (!data || data.length === 0) {
+
+            if (orderMessage) {
+
+                orderMessage.textContent =
+                    "Dnes ešte nemáš objednaný obed.";
+
+                orderMessage.className =
+                    "message";
+
+            }
+
+            return;
+
+        }
+
+
+        // Predvyplnenie už existujúcej objednávky
+        data.forEach(item => {
+
+            const diningChoice =
+                document.querySelector(
+                    `.meal-choice[data-menu-id="${item.menu_id}"][data-option="dining"]`
+                );
+
+            const takeawayChoice =
+                document.querySelector(
+                    `.meal-choice[data-menu-id="${item.menu_id}"][data-option="takeaway"]`
+                );
+
+
+            if (diningChoice) {
+
+                diningChoice.checked =
+                    Boolean(item.dining);
+
+            }
+
+
+            if (takeawayChoice) {
+
+                takeawayChoice.checked =
+                    Boolean(item.takeaway);
+
+            }
+
+        });
+
+
+        if (noSoup) {
+
+            noSoup.checked =
+                data.some(item =>
+                    Boolean(item.no_soup)
+                );
+
+        }
+
+
+        if (orderMessage) {
+
+            orderMessage.textContent =
+                "Toto je tvoja dnešná objednávka. Môžeš ju upraviť.";
+
+            orderMessage.className =
+                "message success-message";
+
+        }
+
+
+        if (confirmOrderButton) {
+
+            confirmOrderButton.textContent =
+                "Uložiť zmeny";
+
+        }
+
 
     } catch (error) {
 
@@ -838,12 +950,20 @@ async function checkTodayOrder(employeeId) {
             error
         );
 
-        return [];
+
+        if (orderMessage) {
+
+            orderMessage.textContent =
+                "Dnešnú objednávku sa nepodarilo načítať.";
+
+            orderMessage.className =
+                "message error-message";
+
+        }
 
     }
 
 }
-
 // =====================================
 // POZDRAV ZAMESTNANCA
 // =====================================
