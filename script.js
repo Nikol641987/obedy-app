@@ -1197,7 +1197,8 @@ function setupOrderButton() {
                     groupedMenus
                 );
 
-
+console.log("OBJEDNÁVKA NA ULOŽENIE:", rows);
+            
             confirmOrderButton.disabled =
                 true;
 
