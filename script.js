@@ -447,36 +447,23 @@ function openOrderScreen(employeeId) {
 
 function setWelcomeEmployee(employeeId) {
 
-    const select =
-        document.getElementById("employeeSelect");
-
-    const welcomeName =
-        document.getElementById("welcomeName");
+    const select = document.getElementById("employeeSelect");
+    const welcomeName = document.getElementById("welcomeName");
 
     if (!select || !welcomeName) return;
 
+    const selectedOption = select.options[select.selectedIndex];
 
-    const option =
-        [...select.options].find(
-            item => item.value === employeeId
-        );
+    if (!selectedOption) {
 
-
-    if (!option) {
-
-        welcomeName.textContent =
-            "Ahoj!";
-
+        welcomeName.textContent = "Ahoj!";
         return;
 
     }
 
+    const firstName = selectedOption.dataset.name;
 
-    const firstName =
-        option.dataset.name || "";
-
-    welcomeName.textContent =
-        `Ahoj, ${firstName}!`;
+    welcomeName.textContent = `Ahoj, ${firstName}!`;
 
 }
 
