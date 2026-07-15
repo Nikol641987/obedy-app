@@ -1,6 +1,6 @@
 // =====================================
 // OBEDY TMV
-// Navigácia, zamestnanci a testovací login
+// Navigácia, zamestnanci a prihlasovanie
 // =====================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -158,12 +158,19 @@ function setupNavigation() {
             const pinInput =
                 document.getElementById("pinInput");
 
+            const pinConfirm =
+                document.getElementById("pinConfirm");
+
             if (rememberMe) {
                 rememberMe.checked = false;
             }
 
             if (pinInput) {
                 pinInput.value = "";
+            }
+
+            if (pinConfirm) {
+                pinConfirm.value = "";
             }
 
             showScreen("homeScreen");
@@ -237,10 +244,13 @@ async function loadEmployees() {
             const option =
                 document.createElement("option");
 
-          option.value =
-    employee.personalNumber && employee.personalNumber !== "None"
-        ? employee.personalNumber
-        : `${employee.surname}_${employee.name}`;
+
+            option.value =
+                employee.personalNumber &&
+                employee.personalNumber !== "None"
+                    ? employee.personalNumber
+                    : `${employee.surname}_${employee.name}`;
+
 
             option.textContent =
                 `${employee.surname} ${employee.name}`;
@@ -250,6 +260,12 @@ async function loadEmployees() {
 
             option.dataset.surname =
                 employee.surname;
+
+            option.dataset.chip =
+                employee.chip || "";
+
+            option.dataset.hasChip =
+                employee.hasChip ? "true" : "false";
 
             select.appendChild(option);
 
@@ -308,7 +324,7 @@ async function loadEmployees() {
 
 
 // =====================================
-// PRIHLÁSENIE
+// PRIHLÁSENIE A VLASTNÝ PIN
 // =====================================
 
 function setupLogin() {
@@ -316,23 +332,91 @@ function setupLogin() {
     const loginButton =
         document.getElementById("loginButton");
 
-    if (!loginButton) return;
+    const select =
+        document.getElementById("employeeSelect");
+
+    const pinInput =
+        document.getElementById("pinInput");
+
+    const pinConfirm =
+        document.getElementById("pinConfirm");
+
+    const pinConfirmWrapper =
+        document.getElementById("pinConfirmWrapper");
+
+    const rememberMe =
+        document.getElementById("rememberMe");
 
 
-    loginButton.addEventListener("click", () => {
+    if (
+        !loginButton ||
+        !select ||
+        !pinInput ||
+        !pinConfirm ||
+        !pinConfirmWrapper ||
+        !rememberMe
+    ) {
+        return;
+    }
 
-        const select =
-            document.getElementById("employeeSelect");
 
-        const pinInput =
-            document.getElementById("pinInput");
+    function updatePinMode() {
 
-        const rememberMe =
-            document.getElementById("rememberMe");
+        const employeeId = select.value;
+
+        pinInput.value = "";
+        pinConfirm.value = "";
 
         const loginMessage =
             document.getElementById("loginMessage");
 
+        if (loginMessage) {
+            loginMessage.textContent = "";
+            loginMessage.className = "message";
+        }
+
+
+        if (!employeeId) {
+
+            pinConfirmWrapper.hidden = true;
+            loginButton.textContent = "Prihlásiť";
+
+            return;
+
+        }
+
+
+        const savedPin =
+            localStorage.getItem(
+                `pin_${employeeId}`
+            );
+
+
+        if (savedPin) {
+
+            pinConfirmWrapper.hidden = true;
+            loginButton.textContent = "Prihlásiť";
+
+        } else {
+
+            pinConfirmWrapper.hidden = false;
+            loginButton.textContent = "Vytvoriť PIN";
+
+        }
+
+    }
+
+
+    select.addEventListener(
+        "change",
+        updatePinMode
+    );
+
+
+    updatePinMode();
+
+
+    loginButton.addEventListener("click", () => {
 
         const employeeId =
             select.value;
@@ -340,9 +424,13 @@ function setupLogin() {
         const pin =
             pinInput.value.trim();
 
+        const confirmPin =
+            pinConfirm.value.trim();
 
-        loginMessage.textContent = "";
-        loginMessage.className = "message";
+        const savedPin =
+            localStorage.getItem(
+                `pin_${employeeId}`
+            );
 
 
         if (!employeeId) {
@@ -359,7 +447,7 @@ function setupLogin() {
         if (!/^\d{4}$/.test(pin)) {
 
             showLoginError(
-                "PIN musí obsahovať 4 čísla."
+                "PIN musí obsahovať presne 4 čísla."
             );
 
             return;
@@ -367,14 +455,55 @@ function setupLogin() {
         }
 
 
-        // ZATIAĽ TESTOVACÍ PIN
-        if (pin !== "1234") {
+        // PRVÉ PRIHLÁSENIE
+        // Zamestnanec si vytvorí vlastný PIN
 
-            showLoginError(
-                "Nesprávny PIN."
+        if (!savedPin) {
+
+            pinConfirmWrapper.hidden = false;
+
+
+            if (!/^\d{4}$/.test(confirmPin)) {
+
+                showLoginError(
+                    "Potvrďte svoj 4-miestny PIN."
+                );
+
+                return;
+
+            }
+
+
+            if (pin !== confirmPin) {
+
+                showLoginError(
+                    "PIN-y sa nezhodujú."
+                );
+
+                return;
+
+            }
+
+
+            localStorage.setItem(
+                `pin_${employeeId}`,
+                pin
             );
 
-            return;
+        } else {
+
+            // ĎALŠIE PRIHLÁSENIE
+            // Kontrola uloženého PIN-u
+
+            if (pin !== savedPin) {
+
+                showLoginError(
+                    "Nesprávny PIN."
+                );
+
+                return;
+
+            }
 
         }
 
@@ -395,15 +524,35 @@ function setupLogin() {
         }
 
 
-        loginMessage.textContent = "";
+        localStorage.setItem(
+            "lastEmployee",
+            employeeId
+        );
+
+
         pinInput.value = "";
+        pinConfirm.value = "";
+
+
+        const loginMessage =
+            document.getElementById("loginMessage");
+
+        if (loginMessage) {
+
+            loginMessage.textContent = "";
+            loginMessage.className = "message";
+
+        }
 
 
         const requestedScreen =
             localStorage.getItem("requestedScreen")
             || "orderScreen";
 
-        localStorage.removeItem("requestedScreen");
+
+        localStorage.removeItem(
+            "requestedScreen"
+        );
 
 
         if (requestedScreen === "orderScreen") {
@@ -426,8 +575,11 @@ function showLoginError(message) {
     const loginMessage =
         document.getElementById("loginMessage");
 
+    if (!loginMessage) return;
+
     loginMessage.textContent = message;
-    loginMessage.className = "message error-message";
+    loginMessage.className =
+        "message error-message";
 
 }
 
@@ -449,23 +601,29 @@ function openOrderScreen(employeeId) {
 
 function setWelcomeEmployee(employeeId) {
 
-    const select = document.getElementById("employeeSelect");
-    const welcomeName = document.getElementById("welcomeName");
+    const select =
+        document.getElementById("employeeSelect");
+
+    const welcomeName =
+        document.getElementById("welcomeName");
 
     if (!select || !welcomeName) return;
 
-    const selectedOption = select.options[select.selectedIndex];
 
-    if (!selectedOption) {
+    const option =
+        [...select.options].find(
+            item => item.value === employeeId
+        );
 
-        welcomeName.textContent = "Ahoj!";
-        return;
 
-    }
+    const firstName =
+        option?.dataset?.name || "";
 
-    const firstName = selectedOption.dataset.name;
 
-    welcomeName.textContent = `Ahoj, ${firstName}!`;
+    welcomeName.textContent =
+        firstName
+            ? `Ahoj, ${firstName}!`
+            : "Ahoj!";
 
 }
 
@@ -544,7 +702,7 @@ async function loadMenus() {
             card.innerHTML = `
                 <div class="menu-card-header">
                     <span class="menu-number">
-                        Menu ${menu.id}
+                        Menu ${escapeHtml(menu.id)}
                     </span>
                 </div>
 
@@ -556,7 +714,7 @@ async function loadMenus() {
                         <input
                             type="checkbox"
                             class="meal-choice"
-                            data-menu-id="${menu.id}"
+                            data-menu-id="${escapeHtml(menu.id)}"
                             data-option="dining"
                         >
                         <span>V jedálni</span>
@@ -566,7 +724,7 @@ async function loadMenus() {
                         <input
                             type="checkbox"
                             class="meal-choice"
-                            data-menu-id="${menu.id}"
+                            data-menu-id="${escapeHtml(menu.id)}"
                             data-option="takeaway"
                         >
                         <span>Zabaliť</span>
@@ -637,6 +795,7 @@ function setupOrderButton() {
 
             const order = {};
 
+
             selectedChoices.forEach(choice => {
 
                 const menuId =
@@ -667,14 +826,17 @@ function setupOrderButton() {
                     ?.checked || false;
 
 
+            const employee =
+                localStorage.getItem(
+                    "loggedEmployee"
+                )
+                || document.getElementById(
+                    "employeeSelect"
+                ).value;
+
+
             console.log({
-                employee:
-                    localStorage.getItem(
-                        "loggedEmployee"
-                    )
-                    || document.getElementById(
-                        "employeeSelect"
-                    ).value,
+                employee,
                 order,
                 noSoup
             });
