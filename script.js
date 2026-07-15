@@ -237,8 +237,10 @@ async function loadEmployees() {
             const option =
                 document.createElement("option");
 
-            option.value =
-                employee.personalNumber;
+          option.value =
+    employee.personalNumber && employee.personalNumber !== "None"
+        ? employee.personalNumber
+        : `${employee.surname}_${employee.name}`;
 
             option.textContent =
                 `${employee.surname} ${employee.name}`;
