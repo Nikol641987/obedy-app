@@ -1283,8 +1283,6 @@ console.log("OBJEDNÁVKA NA ULOŽENIE:", rows);
     orderMessage.className =
         "message error-message";
 
-}
-
             } finally {
 
                 confirmOrderButton.disabled =
