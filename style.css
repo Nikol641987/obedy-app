@@ -1,242 +1,479 @@
-/* ==========================================
-   TMV OBEDY
-========================================== */
+/* =========================================
+   OBEDY TMV – HLAVNÝ VZHĽAD
+========================================= */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+:root {
+    --tmv-blue: #2f66ad;
+    --tmv-blue-dark: #204f8d;
+    --tmv-light: #eef5fc;
+    --background: #f3f6fa;
+    --card: #ffffff;
+    --text: #202631;
+    --muted: #707887;
+    --border: #dce4ee;
+    --shadow: 0 18px 45px rgba(39, 71, 110, 0.12);
 }
 
-body{
-
-    background:#eef3f8;
-
-    font-family:
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
-    color:#2d3748;
-
-    min-height:100vh;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    padding:20px;
-
+* {
+    box-sizing: border-box;
 }
 
-.login-wrapper{
-
-    width:100%;
-    max-width:460px;
-
+html {
+    min-height: 100%;
 }
 
-.login-card{
-
-    background:#ffffff;
-
-    border-radius:24px;
-
-    padding:40px 30px;
-
-    box-shadow:
-        0 15px 40px rgba(0,0,0,.08);
-
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top, #ffffff 0, #f5f8fc 38%, #edf2f7 100%);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.logo{
-
-    width:150px;
-
-    display:block;
-
-    margin:0 auto 20px;
-
+button,
+input,
+select {
+    font: inherit;
 }
 
-h1{
-
-    text-align:center;
-
-    font-size:34px;
-
-    font-weight:700;
-
-    color:#0c5fa8;
-
+button {
+    cursor: pointer;
 }
 
-.subtitle{
-
-    text-align:center;
-
-    color:#6b7280;
-
-    margin-top:8px;
-
-    margin-bottom:35px;
-
-    font-size:15px;
-
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 4px solid rgba(47, 102, 173, 0.18);
+    outline-offset: 2px;
 }
 
-.form-label{
+/* =========================================
+   HLAVNÝ OBAL
+========================================= */
 
-    font-weight:600;
+.app-wrapper {
+    width: min(100% - 28px, 760px);
+    margin: 0 auto;
+    padding: 30px 0 48px;
+}
 
-    margin-bottom:8px;
+.app-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
 
+.app-header .logo {
+    display: block;
+    width: min(260px, 68vw);
+    max-height: 145px;
+    object-fit: contain;
+    margin: 0 auto 12px;
+}
+
+.app-header h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(42px, 9vw, 64px);
+    line-height: 1;
+    font-weight: 750;
+    letter-spacing: -2px;
+}
+
+.app-header p {
+    margin: 15px 0 0;
+    color: var(--muted);
+    font-size: clamp(16px, 3.8vw, 20px);
+}
+
+/* Atribút hidden musí obrazovku skutočne skryť */
+[hidden] {
+    display: none !important;
+}
+
+.app-screen {
+    animation: screenIn 0.22s ease;
+}
+
+@keyframes screenIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   DOMOVSKÉ DLAŽDICE
+========================================= */
+
+.home-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.home-card {
+    appearance: none;
+    min-height: 190px;
+    padding: 25px 20px;
+    border: 1px solid rgba(47, 102, 173, 0.12);
+    border-radius: 26px;
+    background:
+        linear-gradient(145deg, #ffffff 0%, #f7faff 100%);
+    box-shadow: var(--shadow);
+    color: var(--text);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.home-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(47, 102, 173, 0.3);
+    box-shadow: 0 22px 55px rgba(39, 71, 110, 0.17);
+}
+
+.home-card:active {
+    transform: scale(0.98);
+}
+
+.home-icon {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 20px;
+    border-radius: 18px;
+    background: var(--tmv-light);
+    font-size: 29px;
+}
+
+.home-title {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 23px;
+    font-weight: 750;
+    color: var(--tmv-blue-dark);
+}
+
+.home-description {
+    display: block;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.profile-link {
+    appearance: none;
+    display: block;
+    margin: 22px auto 0;
+    padding: 12px 20px;
+    border: 0;
+    background: transparent;
+    color: var(--tmv-blue);
+    font-weight: 700;
+    font-size: 16px;
+}
+
+/* =========================================
+   VŠEOBECNÉ KARTY A FORMULÁRE
+========================================= */
+
+.content-card,
+.welcome-block {
+    background: var(--card);
+    border: 1px solid rgba(47, 102, 173, 0.1);
+    border-radius: 26px;
+    box-shadow: var(--shadow);
+}
+
+.content-card {
+    padding: 28px;
+}
+
+.content-card h2,
+.welcome-block h2 {
+    margin: 0;
+    color: var(--tmv-blue-dark);
+    font-size: 30px;
+    font-weight: 750;
+}
+
+.back-button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--tmv-blue);
+    font-weight: 700;
+    padding: 8px 2px;
+    margin-bottom: 12px;
+}
+
+.form-group {
+    margin-top: 22px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 9px;
+    font-weight: 700;
 }
 
 .form-control,
-.form-select{
-
-    border-radius:14px !important;
-
-    height:52px;
-
-    border:1px solid #d7dee8;
-
-    font-size:16px;
-
+.form-select {
+    width: 100%;
+    height: 56px;
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: #ffffff;
+    color: var(--text);
+    font-size: 17px;
 }
 
 .form-control:focus,
-.form-select:focus{
-
-    border-color:#0c5fa8;
-
-    box-shadow:0 0 0 4px rgba(12,95,168,.12);
-
+.form-select:focus {
+    border-color: var(--tmv-blue);
+    box-shadow: 0 0 0 4px rgba(47, 102, 173, 0.1);
 }
 
-.btn-primary{
-
-    background:#0c5fa8 !important;
-
-    border:none !important;
-
-    border-radius:14px !important;
-
-    height:54px;
-
-    font-size:18px;
-
-    font-weight:600;
-
-    transition:.2s;
-
+.remember-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin: 22px 0;
 }
 
-.btn-primary:hover{
-
-    transform:translateY(-2px);
-
+.remember-row input {
+    width: 21px;
+    height: 21px;
+    flex: 0 0 auto;
+    margin-top: 1px;
 }
 
-.form-check{
-
-    margin-top:18px;
-
+.main-button,
+.secondary-button {
+    appearance: none;
+    width: 100%;
+    min-height: 56px;
+    border-radius: 17px;
+    font-weight: 750;
+    transition:
+        transform 0.16s ease,
+        filter 0.16s ease;
 }
 
-.form-check-input{
-
-    width:20px;
-
-    height:20px;
-
+.main-button {
+    border: 0;
+    background: linear-gradient(135deg, var(--tmv-blue), var(--tmv-blue-dark));
+    color: #ffffff;
+    box-shadow: 0 11px 24px rgba(47, 102, 173, 0.22);
+    font-size: 18px;
 }
 
-.form-check-label{
-
-    margin-left:6px;
-
+.secondary-button {
+    margin-top: 12px;
+    border: 1px solid #bdd0e8;
+    background: #f8fbff;
+    color: var(--tmv-blue-dark);
 }
 
-#loginMessage{
-
-    text-align:center;
-
-    margin-top:18px;
-
-    font-weight:600;
-
-    color:#198754;
-
+.main-button:hover,
+.secondary-button:hover {
+    filter: brightness(1.03);
+    transform: translateY(-1px);
 }
 
-/* ===========================
-   MENU
-=========================== */
-
-#menuContainer{
-
-    margin-top:35px;
-
+.message {
+    min-height: 24px;
+    margin-top: 16px;
+    text-align: center;
+    font-weight: 700;
 }
 
-#menuContainer button{
-
-    border-radius:16px;
-
-    height:58px;
-
-    font-size:17px;
-
-    font-weight:600;
-
-    margin-bottom:12px;
-
+.error-message {
+    color: #b42318;
 }
 
-.logged #menuContainer{
-
-    animation:fadeIn .35s ease;
-
+.success-message {
+    color: #16803c;
 }
 
-@keyframes fadeIn{
+/* =========================================
+   OBJEDNÁVKA
+========================================= */
 
-    from{
+.welcome-block {
+    padding: 25px;
+    margin-bottom: 18px;
+}
 
-        opacity:0;
-        transform:translateY(15px);
+.welcome-block p {
+    margin: 7px 0 0;
+    color: var(--muted);
+}
 
+#menuContainer {
+    display: grid;
+    gap: 15px;
+}
+
+.menu-card {
+    padding: 22px;
+    border: 1px solid rgba(47, 102, 173, 0.13);
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(39, 71, 110, 0.08);
+}
+
+.menu-card-header {
+    margin-bottom: 8px;
+}
+
+.menu-number {
+    display: inline-flex;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: var(--tmv-light);
+    color: var(--tmv-blue-dark);
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.menu-card h3 {
+    margin: 11px 0 18px;
+    font-size: 21px;
+    line-height: 1.35;
+}
+
+.menu-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.menu-option,
+.soup-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: #f9fbfd;
+    font-weight: 700;
+}
+
+.menu-option {
+    min-height: 52px;
+    padding: 13px;
+}
+
+.menu-option input,
+.soup-option input {
+    width: 21px;
+    height: 21px;
+    accent-color: var(--tmv-blue);
+}
+
+.soup-option {
+    margin: 18px 0;
+    padding: 16px;
+}
+
+/* =========================================
+   VÝDAJ
+========================================= */
+
+.issue-card {
+    text-align: center;
+}
+
+.chip-symbol {
+    width: 82px;
+    height: 82px;
+    display: grid;
+    place-items: center;
+    margin: 27px auto 15px;
+    border-radius: 25px;
+    background: var(--tmv-light);
+    color: var(--tmv-blue);
+    font-size: 48px;
+}
+
+.issue-main-text {
+    margin: 0;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.issue-help-text {
+    max-width: 420px;
+    margin: 11px auto 24px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* =========================================
+   MOBIL
+========================================= */
+
+@media (max-width: 620px) {
+    .app-wrapper {
+        width: min(100% - 22px, 540px);
+        padding-top: 20px;
     }
 
-    to{
-
-        opacity:1;
-        transform:none;
-
+    .app-header {
+        margin-bottom: 22px;
     }
 
-}
-
-@media(max-width:500px){
-
-    .login-card{
-
-        padding:28px 22px;
-
+    .home-grid {
+        grid-template-columns: 1fr;
+        gap: 13px;
     }
 
-    h1{
-
-        font-size:30px;
-
+    .home-card {
+        min-height: 135px;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 54px 1fr;
+        grid-template-rows: auto auto;
+        column-gap: 15px;
+        align-items: center;
     }
 
-    .logo{
-
-        width:125px;
-
+    .home-icon {
+        grid-row: 1 / 3;
+        width: 54px;
+        height: 54px;
+        margin: 0;
     }
 
+    .home-title {
+        margin: 0;
+        font-size: 21px;
+    }
+
+    .home-description {
+        align-self: start;
+    }
+
+    .content-card {
+        padding: 22px;
+    }
+
+    .menu-options {
+        grid-template-columns: 1fr;
+    }
 }
