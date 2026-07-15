@@ -865,6 +865,13 @@ async function checkTodayOrder(employeeId) {
 
 
         // Zamestnanec dnes ešte nemá objednávku
+         const now = new Date();
+
+const deadline = new Date();
+deadline.setHours(23, 59, 0, 0);
+
+const canEdit = now < deadline;
+        
         if (!data || data.length === 0) {
 
             if (orderMessage) {
@@ -937,11 +944,49 @@ async function checkTodayOrder(employeeId) {
 
         if (confirmOrderButton) {
 
-            confirmOrderButton.textContent =
-                "Uložiť zmeny";
-confirmOrderButton.dataset.edit = "true";
-            
-        }
+    if (canEdit) {
+
+        confirmOrderButton.disabled = false;
+
+        confirmOrderButton.textContent =
+            "Uložiť zmeny";
+
+        confirmOrderButton.dataset.edit =
+            "true";
+
+    } else {
+
+        confirmOrderButton.disabled = true;
+
+        confirmOrderButton.textContent =
+            "Objednávky sú uzavreté";
+
+    }
+
+}
+        if (!canEdit) {
+
+    document
+        .querySelectorAll(".meal-choice")
+        .forEach(choice => {
+            choice.disabled = true;
+        });
+
+    if (noSoup) {
+        noSoup.disabled = true;
+    }
+
+    if (orderMessage) {
+
+        orderMessage.textContent =
+            "Objednávku už nie je možné upraviť. Uzávierka bola o 8:30.";
+
+        orderMessage.className =
+            "message error-message";
+
+    }
+
+}
 
 
     } catch (error) {
