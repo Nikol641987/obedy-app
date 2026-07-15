@@ -794,6 +794,8 @@ async function openOrderScreen(
     showScreen("orderScreen");
 
     await loadMenus();
+    
+    await checkTodayOrder(employeeId);
 
 }
 async function checkTodayOrder(employeeId) {
