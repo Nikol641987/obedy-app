@@ -1265,19 +1265,25 @@ console.log("OBJEDNÁVKA NA ULOŽENIE:", rows);
                 );
 
 
-            } catch (error) {
+           } catch (error) {
 
-                console.error(
-                    "Chyba pri ukladaní objednávky:",
-                    error
-                );
+    console.error(
+        "Chyba pri ukladaní objednávky:",
+        error
+    );
 
-                orderMessage.textContent =
-                    "Objednávku sa nepodarilo uložiť.";
+    const errorText =
+        error?.message
+        || error?.details
+        || JSON.stringify(error);
 
-                orderMessage.className =
-                    "message error-message";
+    orderMessage.textContent =
+        `Chyba: ${errorText}`;
 
+    orderMessage.className =
+        "message error-message";
+
+}
 
             } finally {
 
