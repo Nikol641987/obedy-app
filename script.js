@@ -1263,7 +1263,12 @@ console.log("OBJEDNÁVKA NA ULOŽENIE:", rows);
                 await loadMyOrders(
                     employeeId
                 );
+                
+setTimeout(() => {
 
+    showScreen("homeScreen");
+
+}, 1200);
 
            } catch (error) {
 
