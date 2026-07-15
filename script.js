@@ -1217,7 +1217,7 @@ function setupOrderButton() {
                 } =
 
                     await supabaseClient
-                        .from("orders")
+                        .from("meal_orders")
                         .delete()
                         .eq(
                             "employee_id",
@@ -1241,7 +1241,7 @@ function setupOrderButton() {
                 } =
 
                     await supabaseClient
-                        .from("orders")
+                       .from("meal_orders")
                         .insert(rows);
 
 
@@ -1344,7 +1344,7 @@ async function loadMyOrders(
         } =
 
             await supabaseClient
-                .from("orders")
+                .from("meal_orders")
                 .select(
                     `
                     id,
