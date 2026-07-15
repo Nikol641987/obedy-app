@@ -1,7 +1,6 @@
-/* ===========================
-   OBEDY APP
-   Trenčianske minerálne vody
-=========================== */
+/* ==========================================
+   TMV OBEDY
+========================================== */
 
 *{
     margin:0;
@@ -11,66 +10,64 @@
 
 body{
 
-    font-family: Gotham, Arial, Helvetica, sans-serif;
+    background:#eef3f8;
 
-    background:#F4F8FB;
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    color:#2d3748;
 
     min-height:100vh;
 
     display:flex;
-
     justify-content:center;
-
     align-items:center;
 
-    color:#333;
+    padding:20px;
 
 }
 
-/* Karta */
+.login-wrapper{
+
+    width:100%;
+    max-width:460px;
+
+}
 
 .login-card{
 
-    width:100%;
-    max-width:480px;
+    background:#ffffff;
 
-    background:white;
+    border-radius:24px;
 
-    border-radius:22px;
+    padding:40px 30px;
 
-    padding:50px;
-
-    box-shadow:0 15px 40px rgba(0,0,0,.12);
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.08);
 
 }
-
-/* Logo */
 
 .logo{
 
-    width:220px;
+    width:150px;
 
     display:block;
 
-    margin:auto;
-
-    margin-bottom:25px;
+    margin:0 auto 20px;
 
 }
-
-/* Nadpis */
 
 h1{
 
     text-align:center;
 
-    color:#0069B4;
-
-    font-size:38px;
+    font-size:34px;
 
     font-weight:700;
 
-    margin-bottom:8px;
+    color:#0c5fa8;
 
 }
 
@@ -78,81 +75,168 @@ h1{
 
     text-align:center;
 
-    color:#666;
+    color:#6b7280;
 
-    margin-bottom:25px;
+    margin-top:8px;
+
+    margin-bottom:35px;
+
+    font-size:15px;
 
 }
-
-/* Formulár */
 
 .form-label{
 
     font-weight:600;
 
-    color:#444;
+    margin-bottom:8px;
 
 }
 
 .form-control,
 .form-select{
 
-    height:55px;
+    border-radius:14px !important;
 
-    border-radius:12px;
+    height:52px;
 
-    font-size:18px;
+    border:1px solid #d7dee8;
+
+    font-size:16px;
 
 }
 
-/* Button */
+.form-control:focus,
+.form-select:focus{
+
+    border-color:#0c5fa8;
+
+    box-shadow:0 0 0 4px rgba(12,95,168,.12);
+
+}
 
 .btn-primary{
 
-    background:#0099E5;
+    background:#0c5fa8 !important;
 
-    border:none;
+    border:none !important;
 
-    border-radius:12px;
+    border-radius:14px !important;
 
-    height:55px;
+    height:54px;
 
-    font-size:20px;
+    font-size:18px;
 
-    font-weight:bold;
+    font-weight:600;
 
-    transition:.25s;
+    transition:.2s;
 
 }
 
 .btn-primary:hover{
 
-    background:#007DC1;
+    transform:translateY(-2px);
 
 }
 
-/* Tablet */
+.form-check{
 
-@media(max-width:700px){
-
-.login-card{
-
-    margin:20px;
-
-    padding:35px;
+    margin-top:18px;
 
 }
 
-.logo{
+.form-check-input{
 
-    width:180px;
+    width:20px;
+
+    height:20px;
+
+}
+
+.form-check-label{
+
+    margin-left:6px;
 
 }
 
-h1{
+#loginMessage{
 
-    font-size:32px;
+    text-align:center;
+
+    margin-top:18px;
+
+    font-weight:600;
+
+    color:#198754;
 
 }
+
+/* ===========================
+   MENU
+=========================== */
+
+#menuContainer{
+
+    margin-top:35px;
+
+}
+
+#menuContainer button{
+
+    border-radius:16px;
+
+    height:58px;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    margin-bottom:12px;
+
+}
+
+.logged #menuContainer{
+
+    animation:fadeIn .35s ease;
+
+}
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+        transform:translateY(15px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:none;
+
+    }
+
+}
+
+@media(max-width:500px){
+
+    .login-card{
+
+        padding:28px 22px;
+
+    }
+
+    h1{
+
+        font-size:30px;
+
+    }
+
+    .logo{
+
+        width:125px;
+
+    }
 
 }
