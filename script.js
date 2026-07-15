@@ -763,7 +763,7 @@ function showLoginError(message) {
 // OBJEDNÁVKA OBEDA
 // =====================================
 
-function openOrderScreen(
+async function openOrderScreen(
     employeeId
 ) {
 
@@ -785,7 +785,6 @@ function openOrderScreen(
 
     }
 
-
     setWelcomeEmployee(
         employeeId
     );
@@ -794,7 +793,7 @@ function openOrderScreen(
 
     showScreen("orderScreen");
 
-    loadMenus();
+    await loadMenus();
 
 }
 
