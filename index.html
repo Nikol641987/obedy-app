@@ -1,115 +1,272 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Obedy</title>
+    <title>Obedy TMV</title>
 
     <link rel="stylesheet" href="style.css">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 </head>
 
 <body>
 
-<div class="login-wrapper">
+<div class="app-wrapper">
 
-    <div class="login-card">
-
-        <img src="assets/TMV_A_modre.svg" class="logo" alt="TMV">
+    <!-- HLAVIČKA -->
+    <header class="app-header">
+        <img
+            src="assets/TMV_A_modre.svg"
+            class="logo"
+            alt="Trenčianske minerálne vody"
+        >
 
         <h1>Obedy</h1>
-
-        <p class="subtitle">
-            Interný objednávkový systém
-        </p>
+        <p>Objednávkový systém zamestnancov</p>
+    </header>
 
 
-        <div class="mt-5">
+    <!-- DOMOVSKÁ OBRAZOVKA -->
+    <main id="homeScreen" class="app-screen">
 
-            <label class="form-label">
-                Zamestnanec
-            </label>
+        <div class="home-grid">
 
-            <select class="form-select" id="employeeSelect">
+            <button id="openOrderButton" class="home-card">
+                <span class="home-icon">🍽️</span>
+                <span class="home-title">Objednať obed</span>
+                <span class="home-description">
+                    Vyber si obed na ďalšie dni
+                </span>
+            </button>
 
-                <option>
-                    Načítavam zamestnancov...
-                </option>
+            <button id="openWeeklyMenuButton" class="home-card">
+                <span class="home-icon">📅</span>
+                <span class="home-title">Týždenné menu</span>
+                <span class="home-description">
+                    Pozri si ponuku na celý týždeň
+                </span>
+            </button>
 
-            </select>
+            <button id="openIssueButton" class="home-card">
+                <span class="home-icon">🍴</span>
+                <span class="home-title">Výdaj obedov</span>
+                <span class="home-description">
+                    Výdaj objednaného obeda
+                </span>
+            </button>
 
-        </div>
-
-
-        <div class="mt-4">
-
-            <label class="form-label">
-                PIN
-            </label>
-
-            <input
-                type="password"
-                id="pinInput"
-                maxlength="4"
-                class="form-control"
-                placeholder="••••"
-            >
-
-            <div class="mt-3">
-
-    <label class="form-label">
-        Potvrďte PIN
-    </label>
-
-    <input
-        type="password"
-        id="pinConfirm"
-        maxlength="4"
-        class="form-control"
-        placeholder="••••"
-    >
+            <button id="openMyOrdersButton" class="home-card">
+                <span class="home-icon">📋</span>
+                <span class="home-title">Moje obedy</span>
+                <span class="home-description">
+                    Skontroluj svoje objednávky
+                </span>
+            </button>
 
         </div>
-            
-            <div class="form-check mt-3">
 
-    <input
-        class="form-check-input"
-        type="checkbox"
-        id="rememberMe"
-    >
-
-    <label class="form-check-label" for="rememberMe">
-        Ostať prihlásený na tomto zariadení
-    </label>
-
-</div>
-
-
-        <button 
-            id="loginButton"
-            class="btn btn-primary mt-5 w-100">
-
-            Prihlásiť
-
+        <button id="openProfileButton" class="profile-link">
+            👤 Môj profil
         </button>
-        <div id="loginMessage" class="mt-3 text-center"></div>
+
+    </main>
 
 
-        <!-- MENU -->
-        <div id="menuContainer" class="mt-4">
-    TEST MENU
+    <!-- PRIHLÁSENIE -->
+    <section id="loginScreen" class="app-screen" hidden>
+
+        <button class="back-button" data-back-home>
+            ← Späť
+        </button>
+
+        <div class="content-card">
+
+            <h2>Prihlásenie</h2>
+
+            <div class="form-group">
+                <label for="employeeSelect">
+                    Zamestnanec
+                </label>
+
+                <select id="employeeSelect" class="form-select">
+                    <option>Načítavam zamestnancov...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="pinInput">
+                    PIN
+                </label>
+
+                <input
+                    type="password"
+                    inputmode="numeric"
+                    maxlength="4"
+                    id="pinInput"
+                    class="form-control"
+                    placeholder="••••"
+                >
+            </div>
+
+            <div id="pinConfirmWrapper" class="form-group">
+                <label for="pinConfirm">
+                    Potvrďte PIN
+                </label>
+
+                <input
+                    type="password"
+                    inputmode="numeric"
+                    maxlength="4"
+                    id="pinConfirm"
+                    class="form-control"
+                    placeholder="••••"
+                >
+            </div>
+
+            <div class="form-check remember-row">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="rememberMe"
+                >
+
+                <label class="form-check-label" for="rememberMe">
+                    Ostať prihlásený na tomto zariadení
+                </label>
+            </div>
+
+            <button id="loginButton" class="main-button">
+                Prihlásiť
+            </button>
+
+            <div id="loginMessage" class="message"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- OBJEDNÁVKA OBEDA -->
+    <section id="orderScreen" class="app-screen" hidden>
+
+        <button class="back-button" data-back-home>
+            ← Späť
+        </button>
+
+        <div class="welcome-block">
+            <h2 id="welcomeName">Ahoj!</h2>
+            <p id="currentDate"></p>
+            <p>Vyber si obed.</p>
+        </div>
+
+        <div id="menuContainer"></div>
+
+        <label class="soup-option">
+            <input type="checkbox" id="noSoup">
+            <span>Bez polievky</span>
+        </label>
+
+        <button id="confirmOrderButton" class="main-button">
+            Potvrdiť objednávku
+        </button>
+
+        <div id="orderMessage" class="message"></div>
+
+    </section>
+
+
+    <!-- TÝŽDENNÉ MENU -->
+    <section id="weeklyMenuScreen" class="app-screen" hidden>
+
+        <button class="back-button" data-back-home>
+            ← Späť
+        </button>
+
+        <div class="content-card">
+            <h2>Týždenné menu</h2>
+
+            <div id="weeklyMenuContainer">
+                Menu na celý týždeň doplníme v ďalšom kroku.
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- VÝDAJ OBEDOV -->
+    <section id="issueScreen" class="app-screen" hidden>
+
+        <button class="back-button" data-back-home>
+            ← Späť
+        </button>
+
+        <div class="content-card issue-card">
+            <h2>Výdaj obedov</h2>
+
+            <div class="chip-symbol">▱</div>
+
+            <p class="issue-main-text">
+                Priložte čip
+            </p>
+
+            <p class="issue-help-text">
+                Obed sa po načítaní čipu automaticky označí ako vydaný.
+            </p>
+
+            <button id="noChipButton" class="secondary-button">
+                Nemám čip
+            </button>
+
+            <div id="issueMessage" class="message"></div>
+        </div>
+
+    </section>
+
+
+    <!-- MOJE OBEDY -->
+    <section id="myOrdersScreen" class="app-screen" hidden>
+
+        <button class="back-button" data-back-home>
+            ← Späť
+        </button>
+
+        <div class="content-card">
+            <h2>Moje obedy</h2>
+
+            <div id="myOrdersContainer">
+                Po prihlásení sa tu zobrazia tvoje objednávky.
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- PROFIL -->
+    <section id="profileScreen" class="app-screen" hidden>
+
+        <button class="back-button" data-back-home>
+            ← Späť
+        </button>
+
+        <div class="content-card">
+            <h2>Môj profil</h2>
+
+            <button id="changePinButton" class="secondary-button">
+                Zmeniť PIN
+            </button>
+
+            <button id="logoutButton" class="secondary-button">
+                Odhlásiť sa
+            </button>
+        </div>
+
+    </section>
+
 </div>
-
-
-    </div>
-
-</div>
-
 
 <script src="script.js"></script>
 
