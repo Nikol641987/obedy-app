@@ -796,7 +796,51 @@ async function openOrderScreen(
     await loadMenus();
 
 }
+async function checkTodayOrder(employeeId) {
 
+    const today =
+        getTodayDate();
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("meal_orders")
+                .select(
+                    "menu_id, menu_name, dining, takeaway, no_soup, issued"
+                )
+                .eq(
+                    "employee_id",
+                    employeeId
+                )
+                .eq(
+                    "order_date",
+                    today
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        console.log(
+            "Dnešná objednávka:",
+            data
+        );
+
+        return data || [];
+
+    } catch (error) {
+
+        console.error(
+            "Chyba pri kontrole dnešnej objednávky:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
 
 // =====================================
 // POZDRAV ZAMESTNANCA
