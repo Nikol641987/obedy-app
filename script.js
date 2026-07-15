@@ -939,7 +939,8 @@ async function checkTodayOrder(employeeId) {
 
             confirmOrderButton.textContent =
                 "Uložiť zmeny";
-
+confirmOrderButton.dataset.edit = "true";
+            
         }
 
 
