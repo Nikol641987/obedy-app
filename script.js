@@ -2512,49 +2512,6 @@ function setupChipLogin() {
 
 }
 
-
-    chipInput.addEventListener(
-        "change",
-        loginByChip
-    );
-
-
-    document
-        .getElementById(
-            "openOrderButton"
-        )
-        ?.addEventListener(
-            "click",
-            focusChipInput
-        );
-
-
-    document
-        .getElementById(
-            "openMyOrdersButton"
-        )
-        ?.addEventListener(
-            "click",
-            focusChipInput
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-back-home]"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-                    chipInput.blur();
-                }
-            );
-
-        });
-
-}
                 
             }
 
