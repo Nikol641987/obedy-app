@@ -83,69 +83,99 @@
             ← Späť
         </button>
 
-        <div class="content-card">
+       <div class="content-card">
 
-            <h2>Prihlásenie</h2>
+    <h2>Prihlásenie</h2>
 
-            <div class="form-group">
-                <label for="employeeSelect">
-                    Zamestnanec
-                </label>
+    <div class="chip-login-box">
 
-                <select id="employeeSelect" class="form-select">
-                    <option>Načítavam zamestnancov...</option>
-                </select>
-            </div>
+        <div class="chip-symbol">▱</div>
 
-            <div class="form-group">
-                <label for="pinInput">
-                    PIN
-                </label>
+        <p class="chip-login-title">
+            Priložte svoj čip
+        </p>
 
-                <input
-                    type="password"
-                    inputmode="numeric"
-                    maxlength="4"
-                    id="pinInput"
-                    class="form-control"
-                    placeholder="••••"
-                >
-            </div>
+        <p class="chip-login-help">
+            Po načítaní čipu sa prihlásite automaticky.
+        </p>
 
-            <div id="pinConfirmWrapper" class="form-group">
-                <label for="pinConfirm">
-                    Potvrďte PIN
-                </label>
+        <input
+            type="text"
+            id="chipLoginInput"
+            class="chip-login-input"
+            autocomplete="off"
+            aria-label="Číslo čipu"
+        >
 
-                <input
-                    type="password"
-                    inputmode="numeric"
-                    maxlength="4"
-                    id="pinConfirm"
-                    class="form-control"
-                    placeholder="••••"
-                >
-            </div>
+    </div>
 
-            <div class="form-check remember-row">
-                <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="rememberMe"
-                >
+    <div class="login-divider">
+        <span>alebo</span>
+    </div>
 
-                <label class="form-check-label" for="rememberMe">
-                    Ostať prihlásený na tomto zariadení
-                </label>
-            </div>
+    <p class="login-without-chip">
+        Nemáte čip? Prihláste sa menom a PIN-om.
+    </p>
 
-            <button id="loginButton" class="main-button">
-                Prihlásiť
-            </button>
+    <div class="form-group">
+        <label for="employeeSelect">
+            Zamestnanec
+        </label>
 
-            <div id="loginMessage" class="message"></div>
+        <select id="employeeSelect" class="form-select">
+            <option>Načítavam zamestnancov...</option>
+        </select>
+    </div>
 
-        </div>
+    <div class="form-group">
+        <label for="pinInput">
+            PIN
+        </label>
+
+        <input
+            type="password"
+            inputmode="numeric"
+            maxlength="4"
+            id="pinInput"
+            class="form-control"
+            placeholder="••••"
+        >
+    </div>
+
+    <div id="pinConfirmWrapper" class="form-group" hidden>
+        <label for="pinConfirm">
+            Potvrďte PIN
+        </label>
+
+        <input
+            type="password"
+            inputmode="numeric"
+            maxlength="4"
+            id="pinConfirm"
+            class="form-control"
+            placeholder="••••"
+        >
+    </div>
+
+    <div class="form-check remember-row">
+        <input
+            class="form-check-input"
+            type="checkbox"
+            id="rememberMe"
+        >
+
+        <label class="form-check-label" for="rememberMe">
+            Ostať prihlásený na tomto zariadení
+        </label>
+    </div>
+
+    <button id="loginButton" class="main-button">
+        Prihlásiť
+    </button>
+
+    <div id="loginMessage" class="message"></div>
+
+</div>
 
     </section>
 
