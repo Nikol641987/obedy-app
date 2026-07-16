@@ -1980,22 +1980,37 @@ function setupManualIssue() {
             "issueEmployeeSelect"
         );
 
+    const issueManualButton =
+        document.getElementById(
+            "issueManualButton"
+        );
+
     const employeeSelect =
         document.getElementById(
             "employeeSelect"
         );
 
+    const issueMessage =
+        document.getElementById(
+            "issueMessage"
+        );
+
+
     if (
         !noChipButton
         || !manualIssueBox
         || !issueEmployeeSelect
+        || !issueManualButton
         || !employeeSelect
+        || !issueMessage
     ) {
         return;
     }
 
+
     issueEmployeeSelect.innerHTML =
         employeeSelect.innerHTML;
+
 
     noChipButton.addEventListener(
         "click",
@@ -2008,6 +2023,224 @@ function setupManualIssue() {
                 manualIssueBox.hidden
                     ? "Nemám čip"
                     : "Skryť výber zamestnanca";
+
+        }
+    );
+
+
+    issueManualButton.addEventListener(
+        "click",
+        async () => {
+
+            const employeeId =
+                issueEmployeeSelect.value;
+
+
+            if (!employeeId) {
+
+                issueMessage.textContent =
+                    "Vyberte zamestnanca.";
+
+                issueMessage.className =
+                    "message error-message";
+
+                return;
+
+            }
+
+
+            issueManualButton.disabled = true;
+
+            issueManualButton.textContent =
+                "Kontrolujem objednávku...";
+
+            issueMessage.textContent = "";
+
+            issueMessage.className =
+                "message";
+
+
+            const today =
+                getTodayDate();
+
+
+            try {
+
+                const { data, error } =
+                    await supabaseClient
+                        .from("meal_orders")
+                        .select(
+                            `
+                            id,
+                            menu_name,
+                            dining,
+                            takeaway,
+                            issued
+                            `
+                        )
+                        .eq(
+                            "employee_id",
+                            employeeId
+                        )
+                        .eq(
+                            "order_date",
+                            today
+                        );
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (
+                    !data
+                    || data.length === 0
+                ) {
+
+                    issueMessage.textContent =
+                        "Tento zamestnanec dnes nemá objednaný obed.";
+
+                    issueMessage.className =
+                        "message error-message";
+
+                    return;
+
+                }
+
+
+                const allIssued =
+                    data.every(
+                        item =>
+                            Boolean(item.issued)
+                    );
+
+
+                if (allIssued) {
+
+                    issueMessage.textContent =
+                        "Obed bol tomuto zamestnancovi už vydaný.";
+
+                    issueMessage.className =
+                        "message";
+
+                    return;
+
+                }
+
+
+                const { error: updateError } =
+                    await supabaseClient
+                        .from("meal_orders")
+                        .update({
+                            issued: true
+                        })
+                        .eq(
+                            "employee_id",
+                            employeeId
+                        )
+                        .eq(
+                            "order_date",
+                            today
+                        );
+
+
+                if (updateError) {
+                    throw updateError;
+                }
+
+
+                const selectedOption =
+                    issueEmployeeSelect
+                        .options[
+                            issueEmployeeSelect
+                                .selectedIndex
+                        ];
+
+                const employeeName =
+                    selectedOption
+                        ?.textContent
+                        ?.trim()
+                    || "Zamestnanec";
+
+
+                const mealsText =
+                    data
+                        .map(item => {
+
+                            const methods = [];
+
+                            if (item.dining) {
+                                methods.push(
+                                    "V jedálni"
+                                );
+                            }
+
+                            if (item.takeaway) {
+                                methods.push(
+                                    "Zabaliť"
+                                );
+                            }
+
+                            return `${item.menu_name} – ${methods.join(" + ")}`;
+
+                        })
+                        .join(" | ");
+
+
+                issueMessage.textContent =
+                    `✅ ${employeeName}: ${mealsText}. Obed bol úspešne vydaný.`;
+
+                issueMessage.className =
+                    "message success-message";
+
+
+                setTimeout(
+                    () => {
+
+                        issueEmployeeSelect.value = "";
+
+                        issueMessage.textContent = "";
+
+                        issueMessage.className =
+                            "message";
+
+                        manualIssueBox.hidden = true;
+
+                        noChipButton.textContent =
+                            "Nemám čip";
+
+                    },
+                    3000
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Chyba pri výdaji obeda:",
+                    error
+                );
+
+                issueMessage.textContent =
+                    `Chyba: ${
+                        error?.message
+                        || "Obed sa nepodarilo vydať."
+                    }`;
+
+                issueMessage.className =
+                    "message error-message";
+
+
+            } finally {
+
+                issueManualButton.disabled =
+                    false;
+
+                issueManualButton.textContent =
+                    "Vydať obed";
+
+            }
 
         }
     );
