@@ -42,6 +42,21 @@ function showScreen(screenId) {
 
 
 // =====================================
+// AKTUÁLNE PRIHLÁSENÝ ZAMESTNANEC
+// =====================================
+
+function getCurrentEmployeeId() {
+
+    return (
+        sessionStorage.getItem("loggedEmployee")
+        || localStorage.getItem("loggedEmployee")
+        || ""
+    );
+
+}
+
+
+// =====================================
 // NAVIGÁCIA
 // =====================================
 
@@ -51,22 +66,19 @@ function setupNavigation() {
         document.getElementById("openOrderButton");
 
     const openWeeklyMenuButton =
-        document.getElementById(
-            "openWeeklyMenuButton"
-        );
+        document.getElementById("openWeeklyMenuButton");
 
     const openIssueButton =
         document.getElementById("openIssueButton");
 
     const openMyOrdersButton =
-        document.getElementById(
-            "openMyOrdersButton"
-        );
+        document.getElementById("openMyOrdersButton");
 
     const openProfileButton =
-        document.getElementById(
-            "openProfileButton"
-        );
+        document.getElementById("openProfileButton");
+
+    const logoutButton =
+        document.getElementById("logoutButton");
 
 
     openOrderButton?.addEventListener(
@@ -82,7 +94,7 @@ function setupNavigation() {
 
             } else {
 
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "requestedScreen",
                     "orderScreen"
                 );
@@ -128,7 +140,7 @@ function setupNavigation() {
 
             } else {
 
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "requestedScreen",
                     "myOrdersScreen"
                 );
@@ -146,9 +158,7 @@ function setupNavigation() {
         () => {
 
             const employeeId =
-                localStorage.getItem(
-                    "loggedEmployee"
-                );
+                getCurrentEmployeeId();
 
             if (employeeId) {
 
@@ -156,7 +166,7 @@ function setupNavigation() {
 
             } else {
 
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "requestedScreen",
                     "profileScreen"
                 );
@@ -185,81 +195,71 @@ function setupNavigation() {
         });
 
 
-    document
-        .getElementById("logoutButton")
-        ?.addEventListener(
-            "click",
-            () => {
+    logoutButton?.addEventListener(
+        "click",
+        () => {
 
-                localStorage.removeItem(
-                    "loggedEmployee"
+            sessionStorage.removeItem(
+                "loggedEmployee"
+            );
+
+            localStorage.removeItem(
+                "loggedEmployee"
+            );
+
+            sessionStorage.removeItem(
+                "requestedScreen"
+            );
+
+            const select =
+                document.getElementById(
+                    "employeeSelect"
                 );
-                
-               localStorage.removeItem(
-              "lastEmployee"
-               );
-                
-                localStorage.removeItem(
-                    "requestedScreen"
+
+            const pinInput =
+                document.getElementById(
+                    "pinInput"
                 );
 
-                const rememberMe =
-                    document.getElementById(
-                        "rememberMe"
-                    );
+            const pinConfirm =
+                document.getElementById(
+                    "pinConfirm"
+                );
 
-                const pinInput =
-                    document.getElementById(
-                        "pinInput"
-                    );
+            const pinConfirmWrapper =
+                document.getElementById(
+                    "pinConfirmWrapper"
+                );
 
-                const pinConfirm =
-                    document.getElementById(
-                        "pinConfirm"
-                    );
+            const rememberMe =
+                document.getElementById(
+                    "rememberMe"
+                );
 
-                if (rememberMe) {
-                    rememberMe.checked = false;
-                }
-
-                if (pinInput) {
-                    pinInput.value = "";
-                }
-
-                if (pinConfirm) {
-                    pinConfirm.value = "";
-                }
-                const select =
-    document.getElementById(
-        "employeeSelect"
-    );
-
-if (select) {
-    select.value = "";
-}
-
-                showScreen("homeScreen");
-
+            if (select) {
+                select.value = "";
             }
-        );
 
-}
+            if (pinInput) {
+                pinInput.value = "";
+            }
 
+            if (pinConfirm) {
+                pinConfirm.value = "";
+            }
 
-// =====================================
-// AKTUÁLNY ZAMESTNANEC
-// =====================================
+            if (pinConfirmWrapper) {
+                pinConfirmWrapper.hidden = true;
+            }
 
-function getCurrentEmployeeId() {
+            if (rememberMe) {
+                rememberMe.checked = false;
+            }
 
-    return (
-        sessionStorage.getItem(
-            "loggedEmployee"
-        )
-        || localStorage.getItem(
-            "loggedEmployee"
-        )
-        || ""
+            clearLoginMessage();
+            showScreen("homeScreen");
+
+        }
     );
 
 }
@@ -291,7 +291,6 @@ async function loadEmployees() {
             );
 
         }
-
 
         const employees =
             await response.json();
@@ -371,66 +370,44 @@ async function loadEmployees() {
         });
 
 
-        const loggedEmployee =
+        const currentEmployee =
+            getCurrentEmployeeId();
+
+        const persistentEmployee =
             localStorage.getItem(
                 "loggedEmployee"
             );
 
-        const lastEmployee =
-            localStorage.getItem(
-                "lastEmployee"
-            );
-
 
         if (
-            loggedEmployee
+            currentEmployee
             && hasEmployeeOption(
                 select,
-                loggedEmployee
+                currentEmployee
             )
         ) {
 
             select.value =
-                loggedEmployee;
+                currentEmployee;
 
-            const rememberMe =
-                document.getElementById(
-                    "rememberMe"
-                );
+        } else {
 
-            if (rememberMe) {
-                rememberMe.checked = true;
-            }
-
-        } else if (
-            lastEmployee
-            && hasEmployeeOption(
-                select,
-                lastEmployee
-            )
-        ) {
-
-            select.value =
-                lastEmployee;
+            select.value = "";
 
         }
 
 
-        select.addEventListener(
-            "change",
-            () => {
+        const rememberMe =
+            document.getElementById(
+                "rememberMe"
+            );
 
-                if (select.value) {
+        if (rememberMe) {
 
-                    localStorage.setItem(
-                        "lastEmployee",
-                        select.value
-                    );
+            rememberMe.checked =
+                Boolean(persistentEmployee);
 
-                }
-
-            }
-        );
+        }
 
 
     } catch (error) {
@@ -611,7 +588,7 @@ function setupLogin() {
                 );
 
 
-            // PRVÉ PRIHLÁSENIE
+            // PIN sa vytvára iba prvýkrát
             if (!savedPin) {
 
                 pinConfirmWrapper.hidden =
@@ -651,7 +628,7 @@ function setupLogin() {
 
             } else {
 
-                // ĎALŠIE PRIHLÁSENIE
+                // Pri ďalšom prihlásení zadá PIN iba raz
                 if (pin !== savedPin) {
 
                     showLoginError(
@@ -665,12 +642,14 @@ function setupLogin() {
             }
 
 
-            localStorage.setItem(
-                "lastEmployee",
+            // Prihlásenie počas otvorenej karty
+            sessionStorage.setItem(
+                "loggedEmployee",
                 employeeId
             );
 
 
+            // Dlhodobé prihlásenie iba pri zaškrtnutí
             if (rememberMe.checked) {
 
                 localStorage.setItem(
@@ -694,13 +673,13 @@ function setupLogin() {
 
 
             const requestedScreen =
-                localStorage.getItem(
+                sessionStorage.getItem(
                     "requestedScreen"
                 )
                 || "orderScreen";
 
 
-            localStorage.removeItem(
+            sessionStorage.removeItem(
                 "requestedScreen"
             );
 
@@ -747,6 +726,7 @@ function clearLoginMessage() {
     if (!loginMessage) return;
 
     loginMessage.textContent = "";
+
     loginMessage.className =
         "message";
 
@@ -772,7 +752,7 @@ function showLoginError(message) {
 
 
 // =====================================
-// OBJEDNÁVKA OBEDA
+// OTVORENIE OBJEDNÁVKY
 // =====================================
 
 async function openOrderScreen(
@@ -797,6 +777,7 @@ async function openOrderScreen(
 
     }
 
+
     setWelcomeEmployee(
         employeeId
     );
@@ -806,32 +787,50 @@ async function openOrderScreen(
     showScreen("orderScreen");
 
     await loadMenus();
-    
-    await checkTodayOrder(employeeId);
+
+    await checkTodayOrder(
+        employeeId
+    );
 
 }
-async function checkTodayOrder(employeeId) {
-    
+
+
+// =====================================
+// KONTROLA DNEŠNEJ OBJEDNÁVKY
+// =====================================
+
+async function checkTodayOrder(
+    employeeId
+) {
 
     const today =
         getTodayDate();
 
     const orderMessage =
-        document.getElementById("orderMessage");
+        document.getElementById(
+            "orderMessage"
+        );
 
     const confirmOrderButton =
-        document.getElementById("confirmOrderButton");
+        document.getElementById(
+            "confirmOrderButton"
+        );
 
     const noSoup =
-        document.getElementById("noSoup");
+        document.getElementById(
+            "noSoup"
+        );
 
     const orderIntroText =
-    document.getElementById("orderIntroText");
+        document.getElementById(
+            "orderIntroText"
+        );
 
 
-    // Najprv vyčistíme všetky voľby
     document
-        .querySelectorAll(".meal-choice")
+        .querySelectorAll(
+            ".meal-choice"
+        )
         .forEach(choice => {
 
             choice.checked = false;
@@ -850,9 +849,24 @@ async function checkTodayOrder(employeeId) {
 
     if (confirmOrderButton) {
 
-        confirmOrderButton.disabled = false;
+        confirmOrderButton.disabled =
+            false;
+
         confirmOrderButton.textContent =
             "Potvrdiť objednávku";
+
+        delete confirmOrderButton
+            .dataset.edit;
+
+    }
+
+
+    if (orderMessage) {
+
+        orderMessage.textContent = "";
+
+        orderMessage.className =
+            "message";
 
     }
 
@@ -880,57 +894,114 @@ async function checkTodayOrder(employeeId) {
         }
 
 
-        // Zamestnanec dnes ešte nemá objednávku
-         const now = new Date();
+        const now =
+            new Date();
 
-const deadline = new Date();
-deadline.setHours(23, 59, 0, 0);
+        const deadline =
+            new Date();
 
-const canEdit = now < deadline;
-        
-        if (!data || data.length === 0) {
+        deadline.setHours(
+            8,
+            30,
+            0,
+            0
+        );
 
-    if (orderIntroText) {
-
-        orderIntroText.textContent =
-    "🍽️ Dnes ešte nemáš objednaný obed. Objednať si ho môžeš do 8:30.";
-
-orderIntroText.style.color =
-    "#d97706";
-
-orderIntroText.style.fontWeight =
-    "700";
-
-orderIntroText.style.fontSize =
-    "1.05rem";
-
-    }
+        const canEdit =
+            now < deadline;
 
 
-    return;
+        // Dnes nemá objednávku
+        if (
+            !data
+            || data.length === 0
+        ) {
 
-}
-if (orderIntroText) {
+            if (orderIntroText) {
 
-orderIntroText.textContent =
-    canEdit
-        ? "✅ Dnešný obed máš úspešne objednaný. Do 8:30 môžeš objednávku ešte upraviť."
-        : "🔒 Dnešný obed máš úspešne objednaný. Objednávku už nie je možné upraviť.";
+                orderIntroText.textContent =
+                    canEdit
 
-orderIntroText.style.color =
-    canEdit
-        ? "#16803c"
-        : "#2563eb";
+                        ? "🍽️ Dnes ešte nemáš objednaný obed. Objednať si ho môžeš do 8:30."
 
-orderIntroText.style.fontWeight =
-    "700";
+                        : "⏰ Dnes nemáš objednaný obed. Objednávky sú už uzavreté.";
 
-orderIntroText.style.fontSize =
-    "1.05rem";
 
-}
+                orderIntroText.style.color =
+                    canEdit
+                        ? "#d97706"
+                        : "#b42318";
 
-        // Predvyplnenie už existujúcej objednávky
+                orderIntroText.style.fontWeight =
+                    "700";
+
+                orderIntroText.style.fontSize =
+                    "1.05rem";
+
+            }
+
+
+            if (!canEdit) {
+
+                document
+                    .querySelectorAll(
+                        ".meal-choice"
+                    )
+                    .forEach(choice => {
+
+                        choice.disabled = true;
+
+                    });
+
+
+                if (noSoup) {
+                    noSoup.disabled = true;
+                }
+
+
+                if (confirmOrderButton) {
+
+                    confirmOrderButton.disabled =
+                        true;
+
+                    confirmOrderButton.textContent =
+                        "Objednávky sú uzavreté";
+
+                }
+
+            }
+
+
+            return;
+
+        }
+
+
+        // Dnes už objednávku má
+        if (orderIntroText) {
+
+            orderIntroText.textContent =
+                canEdit
+
+                    ? "✅ Dnešný obed máš úspešne objednaný. Do 8:30 môžeš objednávku ešte upraviť."
+
+                    : "🔒 Dnešný obed máš úspešne objednaný. Objednávku už nie je možné upraviť.";
+
+
+            orderIntroText.style.color =
+                canEdit
+                    ? "#16803c"
+                    : "#2563eb";
+
+            orderIntroText.style.fontWeight =
+                "700";
+
+            orderIntroText.style.fontSize =
+                "1.05rem";
+
+        }
+
+
         data.forEach(item => {
 
             const diningChoice =
@@ -947,7 +1018,9 @@ orderIntroText.style.fontSize =
             if (diningChoice) {
 
                 diningChoice.checked =
-                    Boolean(item.dining);
+                    Boolean(
+                        item.dining
+                    );
 
             }
 
@@ -955,7 +1028,9 @@ orderIntroText.style.fontSize =
             if (takeawayChoice) {
 
                 takeawayChoice.checked =
-                    Boolean(item.takeaway);
+                    Boolean(
+                        item.takeaway
+                    );
 
             }
 
@@ -965,69 +1040,60 @@ orderIntroText.style.fontSize =
         if (noSoup) {
 
             noSoup.checked =
-                data.some(item =>
-                    Boolean(item.no_soup)
+                data.some(
+                    item =>
+                        Boolean(
+                            item.no_soup
+                        )
                 );
-
-        }
-
-
-        if (orderMessage) {
-
-            orderMessage.textContent =
-                "Toto je tvoja dnešná objednávka. Môžeš ju upraviť.";
-
-            orderMessage.className =
-                "message success-message";
 
         }
 
 
         if (confirmOrderButton) {
 
-    if (canEdit) {
+            if (canEdit) {
 
-        confirmOrderButton.disabled = false;
+                confirmOrderButton.disabled =
+                    false;
 
-        confirmOrderButton.textContent =
-            "Uložiť zmeny";
+                confirmOrderButton.textContent =
+                    "Uložiť zmeny";
 
-        confirmOrderButton.dataset.edit =
-            "true";
+                confirmOrderButton.dataset.edit =
+                    "true";
 
-    } else {
+            } else {
 
-        confirmOrderButton.disabled = true;
+                confirmOrderButton.disabled =
+                    true;
 
-        confirmOrderButton.textContent =
-            "Objednávky sú uzavreté";
+                confirmOrderButton.textContent =
+                    "Objednávky sú uzavreté";
 
-    }
+            }
 
-}
+        }
+
+
         if (!canEdit) {
 
-    document
-        .querySelectorAll(".meal-choice")
-        .forEach(choice => {
-            choice.disabled = true;
-        });
+            document
+                .querySelectorAll(
+                    ".meal-choice"
+                )
+                .forEach(choice => {
 
-    if (noSoup) {
-        noSoup.disabled = true;
-    }
+                    choice.disabled = true;
 
-    if (orderMessage) {
+                });
 
-        orderMessage.textContent =
-            "Objednávku už nie je možné upraviť. Uzávierka bola o 8:30.";
 
-        orderMessage.className =
-            "message error-message";
+            if (noSoup) {
+                noSoup.disabled = true;
+            }
 
-    }
-
-}
+        }
 
 
     } catch (error) {
@@ -1038,19 +1104,24 @@ orderIntroText.style.fontSize =
         );
 
 
-        if (orderMessage) {
+        if (orderIntroText) {
 
-            orderMessage.textContent =
+            orderIntroText.textContent =
                 "Dnešnú objednávku sa nepodarilo načítať.";
 
-            orderMessage.className =
-                "message error-message";
+            orderIntroText.style.color =
+                "#b42318";
+
+            orderIntroText.style.fontWeight =
+                "700";
 
         }
 
     }
 
 }
+
+
 // =====================================
 // POZDRAV ZAMESTNANCA
 // =====================================
@@ -1068,6 +1139,7 @@ function setWelcomeEmployee(
         document.getElementById(
             "welcomeName"
         );
+
 
     if (
         !select
@@ -1114,12 +1186,8 @@ function setCurrentDate() {
     if (!currentDate) return;
 
 
-    const today =
-        new Date();
-
-
     currentDate.textContent =
-        today.toLocaleDateString(
+        new Date().toLocaleDateString(
             "sk-SK",
             {
                 weekday: "long",
@@ -1187,9 +1255,11 @@ async function loadMenus() {
 
             card.innerHTML = `
                 <div class="menu-card-header">
+
                     <span class="menu-number">
                         Menu ${escapeHtml(menu.id)}
                     </span>
+
                 </div>
 
                 <h3>
@@ -1252,7 +1322,7 @@ async function loadMenus() {
 
 
 // =====================================
-// ULOŽENIE OBJEDNÁVKY DO SUPABASE
+// ULOŽENIE OBJEDNÁVKY
 // =====================================
 
 function setupOrderButton() {
@@ -1269,14 +1339,14 @@ function setupOrderButton() {
         "click",
         async () => {
 
-            const selectedChoices =
-                document.querySelectorAll(
-                    ".meal-choice:checked"
-                );
-
             const orderMessage =
                 document.getElementById(
                     "orderMessage"
+                );
+
+            const selectedChoices =
+                document.querySelectorAll(
+                    ".meal-choice:checked"
                 );
 
 
@@ -1284,11 +1354,36 @@ function setupOrderButton() {
                 selectedChoices.length === 0
             ) {
 
-                orderMessage.textContent =
-                    "Vyberte aspoň jeden obed.";
+                if (orderMessage) {
 
-                orderMessage.className =
-                    "message error-message";
+                    orderMessage.textContent =
+                        "Vyberte aspoň jeden obed.";
+
+                    orderMessage.className =
+                        "message error-message";
+
+                }
+
+                return;
+
+            }
+
+
+            const employeeId =
+                getCurrentEmployeeId();
+
+
+            if (!employeeId) {
+
+                if (orderMessage) {
+
+                    orderMessage.textContent =
+                        "Najprv sa prihláste.";
+
+                    orderMessage.className =
+                        "message error-message";
+
+                }
 
                 return;
 
@@ -1300,29 +1395,11 @@ function setupOrderButton() {
                     "employeeSelect"
                 );
 
-            const employeeId =
-                getCurrentEmployeeId();
-
-
-            if (!employeeId) {
-
-                orderMessage.textContent =
-                    "Najprv sa prihláste.";
-
-                orderMessage.className =
-                    "message error-message";
-
-                return;
-
-            }
-
-
             const selectedEmployee =
                 [...employeeSelect.options]
                     .find(
                         option =>
-                            option.value ===
-                            employeeId
+                            option.value === employeeId
                     );
 
 
@@ -1347,7 +1424,6 @@ function setupOrderButton() {
 
             const orderDate =
                 getTodayDate();
-
 
             const groupedMenus = {};
 
@@ -1449,18 +1525,22 @@ function setupOrderButton() {
                     groupedMenus
                 );
 
-console.log("OBJEDNÁVKA NA ULOŽENIE:", rows);
-            
+
             confirmOrderButton.disabled =
                 true;
 
             confirmOrderButton.textContent =
                 "Ukladám objednávku...";
 
-            orderMessage.textContent = "";
 
-            orderMessage.className =
-                "message";
+            if (orderMessage) {
+
+                orderMessage.textContent = "";
+
+                orderMessage.className =
+                    "message";
+
+            }
 
 
             try {
@@ -1483,9 +1563,7 @@ console.log("OBJEDNÁVKA NA ULOŽENIE:", rows);
 
 
                 if (deleteError) {
-
                     throw deleteError;
-
                 }
 
 
@@ -1494,51 +1572,75 @@ console.log("OBJEDNÁVKA NA ULOŽENIE:", rows);
                 } =
 
                     await supabaseClient
-                       .from("meal_orders")
+                        .from("meal_orders")
                         .insert(rows);
 
 
                 if (insertError) {
-
                     throw insertError;
+                }
+
+
+                const isEdit =
+                    confirmOrderButton
+                        .dataset.edit ===
+                    "true";
+
+
+                if (orderMessage) {
+
+                    orderMessage.textContent =
+                        isEdit
+
+                            ? "Objednávka bola úspešne upravená."
+
+                            : "Objednávka bola úspešne uložená.";
+
+
+                    orderMessage.className =
+                        "message success-message";
 
                 }
 
 
-                orderMessage.textContent =
-                    "Objednávka bola úspešne uložená.";
+                setTimeout(
+                    () => {
 
-                orderMessage.className =
-                    "message success-message";
+                        showScreen(
+                            "homeScreen"
+                        );
 
-
-                await loadMyOrders(
-                    employeeId
+                    },
+                    1200
                 );
-                
-setTimeout(() => {
 
-    showScreen("homeScreen");
 
-}, 1200);
+            } catch (error) {
 
-           } catch (error) {
+                console.error(
+                    "Chyba pri ukladaní objednávky:",
+                    error
+                );
 
-    console.error(
-        "Chyba pri ukladaní objednávky:",
-        error
-    );
 
-    const errorText =
-        error?.message
-        || error?.details
-        || JSON.stringify(error);
+                const errorText =
+                    error?.message
+                    || error?.details
+                    || JSON.stringify(
+                        error
+                    );
 
-    orderMessage.textContent =
-        `Chyba: ${errorText}`;
 
-    orderMessage.className =
-        "message error-message";
+                if (orderMessage) {
+
+                    orderMessage.textContent =
+                        `Chyba: ${errorText}`;
+
+                    orderMessage.className =
+                        "message error-message";
+
+                }
+
 
             } finally {
 
@@ -1583,6 +1685,7 @@ async function loadMyOrders(
         document.getElementById(
             "myOrdersContainer"
         );
+
 
     if (
         !container
@@ -1632,9 +1735,7 @@ async function loadMyOrders(
 
 
         if (error) {
-
             throw error;
-
         }
 
 
