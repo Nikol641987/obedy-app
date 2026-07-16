@@ -534,3 +534,36 @@ select:focus-visible {
     display: block;
     margin: 10px auto 25px;
 }
+/* =====================================
+   VÝDAJ OBEDOV
+===================================== */
+
+.issue-chip-icon {
+    width: 95px;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px;
+}
+
+.issue-main-text {
+    text-align: center;
+    color: #25579a;
+    font-size: 1.45rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.issue-help-text {
+    text-align: center;
+    color: #6b7789;
+    font-size: 1rem;
+    margin-bottom: 28px;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.issue-card {
+    max-width: 650px;
+    margin: 0 auto;
+}
