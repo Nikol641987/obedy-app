@@ -240,15 +240,9 @@ function setupNavigation() {
 
 function getCurrentEmployeeId() {
 
-    return (
-        localStorage.getItem(
-            "loggedEmployee"
-        )
-        || document.getElementById(
-            "employeeSelect"
-        )?.value
-        || ""
-    );
+    return localStorage.getItem(
+        "loggedEmployee"
+    ) || "";
 
 }
 
