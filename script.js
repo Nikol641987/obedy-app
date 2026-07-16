@@ -2188,8 +2188,11 @@ function setupManualIssue() {
                         .join(" | ");
 
 
-                issueMessage.textContent =
-                    `✅ ${employeeName}: ${mealsText}. Obed bol úspešne vydaný.`;
+                iissueMessage.innerHTML = `
+    <strong>✅ ${employeeName}</strong><br>
+    ${mealsText}<br><br>
+    Obed bol úspešne vydaný.
+`;
 
                 issueMessage.className =
                     "message success-message";
