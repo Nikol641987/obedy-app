@@ -891,15 +891,6 @@ const canEdit = now < deadline;
 
     }
 
-    if (orderMessage) {
-
-        orderMessage.textContent =
-            "Dnes ešte nemáš objednaný obed.";
-
-        orderMessage.className =
-            "message";
-
-    }
 
     return;
 
