@@ -2263,9 +2263,9 @@ function setupManualIssue() {
 
 function setupChipLogin() {
 
-    const chipInput =
+    const loginScreen =
         document.getElementById(
-            "chipLoginInput"
+            "loginScreen"
         );
 
     const employeeSelect =
@@ -2278,14 +2278,233 @@ function setupChipLogin() {
             "loginMessage"
         );
 
+    const pinInput =
+        document.getElementById(
+            "pinInput"
+        );
+
+    const pinConfirm =
+        document.getElementById(
+            "pinConfirm"
+        );
+
 
     if (
-        !chipInput
+        !loginScreen
         || !employeeSelect
     ) {
         return;
     }
 
+
+    let chipBuffer = "";
+    let chipTimer = null;
+    let processingChip = false;
+
+
+    function normalizeChip(value) {
+
+        return String(value || "")
+            .trim()
+            .replace(/\s+/g, "");
+
+    }
+
+
+    async function processChip(chipNumber) {
+
+        if (
+            processingChip
+            || !chipNumber
+        ) {
+            return;
+        }
+
+        processingChip = true;
+
+
+        const employeeOption =
+            [...employeeSelect.options]
+                .find(option => {
+
+                    const savedChip =
+                        normalizeChip(
+                            option.dataset.chip
+                        );
+
+                    return (
+                        savedChip
+                        && savedChip === chipNumber
+                    );
+
+                });
+
+
+        if (!employeeOption) {
+
+            if (loginMessage) {
+
+                loginMessage.textContent =
+                    `Čip ${chipNumber} sa nenašiel v zozname zamestnancov.`;
+
+                loginMessage.className =
+                    "message error-message";
+
+            }
+
+            processingChip = false;
+            return;
+
+        }
+
+
+        const employeeId =
+            employeeOption.value;
+
+
+        sessionStorage.setItem(
+            "loggedEmployee",
+            employeeId
+        );
+
+        employeeSelect.value =
+            employeeId;
+
+
+        if (loginMessage) {
+
+            loginMessage.textContent =
+                `Čip načítaný: ${employeeOption.textContent.trim()}`;
+
+            loginMessage.className =
+                "message success-message";
+
+        }
+
+
+        const requestedScreen =
+            sessionStorage.getItem(
+                "requestedScreen"
+            )
+            || "orderScreen";
+
+
+        sessionStorage.removeItem(
+            "requestedScreen"
+        );
+
+
+        if (
+            requestedScreen ===
+            "orderScreen"
+        ) {
+
+            await openOrderScreen(
+                employeeId
+            );
+
+        } else if (
+            requestedScreen ===
+            "myOrdersScreen"
+        ) {
+
+            openMyOrdersScreen(
+                employeeId
+            );
+
+        } else {
+
+            showScreen(
+                requestedScreen
+            );
+
+        }
+
+
+        chipBuffer = "";
+        processingChip = false;
+
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            // Čip snímame iba na prihlasovacej obrazovke
+            if (loginScreen.hidden) {
+                return;
+            }
+
+
+            // Pri ručnom písaní PIN-u čítačku nesnímame
+            if (
+                document.activeElement === pinInput
+                || document.activeElement === pinConfirm
+            ) {
+                return;
+            }
+
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                clearTimeout(chipTimer);
+
+                const completedChip =
+                    normalizeChip(chipBuffer);
+
+                chipBuffer = "";
+
+                processChip(
+                    completedChip
+                );
+
+                return;
+
+            }
+
+
+            // Čítačka posiela číslice veľmi rýchlo
+            if (/^\d$/.test(event.key)) {
+
+                chipBuffer += event.key;
+
+                clearTimeout(chipTimer);
+
+                chipTimer = setTimeout(
+                    () => {
+
+                        const completedChip =
+                            normalizeChip(
+                                chipBuffer
+                            );
+
+                        chipBuffer = "";
+
+                        // Aby sa obyčajný jeden stlačený kláves
+                        // nepovažoval za RFID čip
+                        if (
+                            completedChip.length >= 6
+                        ) {
+
+                            processChip(
+                                completedChip
+                            );
+
+                        }
+
+                    },
+                    120
+                );
+
+            }
+
+        }
+    );
+
+}
 
     function focusChipInput() {
 
