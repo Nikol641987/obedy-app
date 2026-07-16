@@ -904,7 +904,20 @@ const canEdit = now < deadline;
     return;
 
 }
+if (orderIntroText) {
 
+    orderIntroText.textContent =
+        canEdit
+            ? "Dnes už máš objednaný obed. Môžeš ho ešte upraviť."
+            : "Dnes už máš objednaný obed. Objednávku už nie je možné upraviť.";
+
+    orderIntroText.style.color =
+        "#16803c";
+
+    orderIntroText.style.fontWeight =
+        "700";
+
+}
 
         // Predvyplnenie už existujúcej objednávky
         data.forEach(item => {
