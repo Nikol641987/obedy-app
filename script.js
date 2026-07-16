@@ -2512,10 +2512,4 @@ function setupChipLogin() {
 
 }
 
-                
-            }
 
-        }
-    );
-
-}
