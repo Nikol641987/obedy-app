@@ -2501,7 +2501,7 @@ function setupChipLogin() {
 
                         }
 
-                    },
+                     },
                     120
                 );
 
