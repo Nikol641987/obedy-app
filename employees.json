@@ -331,7 +331,7 @@
     "hasChip": false,
     "active": true,
     "pin": null
-  }
+  },
   {
    "personalNumber": "None",
     "name": "Testovacia",
@@ -341,5 +341,4 @@
     "active": true,
     "pin": null
     }
-  {
 ]
