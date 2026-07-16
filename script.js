@@ -2188,7 +2188,7 @@ function setupManualIssue() {
                         .join(" | ");
 
 
-                iissueMessage.innerHTML = `
+                issueMessage.innerHTML = `
     <strong>✅ ${employeeName}</strong><br>
     ${mealsText}<br><br>
     Obed bol úspešne vydaný.
