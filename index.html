@@ -77,113 +77,111 @@
 
 
     <!-- PRIHLÁSENIE -->
-    <section id="loginScreen" class="app-screen" hidden>
+   <!-- PRIHLÁSENIE -->
+<section id="loginScreen" class="app-screen" hidden>
 
-        <button class="back-button" data-back-home>
-            ← Späť
-        </button>
-
-       <div class="content-card">
-
-    <h2>Prihlásenie</h2>
-
-    <div class="chip-login-box">
-
-    <img
-        src="assets/rfid-icon.png"
-        alt="RFID"
-        class="chip-login-icon"
-    >
-
-   <h3 class="chip-login-title">
-        Priložte zamestnanecký čip
-    </h3>
-
-    <p class="chip-login-help">
-        Po načítaní čipu bude obed automaticky označený ako vydaný.
-    </p>
-
-</div>
-
-    <input
-        type="text"
-        id="chipLoginInput"
-        class="chip-login-input"
-        autocomplete="off"
-        aria-label="Číslo čipu"
-    >
-
-</div>
-
-  <hr class="login-divider">
-
-<h4 class="login-subtitle">
-    Prihlásenie bez čipu
-</h4>
-
-    <div class="form-group">
-        <label for="employeeSelect">
-            Zamestnanec
-        </label>
-
-        <select id="employeeSelect" class="form-select">
-            <option>Načítavam zamestnancov...</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="pinInput">
-            PIN
-        </label>
-
-        <input
-            type="password"
-            inputmode="numeric"
-            maxlength="4"
-            id="pinInput"
-            class="form-control"
-            placeholder="••••"
-        >
-    </div>
-
-    <div id="pinConfirmWrapper" class="form-group" hidden>
-        <label for="pinConfirm">
-            Potvrďte PIN
-        </label>
-
-        <input
-            type="password"
-            inputmode="numeric"
-            maxlength="4"
-            id="pinConfirm"
-            class="form-control"
-            placeholder="••••"
-        >
-    </div>
-
-    <div class="form-check remember-row">
-        <input
-            class="form-check-input"
-            type="checkbox"
-            id="rememberMe"
-        >
-
-        <label class="form-check-label" for="rememberMe">
-            Ostať prihlásený na tomto zariadení
-        </label>
-    </div>
-
-    <button id="loginButton" class="main-button">
-        Prihlásiť
+    <button class="back-button" data-back-home>
+        ← Späť
     </button>
 
-    <div id="loginMessage" class="message"></div>
+    <div class="content-card">
 
-</div>
+        <h2>Prihlásenie</h2>
 
-    </section>
+        <div class="chip-login-box">
 
+            <img
+                src="assets/rfid-icon.png"
+                alt="RFID"
+                class="chip-login-icon"
+            >
 
+            <h3 class="chip-login-title">
+                Priložte zamestnanecký čip
+            </h3>
+
+            <p class="chip-login-help">
+                Po načítaní čipu sa prihlásite automaticky.
+            </p>
+
+            <input
+                type="text"
+                id="chipLoginInput"
+                class="chip-login-input"
+                autocomplete="off"
+                aria-label="Číslo čipu"
+            >
+
+        </div>
+
+        <hr class="login-divider">
+
+        <h4 class="login-subtitle">
+            Prihlásenie bez čipu
+        </h4>
+
+        <div class="form-group">
+            <label for="employeeSelect">
+                Zamestnanec
+            </label>
+
+            <select id="employeeSelect" class="form-select">
+                <option>Načítavam zamestnancov...</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="pinInput">
+                PIN
+            </label>
+
+            <input
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                id="pinInput"
+                class="form-control"
+                placeholder="••••"
+            >
+        </div>
+
+        <div id="pinConfirmWrapper" class="form-group" hidden>
+            <label for="pinConfirm">
+                Potvrďte PIN
+            </label>
+
+            <input
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                id="pinConfirm"
+                class="form-control"
+                placeholder="••••"
+            >
+        </div>
+
+        <div class="form-check remember-row">
+            <input
+                class="form-check-input"
+                type="checkbox"
+                id="rememberMe"
+            >
+
+            <label class="form-check-label" for="rememberMe">
+                Ostať prihlásený na tomto zariadení
+            </label>
+        </div>
+
+        <button id="loginButton" class="main-button">
+            Prihlásiť
+        </button>
+
+        <div id="loginMessage" class="message"></div>
+
+    </div>
+
+</section>
+    
     <!-- OBJEDNÁVKA OBEDA -->
     <section id="orderScreen" class="app-screen" hidden>
 
@@ -232,66 +230,72 @@
 
 
     <!-- VÝDAJ OBEDOV -->
-    <section id="issueScreen" class="app-screen" hidden>
+    <!-- VÝDAJ OBEDOV -->
+<section id="issueScreen" class="app-screen" hidden>
 
-        <button class="back-button" data-back-home>
-            ← Späť
-        </button>
+    <button class="back-button" data-back-home>
+        ← Späť
+    </button>
 
-       <div class="issue-card">
-            <h2>Výdaj obedov</h2>
+    <div class="issue-card">
+
+        <h2>Výdaj obedov</h2>
+
+        <div class="chip-login-box">
 
             <img
-    src="assets/rfid-icon.png"
-    alt="RFID"
-    class="issue-chip-icon"
->
+                src="assets/rfid-icon.png"
+                alt="RFID"
+                class="chip-login-icon"
+            >
 
-<h3 class="issue-main-text">
-    Priložte zamestnanecký čip
-</h3>
+            <h3 class="chip-login-title">
+                Priložte zamestnanecký čip
+            </h3>
 
-<p class="issue-help-text">
-    Po načítaní čipu bude obed automaticky označený ako vydaný.
-</p>
+            <p class="chip-login-help">
+                Po načítaní čipu bude obed automaticky označený ako vydaný.
+            </p>
 
-            <button id="noChipButton" class="secondary-button">
-                Nemám čip
+        </div>
+
+        <button id="noChipButton" class="secondary-button">
+            Nemám čip
+        </button>
+
+        <div id="issueMessage" class="message"></div>
+
+        <div id="manualIssueBox" hidden>
+
+            <div class="form-group mt-4">
+
+                <label for="issueEmployeeSelect">
+                    Zamestnanec
+                </label>
+
+                <select
+                    id="issueEmployeeSelect"
+                    class="form-select"
+                >
+                    <option>
+                        Načítavam zamestnancov...
+                    </option>
+                </select>
+
+            </div>
+
+            <button
+                id="issueManualButton"
+                class="main-button mt-3"
+            >
+                Vydať obed
             </button>
 
-            <div id="issueMessage" class="message"></div>
-            <div id="manualIssueBox" hidden>
-
-    <div class="form-group mt-4">
-
-        <label for="issueEmployeeSelect">
-            Zamestnanec
-        </label>
-
-        <select
-            id="issueEmployeeSelect"
-            class="form-select"
-        >
-            <option>
-                Načítavam zamestnancov...
-            </option>
-        </select>
+        </div>
 
     </div>
 
-    <button
-        id="issueManualButton"
-        class="main-button mt-3"
-    >
-        Vydať obed
-    </button>
-
-</div>
-    
-
-    </section>
-
-
+</section>
     <!-- MOJE OBEDY -->
     <section id="myOrdersScreen" class="app-screen" hidden>
 
