@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupLogin();
     setupOrderButton();
     setupManualIssue();
+    setupChipLogin();
 
 });
 
@@ -2243,6 +2244,223 @@ function setupManualIssue() {
                 issueManualButton.textContent =
                     "Vydať obed";
 
+function setupChipLogin() {
+
+    const chipInput =
+        document.getElementById(
+            "chipLoginInput"
+        );
+
+    const employeeSelect =
+        document.getElementById(
+            "employeeSelect"
+        );
+
+    const loginMessage =
+        document.getElementById(
+            "loginMessage"
+        );
+
+
+    if (
+        !chipInput
+        || !employeeSelect
+    ) {
+        return;
+    }
+
+
+    function focusChipInput() {
+
+        chipInput.value = "";
+
+        setTimeout(() => {
+            chipInput.focus();
+        }, 50);
+
+    }
+
+
+    async function loginByChip() {
+
+        const chipNumber =
+            chipInput.value
+                .trim()
+                .replace(/\s+/g, "");
+
+
+        if (!chipNumber) {
+            return;
+        }
+
+
+        const employeeOption =
+            [...employeeSelect.options]
+                .find(option => {
+
+                    const savedChip =
+                        String(
+                            option.dataset.chip
+                            || ""
+                        )
+                            .trim()
+                            .replace(/\s+/g, "");
+
+                    return (
+                        savedChip
+                        && savedChip === chipNumber
+                    );
+
+                });
+
+
+        if (!employeeOption) {
+
+            if (loginMessage) {
+
+                loginMessage.textContent =
+                    "Čip sa nenašiel v zozname zamestnancov.";
+
+                loginMessage.className =
+                    "message error-message";
+
+            }
+
+            focusChipInput();
+
+            return;
+
+        }
+
+
+        const employeeId =
+            employeeOption.value;
+
+
+        sessionStorage.setItem(
+            "loggedEmployee",
+            employeeId
+        );
+
+
+        employeeSelect.value =
+            employeeId;
+
+
+        if (loginMessage) {
+
+            loginMessage.textContent =
+                `Čip načítaný: ${employeeOption.textContent.trim()}`;
+
+            loginMessage.className =
+                "message success-message";
+
+        }
+
+
+        const requestedScreen =
+            sessionStorage.getItem(
+                "requestedScreen"
+            )
+            || "orderScreen";
+
+
+        sessionStorage.removeItem(
+            "requestedScreen"
+        );
+
+
+        if (
+            requestedScreen ===
+            "orderScreen"
+        ) {
+
+            await openOrderScreen(
+                employeeId
+            );
+
+        } else if (
+            requestedScreen ===
+            "myOrdersScreen"
+        ) {
+
+            openMyOrdersScreen(
+                employeeId
+            );
+
+        } else {
+
+            showScreen(
+                requestedScreen
+            );
+
+        }
+
+
+        chipInput.value = "";
+
+    }
+
+
+    chipInput.addEventListener(
+        "keydown",
+        async event => {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                await loginByChip();
+
+            }
+
+        }
+    );
+
+
+    chipInput.addEventListener(
+        "change",
+        loginByChip
+    );
+
+
+    document
+        .getElementById(
+            "openOrderButton"
+        )
+        ?.addEventListener(
+            "click",
+            focusChipInput
+        );
+
+
+    document
+        .getElementById(
+            "openMyOrdersButton"
+        )
+        ?.addEventListener(
+            "click",
+            focusChipInput
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-back-home]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+                    chipInput.blur();
+                }
+            );
+
+        });
+
+}
+                
             }
 
         }
