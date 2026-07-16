@@ -901,7 +901,7 @@ async function checkTodayOrder(
             new Date();
 
         deadline.setHours(
-            8,
+            11,
             30,
             0,
             0
