@@ -878,6 +878,15 @@ const canEdit = now < deadline;
         
         if (!data || data.length === 0) {
 
+            if (orderIntroText) {
+
+        orderIntroText.textContent =
+            canEdit
+                ? "Dnes ešte nemáš objednaný obed. Vyber si obed."
+                : "Dnes nemáš objednaný obed. Objednávky sú už uzavreté.";
+
+    }
+
             if (orderMessage) {
 
                 orderMessage.textContent =
