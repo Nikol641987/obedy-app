@@ -39,7 +39,24 @@ function showScreen(screenId) {
         top: 0,
         behavior: "smooth"
     });
+if (screenId === "loginScreen") {
 
+    const chipInput =
+        document.getElementById(
+            "chipLoginInput"
+        );
+
+    if (chipInput) {
+
+        chipInput.value = "";
+
+        setTimeout(() => {
+            chipInput.focus();
+        }, 150);
+
+    }
+
+}
 }
 
 
