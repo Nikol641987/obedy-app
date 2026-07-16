@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupNavigation();
     setupLogin();
     setupOrderButton();
+    setupManualIssue();
 
 });
 
@@ -1960,5 +1961,55 @@ function escapeHtml(text) {
         String(text ?? "");
 
     return element.innerHTML;
+
+}
+function setupManualIssue() {
+
+    const noChipButton =
+        document.getElementById(
+            "noChipButton"
+        );
+
+    const manualIssueBox =
+        document.getElementById(
+            "manualIssueBox"
+        );
+
+    const issueEmployeeSelect =
+        document.getElementById(
+            "issueEmployeeSelect"
+        );
+
+    const employeeSelect =
+        document.getElementById(
+            "employeeSelect"
+        );
+
+    if (
+        !noChipButton
+        || !manualIssueBox
+        || !issueEmployeeSelect
+        || !employeeSelect
+    ) {
+        return;
+    }
+
+    issueEmployeeSelect.innerHTML =
+        employeeSelect.innerHTML;
+
+    noChipButton.addEventListener(
+        "click",
+        () => {
+
+            manualIssueBox.hidden =
+                !manualIssueBox.hidden;
+
+            noChipButton.textContent =
+                manualIssueBox.hidden
+                    ? "Nemám čip"
+                    : "Skryť výber zamestnanca";
+
+        }
+    );
 
 }
