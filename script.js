@@ -2503,7 +2503,7 @@ function setupChipLogin() {
                         }
 
                      },
-                    120
+                    800
                 );
 
             }
@@ -2844,7 +2844,7 @@ function setupChipIssue() {
                         }
 
                     },
-                    120
+                    800
                 );
 
             }
