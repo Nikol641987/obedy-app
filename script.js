@@ -252,9 +252,15 @@ if (select) {
 
 function getCurrentEmployeeId() {
 
-    return localStorage.getItem(
-        "loggedEmployee"
-    ) || "";
+    return (
+        sessionStorage.getItem(
+            "loggedEmployee"
+        )
+        || localStorage.getItem(
+            "loggedEmployee"
+        )
+        || ""
+    );
 
 }
 
