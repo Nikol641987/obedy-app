@@ -2253,16 +2253,22 @@ function setupManualIssue() {
                     "message error-message";
 
 
-            } finally {
+          } finally {
 
-                issueManualButton.disabled =
-                    false;
+    issueManualButton.disabled =
+        false;
 
-                issueManualButton.textContent =
-                    "Vydať obed";
+    issueManualButton.textContent =
+        "Vydať obed";
+
+}
+
+        }
+    );
+
+}
 
 function setupChipLogin() {
-
     const loginScreen =
         document.getElementById(
             "loginScreen"
