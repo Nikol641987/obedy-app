@@ -194,7 +194,11 @@ function setupNavigation() {
                 localStorage.removeItem(
                     "loggedEmployee"
                 );
-
+                
+               localStorage.removeItem(
+              "lastEmployee"
+               );
+                
                 localStorage.removeItem(
                     "requestedScreen"
                 );
@@ -225,6 +229,14 @@ function setupNavigation() {
                 if (pinConfirm) {
                     pinConfirm.value = "";
                 }
+                const select =
+    document.getElementById(
+        "employeeSelect"
+    );
+
+if (select) {
+    select.value = "";
+}
 
                 showScreen("homeScreen");
 
