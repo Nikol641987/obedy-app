@@ -528,3 +528,9 @@ select:focus-visible {
     border: none;
     border-top: 1px solid #dbe3ee;
 }
+.issue-chip-icon {
+    width: 120px;
+    height: auto;
+    display: block;
+    margin: 10px auto 25px;
+}
