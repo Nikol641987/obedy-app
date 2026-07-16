@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupOrderButton();
     setupManualIssue();
     setupChipLogin();
+    setupChipIssue();
 
 });
 
@@ -2511,5 +2512,345 @@ function setupChipLogin() {
     );
 
 }
+function setupChipIssue() {
 
+    const issueScreen =
+        document.getElementById(
+            "issueScreen"
+        );
+
+    const employeeSelect =
+        document.getElementById(
+            "employeeSelect"
+        );
+
+    const issueMessage =
+        document.getElementById(
+            "issueMessage"
+        );
+
+    if (
+        !issueScreen
+        || !employeeSelect
+        || !issueMessage
+    ) {
+        return;
+    }
+
+    let chipBuffer = "";
+    let chipTimer = null;
+    let processingChip = false;
+
+
+    function normalizeChip(value) {
+
+        return String(value || "")
+            .trim()
+            .replace(/\s+/g, "");
+
+    }
+
+
+    async function issueByChip(
+        chipNumber
+    ) {
+
+        if (
+            processingChip
+            || !chipNumber
+        ) {
+            return;
+        }
+
+        processingChip = true;
+
+
+        const employeeOption =
+            [...employeeSelect.options]
+                .find(option => {
+
+                    const savedChip =
+                        normalizeChip(
+                            option.dataset.chip
+                        );
+
+                    return (
+                        savedChip
+                        && savedChip === chipNumber
+                    );
+
+                });
+
+
+        if (!employeeOption) {
+
+            issueMessage.textContent =
+                `Čip ${chipNumber} sa nenašiel v zozname zamestnancov.`;
+
+            issueMessage.className =
+                "message error-message";
+
+            processingChip = false;
+
+            return;
+
+        }
+
+
+        const employeeId =
+            employeeOption.value;
+
+        const employeeName =
+            employeeOption.textContent.trim();
+
+        const today =
+            getTodayDate();
+
+
+        try {
+
+            const { data, error } =
+                await supabaseClient
+                    .from("meal_orders")
+                    .select(
+                        `
+                        id,
+                        menu_name,
+                        dining,
+                        takeaway,
+                        issued
+                        `
+                    )
+                    .eq(
+                        "employee_id",
+                        employeeId
+                    )
+                    .eq(
+                        "order_date",
+                        today
+                    );
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            if (
+                !data
+                || data.length === 0
+            ) {
+
+                issueMessage.innerHTML = `
+                    <strong>❌ ${escapeHtml(employeeName)}</strong><br><br>
+                    Tento zamestnanec dnes nemá objednaný obed.
+                `;
+
+                issueMessage.className =
+                    "message error-message";
+
+                processingChip = false;
+
+                return;
+
+            }
+
+
+            const allIssued =
+                data.every(
+                    item =>
+                        Boolean(item.issued)
+                );
+
+
+            if (allIssued) {
+
+                issueMessage.innerHTML = `
+                    <strong>❌ ${escapeHtml(employeeName)}</strong><br><br>
+                    Obed bol tomuto zamestnancovi už vydaný.
+                `;
+
+                issueMessage.className =
+                    "message error-message";
+
+                processingChip = false;
+
+                return;
+
+            }
+
+
+            const { error: updateError } =
+                await supabaseClient
+                    .from("meal_orders")
+                    .update({
+                        issued: true
+                    })
+                    .eq(
+                        "employee_id",
+                        employeeId
+                    )
+                    .eq(
+                        "order_date",
+                        today
+                    );
+
+
+            if (updateError) {
+                throw updateError;
+            }
+
+
+            const mealsHtml =
+                data
+                    .map(item => {
+
+                        const methods = [];
+
+                        if (item.dining) {
+                            methods.push(
+                                "V jedálni"
+                            );
+                        }
+
+                        if (item.takeaway) {
+                            methods.push(
+                                "Zabaliť"
+                            );
+                        }
+
+                        return `
+                            <div>
+                                <strong>
+                                    ${escapeHtml(item.menu_name)}
+                                </strong>
+                                – ${escapeHtml(methods.join(" + "))}
+                            </div>
+                        `;
+
+                    })
+                    .join("");
+
+
+            issueMessage.innerHTML = `
+                <strong>✅ ${escapeHtml(employeeName)}</strong>
+                <br><br>
+
+                ${mealsHtml}
+
+                <br>
+                Obed bol úspešne vydaný.
+            `;
+
+            issueMessage.className =
+                "message success-message";
+
+
+            setTimeout(
+                () => {
+
+                    issueMessage.textContent = "";
+
+                    issueMessage.className =
+                        "message";
+
+                },
+                3000
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Chyba pri výdaji čipom:",
+                error
+            );
+
+            issueMessage.textContent =
+                `Chyba: ${
+                    error?.message
+                    || "Obed sa nepodarilo vydať."
+                }`;
+
+            issueMessage.className =
+                "message error-message";
+
+        } finally {
+
+            chipBuffer = "";
+            processingChip = false;
+
+        }
+
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            // Čip načítavame iba na obrazovke Výdaj obedov
+            if (issueScreen.hidden) {
+                return;
+            }
+
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                clearTimeout(chipTimer);
+
+                const completedChip =
+                    normalizeChip(
+                        chipBuffer
+                    );
+
+                chipBuffer = "";
+
+                issueByChip(
+                    completedChip
+                );
+
+                return;
+
+            }
+
+
+            if (/^\d$/.test(event.key)) {
+
+                chipBuffer += event.key;
+
+                clearTimeout(chipTimer);
+
+                chipTimer = setTimeout(
+                    () => {
+
+                        const completedChip =
+                            normalizeChip(
+                                chipBuffer
+                            );
+
+                        chipBuffer = "";
+
+                        if (
+                            completedChip.length >= 6
+                        ) {
+
+                            issueByChip(
+                                completedChip
+                            );
+
+                        }
+
+                    },
+                    120
+                );
+
+            }
+
+        }
+    );
+
+}
 
