@@ -515,3 +515,16 @@ select:focus-visible {
     height: 1px;
     pointer-events: none;
 }ved 
+.login-subtitle {
+    text-align: center;
+    color: #25579a;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 24px 0 20px;
+}
+
+.login-divider {
+    margin: 28px 0 18px;
+    border: none;
+    border-top: 1px solid #dbe3ee;
+}
