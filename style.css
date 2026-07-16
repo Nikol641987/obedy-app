@@ -477,3 +477,41 @@ select:focus-visible {
         grid-template-columns: 1fr;
     }
 }
+/* =====================================
+   PRIHLÁSENIE RFID
+===================================== */
+
+.chip-login-box {
+    text-align: center;
+    background: #f8fbff;
+    border: 1px solid #dce7f5;
+    border-radius: 24px;
+    padding: 30px 25px;
+    margin-bottom: 30px;
+}
+
+.chip-login-icon {
+    width: 90px;
+    height: auto;
+    margin-bottom: 18px;
+}
+
+.chip-login-title {
+    color: #25579a;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.chip-login-help {
+    color: #6b7789;
+    margin-bottom: 0;
+}
+
+.chip-login-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}ved 
