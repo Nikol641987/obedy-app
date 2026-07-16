@@ -878,28 +878,32 @@ const canEdit = now < deadline;
         
         if (!data || data.length === 0) {
 
-            if (orderIntroText) {
+    if (orderIntroText) {
 
         orderIntroText.textContent =
-            canEdit
-                ? "Dnes ešte nemáš objednaný obed. Vyber si obed."
-                : "Dnes nemáš objednaný obed. Objednávky sú už uzavreté.";
+            "Dnes ešte nemáš objednaný obed.";
+
+        orderIntroText.style.color =
+            "#b42318";
+
+        orderIntroText.style.fontWeight =
+            "700";
 
     }
 
-            if (orderMessage) {
+    if (orderMessage) {
 
-                orderMessage.textContent =
-                    "Dnes ešte nemáš objednaný obed.";
+        orderMessage.textContent =
+            "Dnes ešte nemáš objednaný obed.";
 
-                orderMessage.className =
-                    "message";
+        orderMessage.className =
+            "message";
 
-            }
+    }
 
-            return;
+    return;
 
-        }
+}
 
 
         // Predvyplnenie už existujúcej objednávky
