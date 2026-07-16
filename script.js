@@ -881,13 +881,16 @@ const canEdit = now < deadline;
     if (orderIntroText) {
 
         orderIntroText.textContent =
-            "Dnes ešte nemáš objednaný obed.";
+    "🍽️ Dnes ešte nemáš objednaný obed. Objednať si ho môžeš do 8:30.";
 
-        orderIntroText.style.color =
-            "#b42318";
+orderIntroText.style.color =
+    "#d97706";
 
-        orderIntroText.style.fontWeight =
-            "700";
+orderIntroText.style.fontWeight =
+    "700";
+
+orderIntroText.style.fontSize =
+    "1.05rem";
 
     }
 
@@ -897,16 +900,21 @@ const canEdit = now < deadline;
 }
 if (orderIntroText) {
 
-    orderIntroText.textContent =
-        canEdit
-            ? "Dnes už máš objednaný obed. Môžeš ho ešte upraviť."
-            : "Dnes už máš objednaný obed. Objednávku už nie je možné upraviť.";
+orderIntroText.textContent =
+    canEdit
+        ? "✅ Dnešný obed máš úspešne objednaný. Do 8:30 môžeš objednávku ešte upraviť."
+        : "🔒 Dnešný obed máš úspešne objednaný. Objednávku už nie je možné upraviť.";
 
-    orderIntroText.style.color =
-        "#16803c";
+orderIntroText.style.color =
+    canEdit
+        ? "#16803c"
+        : "#2563eb";
 
-    orderIntroText.style.fontWeight =
-        "700";
+orderIntroText.style.fontWeight =
+    "700";
+
+orderIntroText.style.fontSize =
+    "1.05rem";
 
 }
 
