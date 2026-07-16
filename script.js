@@ -799,6 +799,7 @@ async function openOrderScreen(
 
 }
 async function checkTodayOrder(employeeId) {
+    
 
     const today =
         getTodayDate();
@@ -811,6 +812,9 @@ async function checkTodayOrder(employeeId) {
 
     const noSoup =
         document.getElementById("noSoup");
+
+    const orderIntroText =
+    document.getElementById("orderIntroText");
 
 
     // Najprv vyčistíme všetky voľby
