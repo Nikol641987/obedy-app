@@ -707,3 +707,30 @@ select:focus-visible {
     font-size:14px;
 
 }
+.issue-meal-row{
+    padding:10px 0;
+    border-top:1px solid var(--border);
+}
+
+.issue-meal-row:first-of-type{
+    border-top:0;
+}
+
+.issue-status{
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid var(--border);
+    font-size:14px;
+    font-weight:800;
+}
+
+.issue-item.waiting{
+    background:#f2fff6;
+    border-color:#9ad8aa;
+}
+
+.issue-item.issued{
+    background:#fff4f3;
+    border-color:#e4aaa6;
+    opacity:1;
+}
