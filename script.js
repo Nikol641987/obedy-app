@@ -90,6 +90,9 @@ function setupNavigation() {
 
     const openIssueButton =
         document.getElementById("openIssueButton");
+    
+    const openDashboardButton =
+    document.getElementById("openDashboardButton");
 
     const openMyOrdersButton =
         document.getElementById("openMyOrdersButton");
@@ -147,7 +150,16 @@ function setupNavigation() {
 
     }
 );
+openDashboardButton?.addEventListener(
+    "click",
+    async () => {
 
+        showScreen("dashboardScreen");
+
+        await renderIssueDashboard();
+
+    }
+);
 
     openMyOrdersButton?.addEventListener(
         "click",
