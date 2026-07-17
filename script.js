@@ -2539,6 +2539,8 @@ function setupChipLogin() {
 
         }
     );
+    
+    }
 
 async function renderIssueDashboard() {
 
