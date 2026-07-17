@@ -2540,7 +2540,6 @@ function setupChipLogin() {
         }
     );
 
-}
 async function renderIssueDashboard() {
 
     const issueCards =
