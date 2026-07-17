@@ -2207,10 +2207,26 @@ function setupManualIssue() {
                         .join(" | ");
 
 
-                issueMessage.innerHTML = `
-    <strong>✅ ${employeeName}</strong><br>
-    ${mealsText}<br><br>
-    Obed bol úspešne vydaný.
+   issueMessage.innerHTML = `
+<div class="issue-success">
+
+    <div class="issue-success-icon">
+        ✅
+    </div>
+
+    <div class="issue-success-name">
+        ${employeeName}
+    </div>
+
+    <div class="issue-success-meal">
+        ${mealsText}
+    </div>
+
+    <div class="issue-success-text">
+        Obed bol úspešne vydaný
+    </div>
+
+</div>
 `;
 
                 issueMessage.className =
@@ -2233,7 +2249,7 @@ function setupManualIssue() {
                             "Nemám čip";
 
                     },
-                    3000
+                    5000
                 );
 
 
@@ -2755,7 +2771,8 @@ function setupChipIssue() {
                         "message";
 
                 },
-                3000
+                5000
+            
             );
 
 
