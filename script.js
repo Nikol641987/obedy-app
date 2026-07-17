@@ -2605,8 +2605,9 @@ async function renderIssueDashboard() {
     }
 
 
-    issueCards.innerHTML =
-        "<p>Načítavam dnešné objednávky...</p>";
+    issueCards.innerHTML = `
+        <p>Načítavam dnešné objednávky...</p>
+    `;
 
 
     try {
@@ -2627,10 +2628,7 @@ async function renderIssueDashboard() {
                     takeaway,
                     issued
                 `)
-                .eq("order_date", today)
-                .order("employee_name", {
-                    ascending: true
-                });
+                .eq("order_date", today);
 
 
         if (error) {
@@ -2677,22 +2675,44 @@ async function renderIssueDashboard() {
 
 
         const employees =
-            [...employeeOrders.values()];
+            [...employeeOrders.values()]
+                .map(employee => {
+
+                    const isIssued =
+                        employee.orders.every(order =>
+                            Boolean(order.issued)
+                        );
+
+
+                    return {
+                        ...employee,
+                        isIssued
+                    };
+
+                })
+                .sort((a, b) => {
+
+                    if (a.isIssued !== b.isIssued) {
+                        return a.isIssued ? 1 : -1;
+                    }
+
+                    return a.employeeName.localeCompare(
+                        b.employeeName,
+                        "sk"
+                    );
+
+                });
 
 
         const waitingEmployees =
             employees.filter(employee =>
-                employee.orders.some(order =>
-                    !Boolean(order.issued)
-                )
+                !employee.isIssued
             );
 
 
         const issuedEmployees =
             employees.filter(employee =>
-                employee.orders.every(order =>
-                    Boolean(order.issued)
-                )
+                employee.isIssued
             );
 
 
@@ -2723,12 +2743,6 @@ async function renderIssueDashboard() {
             employees
                 .map(employee => {
 
-                    const isIssued =
-                        employee.orders.every(order =>
-                            Boolean(order.issued)
-                        );
-
-
                     const mealsHtml =
                         employee.orders
                             .map(order => {
@@ -2744,18 +2758,31 @@ async function renderIssueDashboard() {
                                 }
 
 
-                                return `
-                                    <div class="issue-menu">
-                                        ${escapeHtml(
-                                            order.menu_name
-                                            || "Obed"
-                                        )}
-                                    </div>
+                                const methodText =
+                                    methods.length > 0
+                                        ? methods.join(" + ")
+                                        : "Spôsob výdaja neuvedený";
 
-                                    <div class="issue-type">
-                                        ${escapeHtml(
-                                            methods.join(" + ")
-                                        )}
+
+                                return `
+                                    <div class="issue-meal-row">
+
+                                        <div class="issue-menu">
+                                            🍽️ ${escapeHtml(
+                                                order.menu_name
+                                                || "Obed"
+                                            )}
+                                        </div>
+
+                                        <div class="issue-type">
+                                            ${
+                                                order.takeaway
+                                                    ? "📦"
+                                                    : "🍴"
+                                            }
+                                            ${escapeHtml(methodText)}
+                                        </div>
+
                                     </div>
                                 `;
 
@@ -2765,7 +2792,7 @@ async function renderIssueDashboard() {
 
                     return `
                         <div class="issue-item ${
-                            isIssued
+                            employee.isIssued
                                 ? "issued"
                                 : "waiting"
                         }">
@@ -2777,6 +2804,14 @@ async function renderIssueDashboard() {
                             </div>
 
                             ${mealsHtml}
+
+                            <div class="issue-status">
+                                ${
+                                    employee.isIssued
+                                        ? "🔴 Vydané"
+                                        : "🟢 Čaká"
+                                }
+                            </div>
 
                         </div>
                     `;
