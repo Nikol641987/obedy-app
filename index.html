@@ -230,7 +230,6 @@
 
 
     <!-- VÝDAJ OBEDOV -->
-    <!-- VÝDAJ OBEDOV -->
 <section id="issueScreen" class="app-screen" hidden>
 
     <button class="back-button" data-back-home>
@@ -264,6 +263,38 @@
         </button>
 
         <div id="issueMessage" class="message"></div>
+        <div class="issue-dashboard">
+
+    <div class="issue-stats">
+
+        <div class="stat-card">
+            <span class="stat-number" id="waitingCount">0</span>
+            <span class="stat-label">Čaká</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-number" id="issuedCount">0</span>
+            <span class="stat-label">Vydané</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-number" id="totalCount">0</span>
+            <span class="stat-label">Spolu</span>
+        </div>
+
+    </div>
+
+    <h3 class="issue-list-title">
+        Dnešný výdaj obedov
+    </h3>
+
+    <div id="issueCards" class="issue-cards">
+
+        <!-- sem sa budú automaticky generovať kartičky -->
+
+    </div>
+
+</div>
 
         <div id="manualIssueBox" hidden>
 
