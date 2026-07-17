@@ -567,3 +567,32 @@ select:focus-visible {
     max-width: 650px;
     margin: 0 auto;
 }
+.issue-success{
+    text-align:center;
+    padding:28px 20px;
+}
+
+.issue-success-icon{
+    font-size:56px;
+    margin-bottom:12px;
+}
+
+.issue-success-name{
+    font-size:34px;
+    font-weight:800;
+    color:var(--tmv-blue);
+    margin-bottom:18px;
+}
+
+.issue-success-meal{
+    font-size:24px;
+    font-weight:700;
+    line-height:1.6;
+    margin-bottom:22px;
+}
+
+.issue-success-text{
+    font-size:22px;
+    color:#1a7f37;
+    font-weight:700;
+}
