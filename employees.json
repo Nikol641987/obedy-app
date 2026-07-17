@@ -15,7 +15,8 @@
     "chip": "01100014339714",
     "hasChip": true,
     "active": true,
-    "pin": null
+    "pin": null,
+    "role": "issue"
   },
   {
     "personalNumber": "ZAT000005",
@@ -96,7 +97,8 @@
     "chip": "00970012429877",
     "hasChip": true,
     "active": true,
-    "pin": null
+    "pin": null,
+    "role": "issue"
   },
   {
     "personalNumber": "ZAT000092",
@@ -105,7 +107,8 @@
     "chip": "00010002766045",
     "hasChip": true,
     "active": true,
-    "pin": null
+    "pin": null,
+    "role": "issue"
   },
   {
     "personalNumber": "ZAT000161",
@@ -294,7 +297,8 @@
     "chip": "",
     "hasChip": false,
     "active": true,
-    "pin": null
+    "pin": null,
+    "role": "admin"
   },
   {
     "personalNumber": "None",
