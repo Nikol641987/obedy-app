@@ -2614,16 +2614,18 @@ async function renderIssueDashboard() {
 
             if (!employeeOrders.has(employeeKey)) {
 
-                employeeOrders.set(
-                    employeeKey,
-                    {
-                        employeeName:
-                            order.employee_name
-                            || "Neznámy zamestnanec",
+           employeeOrders.set(
+    employeeKey,
+    {
+        employeeId: employeeKey,
 
-                        orders: []
-                    }
-                );
+        employeeName:
+            order.employee_name
+            || "Neznámy zamestnanec",
+
+        orders: []
+    }
+);
 
             }
 
@@ -2774,13 +2776,84 @@ async function renderIssueDashboard() {
                                         : "🟢 Čaká"
                                 }
                             </div>
+                            ${
+    !employee.isIssued
+        ? `
+            <button
+                type="button"
+                class="manual-issue-card-button"
+                data-employee-id="${escapeHtml(employee.employeeId)}"
+            >
+                ✅ Vydať osobne
+            </button>
+        `
+        : ""
+}
 
                         </div>
                     `;
 
                 })
                 .join("");
+issueCards
+    .querySelectorAll(".manual-issue-card-button")
+    .forEach(button => {
 
+        button.addEventListener(
+            "click",
+            async () => {
+
+                const employeeId =
+                    button.dataset.employeeId;
+
+                if (!employeeId) return;
+
+                button.disabled = true;
+                button.textContent = "Vydávam...";
+
+                try {
+
+                    const { error } =
+                        await supabaseClient
+                            .from("meal_orders")
+                            .update({
+                                issued: true
+                            })
+                            .eq(
+                                "employee_id",
+                                employeeId
+                            )
+                            .eq(
+                                "order_date",
+                                today
+                            );
+
+                    if (error) {
+                        throw error;
+                    }
+
+                    await renderIssueDashboard();
+
+                } catch (error) {
+
+                    console.error(
+                        "Chyba pri osobnom výdaji:",
+                        error
+                    );
+
+                    button.disabled = false;
+                    button.textContent =
+                        "✅ Vydať osobne";
+
+                    alert(
+                        "Obed sa nepodarilo označiť ako vydaný."
+                    );
+                }
+
+            }
+        );
+
+    });
 
     } catch (error) {
 
