@@ -2346,7 +2346,7 @@ function setupChipLogin() {
             .replace(/\s+/g, "");
 
     }
-
+}
 
     async function processChip(chipNumber) {
 
