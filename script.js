@@ -138,13 +138,15 @@ function setupNavigation() {
 
 
     openIssueButton?.addEventListener(
-        "click",
-        () => {
+    "click",
+    async () => {
 
-            showScreen("issueScreen");
+        showScreen("issueScreen");
 
-        }
-    );
+        await renderIssueDashboard();
+
+    }
+);
 
 
     openMyOrdersButton?.addEventListener(
@@ -2566,7 +2568,247 @@ function setupChipIssue() {
 
     }
 
+async function renderIssueDashboard() {
 
+    const issueCards =
+        document.getElementById("issueCards");
+
+    const waitingCount =
+        document.getElementById("waitingCount");
+
+    const issuedCount =
+        document.getElementById("issuedCount");
+
+    const totalCount =
+        document.getElementById("totalCount");
+
+
+    if (
+        !issueCards
+        || !waitingCount
+        || !issuedCount
+        || !totalCount
+    ) {
+        return;
+    }
+
+
+    issueCards.innerHTML = `
+        <p>Načítavam dnešné objednávky...</p>
+    `;
+
+
+    try {
+
+        const today =
+            getTodayDate();
+
+
+        const { data, error } =
+            await supabaseClient
+                .from("meal_orders")
+                .select(`
+                    id,
+                    employee_id,
+                    menu_name,
+                    dining,
+                    takeaway,
+                    issued
+                `)
+                .eq(
+                    "order_date",
+                    today
+                );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        const orders =
+            data || [];
+
+
+        const employeeOrders =
+            new Map();
+
+
+        orders.forEach(order => {
+
+            const employeeOption =
+                [...employeeSelect.options]
+                    .find(option =>
+                        option.value ===
+                        String(order.employee_id)
+                    );
+
+
+            const employeeName =
+                employeeOption
+                    ? employeeOption.textContent.trim()
+                    : "Neznámy zamestnanec";
+
+
+            if (
+                !employeeOrders.has(
+                    order.employee_id
+                )
+            ) {
+
+                employeeOrders.set(
+                    order.employee_id,
+                    {
+                        employeeName,
+                        orders: []
+                    }
+                );
+
+            }
+
+
+            employeeOrders
+                .get(order.employee_id)
+                .orders
+                .push(order);
+
+        });
+
+
+        const employees =
+            [...employeeOrders.values()]
+                .sort((a, b) =>
+                    a.employeeName.localeCompare(
+                        b.employeeName,
+                        "sk"
+                    )
+                );
+
+
+        const issuedEmployees =
+            employees.filter(employee =>
+                employee.orders.every(order =>
+                    Boolean(order.issued)
+                )
+            );
+
+
+        const waitingEmployees =
+            employees.filter(employee =>
+                !employee.orders.every(order =>
+                    Boolean(order.issued)
+                )
+            );
+
+
+        waitingCount.textContent =
+            waitingEmployees.length;
+
+        issuedCount.textContent =
+            issuedEmployees.length;
+
+        totalCount.textContent =
+            employees.length;
+
+
+        if (employees.length === 0) {
+
+            issueCards.innerHTML = `
+                <p>
+                    Na dnešný deň nie sú žiadne objednávky.
+                </p>
+            `;
+
+            return;
+
+        }
+
+
+        issueCards.innerHTML =
+            employees
+                .map(employee => {
+
+                    const isIssued =
+                        employee.orders.every(order =>
+                            Boolean(order.issued)
+                        );
+
+
+                    const mealsHtml =
+                        employee.orders
+                            .map(order => {
+
+                                const methods = [];
+
+                                if (order.dining) {
+                                    methods.push(
+                                        "V jedálni"
+                                    );
+                                }
+
+                                if (order.takeaway) {
+                                    methods.push(
+                                        "Zabaliť"
+                                    );
+                                }
+
+
+                                return `
+                                    <div class="issue-menu">
+                                        ${escapeHtml(
+                                            order.menu_name
+                                        )}
+                                    </div>
+
+                                    <div class="issue-type">
+                                        ${escapeHtml(
+                                            methods.join(" + ")
+                                        )}
+                                    </div>
+                                `;
+
+                            })
+                            .join("");
+
+
+                    return `
+                        <div class="issue-item ${
+                            isIssued
+                                ? "issued"
+                                : "waiting"
+                        }">
+
+                            <div class="issue-name">
+                                ${escapeHtml(
+                                    employee.employeeName
+                                )}
+                            </div>
+
+                            ${mealsHtml}
+
+                        </div>
+                    `;
+
+                })
+                .join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Chyba pri načítaní dashboardu:",
+            error
+        );
+
+        issueCards.innerHTML = `
+            <p class="error-message">
+                Dashboard sa nepodarilo načítať.
+            </p>
+        `;
+
+    }
+
+}
     async function issueByChip(
         chipNumber
     ) {
@@ -2760,6 +3002,7 @@ function setupChipIssue() {
 
             issueMessage.className =
                 "message success-message";
+            await renderIssueDashboard();
 
 
             setTimeout(
