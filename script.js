@@ -75,6 +75,22 @@ function getCurrentEmployeeId() {
 
 }
 
+function getCurrentUserRole() {
+
+    const employeeId = getCurrentEmployeeId();
+
+    const select = document.getElementById("employeeSelect");
+
+    if (!select || !employeeId) {
+        return "";
+    }
+
+    const option = [...select.options].find(
+        option => option.value === employeeId
+    );
+
+    return option?.dataset?.role || "";
+}
 
 // =====================================
 // NAVIGÁCIA
@@ -103,6 +119,13 @@ function setupNavigation() {
     const logoutButton =
         document.getElementById("logoutButton");
 
+    const currentRole = getCurrentUserRole();
+
+if (openIssueButton) {
+    openIssueButton.hidden =
+        currentRole !== "admin"
+        && currentRole !== "issue";
+}
 
     openOrderButton?.addEventListener(
         "click",
@@ -397,6 +420,8 @@ async function loadEmployees() {
                 employee.hasChip
                     ? "true"
                     : "false";
+            option.dataset.role =
+    employee.role || "";
 
 
             select.appendChild(option);
