@@ -2542,44 +2542,6 @@ function setupChipLogin() {
     );
 
 }
-function setupChipIssue() {
-
-    const issueScreen =
-        document.getElementById(
-            "issueScreen"
-        );
-
-    const employeeSelect =
-        document.getElementById(
-            "employeeSelect"
-        );
-
-    const issueMessage =
-        document.getElementById(
-            "issueMessage"
-        );
-
-    if (
-        !issueScreen
-        || !employeeSelect
-        || !issueMessage
-    ) {
-        return;
-    }
-
-    let chipBuffer = "";
-    let chipTimer = null;
-    let processingChip = false;
-
-
-    function normalizeChip(value) {
-
-        return String(value || "")
-            .trim()
-            .replace(/\s+/g, "");
-
-    }
-
 async function renderIssueDashboard() {
 
     const issueCards =
@@ -2841,7 +2803,43 @@ async function renderIssueDashboard() {
 
     }
 
-}
+function setupChipIssue() {
+
+    const issueScreen =
+        document.getElementById(
+            "issueScreen"
+        );
+
+    const employeeSelect =
+        document.getElementById(
+            "employeeSelect"
+        );
+
+    const issueMessage =
+        document.getElementById(
+            "issueMessage"
+        );
+
+    if (
+        !issueScreen
+        || !employeeSelect
+        || !issueMessage
+    ) {
+        return;
+    }
+
+    let chipBuffer = "";
+    let chipTimer = null;
+    let processingChip = false;
+
+
+    function normalizeChip(value) {
+
+        return String(value || "")
+            .trim()
+            .replace(/\s+/g, "");
+
+    }
     async function issueByChip(
         chipNumber
     ) {
