@@ -2346,7 +2346,6 @@ function setupChipLogin() {
             .replace(/\s+/g, "");
 
     }
-}
 
     async function processChip(chipNumber) {
 
@@ -2801,6 +2800,8 @@ async function renderIssueDashboard() {
             </p>
         `;
 
+    }
+    
     }
 
 function setupChipIssue() {
