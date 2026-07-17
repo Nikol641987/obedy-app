@@ -2605,9 +2605,8 @@ async function renderIssueDashboard() {
     }
 
 
-    issueCards.innerHTML = `
-        <p>Načítavam dnešné objednávky...</p>
-    `;
+    issueCards.innerHTML =
+        "<p>Načítavam dnešné objednávky...</p>";
 
 
     try {
@@ -2622,15 +2621,16 @@ async function renderIssueDashboard() {
                 .select(`
                     id,
                     employee_id,
+                    employee_name,
                     menu_name,
                     dining,
                     takeaway,
                     issued
                 `)
-                .eq(
-                    "order_date",
-                    today
-                );
+                .eq("order_date", today)
+                .order("employee_name", {
+                    ascending: true
+                });
 
 
         if (error) {
@@ -2648,30 +2648,19 @@ async function renderIssueDashboard() {
 
         orders.forEach(order => {
 
-            const employeeOption =
-                [...employeeSelect.options]
-                    .find(option =>
-                        option.value ===
-                        String(order.employee_id)
-                    );
+            const employeeKey =
+                String(order.employee_id);
 
 
-            const employeeName =
-                employeeOption
-                    ? employeeOption.textContent.trim()
-                    : "Neznámy zamestnanec";
-
-
-            if (
-                !employeeOrders.has(
-                    order.employee_id
-                )
-            ) {
+            if (!employeeOrders.has(employeeKey)) {
 
                 employeeOrders.set(
-                    order.employee_id,
+                    employeeKey,
                     {
-                        employeeName,
+                        employeeName:
+                            order.employee_name
+                            || "Neznámy zamestnanec",
+
                         orders: []
                     }
                 );
@@ -2680,7 +2669,7 @@ async function renderIssueDashboard() {
 
 
             employeeOrders
-                .get(order.employee_id)
+                .get(employeeKey)
                 .orders
                 .push(order);
 
@@ -2688,26 +2677,20 @@ async function renderIssueDashboard() {
 
 
         const employees =
-            [...employeeOrders.values()]
-                .sort((a, b) =>
-                    a.employeeName.localeCompare(
-                        b.employeeName,
-                        "sk"
-                    )
-                );
+            [...employeeOrders.values()];
+
+
+        const waitingEmployees =
+            employees.filter(employee =>
+                employee.orders.some(order =>
+                    !Boolean(order.issued)
+                )
+            );
 
 
         const issuedEmployees =
             employees.filter(employee =>
                 employee.orders.every(order =>
-                    Boolean(order.issued)
-                )
-            );
-
-
-        const waitingEmployees =
-            employees.filter(employee =>
-                !employee.orders.every(order =>
                     Boolean(order.issued)
                 )
             );
@@ -2753,15 +2736,11 @@ async function renderIssueDashboard() {
                                 const methods = [];
 
                                 if (order.dining) {
-                                    methods.push(
-                                        "V jedálni"
-                                    );
+                                    methods.push("V jedálni");
                                 }
 
                                 if (order.takeaway) {
-                                    methods.push(
-                                        "Zabaliť"
-                                    );
+                                    methods.push("Zabaliť");
                                 }
 
 
@@ -2769,6 +2748,7 @@ async function renderIssueDashboard() {
                                     <div class="issue-menu">
                                         ${escapeHtml(
                                             order.menu_name
+                                            || "Obed"
                                         )}
                                     </div>
 
@@ -2811,6 +2791,12 @@ async function renderIssueDashboard() {
             "Chyba pri načítaní dashboardu:",
             error
         );
+
+
+        waitingCount.textContent = "0";
+        issuedCount.textContent = "0";
+        totalCount.textContent = "0";
+
 
         issueCards.innerHTML = `
             <p class="error-message">
