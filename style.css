@@ -596,3 +596,114 @@ select:focus-visible {
     color:#1a7f37;
     font-weight:700;
 }
+/* =====================================
+   DASHBOARD VÝDAJA
+===================================== */
+
+.issue-dashboard{
+    margin-top:35px;
+}
+
+.issue-stats{
+    display:flex;
+    gap:16px;
+    margin-bottom:28px;
+}
+
+.stat-card{
+    flex:1;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:var(--shadow);
+}
+
+.stat-number{
+    display:block;
+    font-size:34px;
+    font-weight:800;
+    color:var(--tmv-blue);
+}
+
+.stat-label{
+    display:block;
+    margin-top:6px;
+    color:var(--muted);
+    font-weight:700;
+}
+
+.issue-list-title{
+    margin:10px 0 20px;
+    text-align:left;
+    color:var(--tmv-blue-dark);
+}
+
+.issue-cards{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(170px,1fr));
+
+    gap:16px;
+
+}
+
+.issue-item{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    border:2px solid #dce4ee;
+
+    padding:18px;
+
+    text-align:left;
+
+    box-shadow:0 8px 18px rgba(0,0,0,.06);
+
+    transition:.25s;
+
+}
+
+.issue-item.waiting{
+
+    border-left:8px solid #24a148;
+
+}
+
+.issue-item.issued{
+
+    border-left:8px solid #d93025;
+
+    opacity:.75;
+
+}
+
+.issue-name{
+
+    font-size:20px;
+
+    font-weight:800;
+
+    margin-bottom:10px;
+
+}
+
+.issue-menu{
+
+    font-size:15px;
+
+    margin-bottom:6px;
+
+}
+
+.issue-type{
+
+    color:var(--muted);
+
+    font-size:14px;
+
+}
