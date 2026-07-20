@@ -734,7 +734,7 @@ select:focus-visible {
     border-color:#e4aaa6;
     opacity:1;
 }
-.modal {
+.email-modal {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.45);
@@ -745,7 +745,7 @@ select:focus-visible {
     z-index: 1000;
 }
 
-.modal[hidden] {
+.email-modal[hidden] {
     display: none;
 }
 
