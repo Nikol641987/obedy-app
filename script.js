@@ -96,6 +96,8 @@ function getCurrentUserRole() {
 function updatePermissions() {
 
     const role = getCurrentUserRole();
+    
+    console.log("Aktuálna rola:", role);
 
     const openIssueButton =
         document.getElementById("openIssueButton");
