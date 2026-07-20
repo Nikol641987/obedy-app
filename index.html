@@ -407,7 +407,45 @@
     </section>
 
 </div>
+<div id="emailModal" class="modal" hidden>
 
+    <div class="modal-content">
+
+        <h2>Zmeniť e-mail</h2>
+
+        <label for="newEmailInput">
+            Nový e-mail
+        </label>
+
+        <input
+            id="newEmailInput"
+            type="email"
+            placeholder="napr. meno@firma.sk"
+        >
+
+        <div class="modal-actions">
+
+            <button
+                id="cancelEmailButton"
+                class="secondary-button"
+                type="button"
+            >
+                Zrušiť
+            </button>
+
+            <button
+                id="saveEmailButton"
+                class="main-button"
+                type="button"
+            >
+                Uložiť
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="script.js"></script>
