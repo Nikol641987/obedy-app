@@ -2708,26 +2708,24 @@ async function renderIssueDashboard() {
                 });
 
 
-        const waitingEmployees =
-            employees.filter(employee =>
-                !employee.isIssued
-            );
+        const waitingMeals =
+    orders.filter(order =>
+        !order.issued
+    ).length;
 
+const issuedMeals =
+    orders.filter(order =>
+        order.issued
+    ).length;
 
-        const issuedEmployees =
-            employees.filter(employee =>
-                employee.isIssued
-            );
+waitingCount.textContent =
+    waitingMeals;
 
+issuedCount.textContent =
+    issuedMeals;
 
-        waitingCount.textContent =
-            waitingEmployees.length;
-
-        issuedCount.textContent =
-            issuedEmployees.length;
-
-        totalCount.textContent =
-            employees.length;
+totalCount.textContent =
+    orders.length;
 
 
         if (employees.length === 0) {
