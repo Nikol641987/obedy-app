@@ -285,6 +285,87 @@ cancelEmailButton?.addEventListener(
 
     }
 );
+    const saveEmailButton =
+    document.getElementById(
+        "saveEmailButton"
+    );
+
+saveEmailButton?.addEventListener(
+    "click",
+    async () => {
+
+        const email =
+            document.getElementById(
+                "newEmailInput"
+            ).value.trim();
+
+        if (
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                email
+            )
+        ) {
+
+            alert(
+                "Zadajte platný e-mail."
+            );
+
+            return;
+        }
+
+        const employeeId =
+            sessionStorage.getItem(
+                "loggedEmployee"
+            )
+            || localStorage.getItem(
+                "loggedEmployee"
+            );
+
+        if (!employeeId) {
+            return;
+        }
+
+        const [surname, name] =
+            employeeId.split("_");
+
+        const { error } =
+            await supabaseClient
+                .from("employees")
+                .update({
+                    email: email
+                })
+                .eq(
+                    "surname",
+                    surname
+                )
+                .eq(
+                    "name",
+                    name
+                );
+
+        if (error) {
+
+            console.error(
+                "Chyba pri ukladaní e-mailu:",
+                error
+            );
+
+            alert(
+                "E-mail sa nepodarilo uložiť."
+            );
+
+            return;
+        }
+
+        emailModal.hidden = true;
+
+        alert(
+            "E-mail bol uložený."
+        );
+
+        loadProfile();
+
+    }
+);
     logoutButton?.addEventListener(
         "click",
         () => {
