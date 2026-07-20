@@ -249,7 +249,92 @@ openDashboardButton?.addEventListener(
         }
     );
 
+const changeEmailButton =
+    document.getElementById(
+        "changeEmailButton"
+    );
 
+changeEmailButton?.addEventListener(
+    "click",
+    async () => {
+
+        const newEmail =
+            prompt(
+                "Zadajte nový e-mail:"
+            );
+
+        if (newEmail === null) {
+            return;
+        }
+
+        const email =
+            newEmail.trim();
+
+        if (
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                email
+            )
+        ) {
+
+            alert(
+                "Zadajte platný e-mail."
+            );
+
+            return;
+        }
+
+        const employeeId =
+            sessionStorage.getItem(
+                "loggedEmployee"
+            )
+            || localStorage.getItem(
+                "loggedEmployee"
+            );
+
+        if (!employeeId) {
+            return;
+        }
+
+        const [surname, name] =
+            employeeId.split("_");
+
+        const { error } =
+            await supabaseClient
+                .from("employees")
+                .update({
+                    email: email
+                })
+                .eq(
+                    "surname",
+                    surname
+                )
+                .eq(
+                    "name",
+                    name
+                );
+
+        if (error) {
+
+            console.error(
+                "Chyba pri ukladaní e-mailu:",
+                error
+            );
+
+            alert(
+                "E-mail sa nepodarilo uložiť."
+            );
+
+            return;
+        }
+
+        alert(
+            "E-mail bol uložený."
+        );
+
+        loadProfile();
+
+    }
+);
     document
         .querySelectorAll("[data-back-home]")
         .forEach(button => {
