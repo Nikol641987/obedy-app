@@ -233,6 +233,7 @@ openDashboardButton?.addEventListener(
             if (employeeId) {
 
                 showScreen("profileScreen");
+                loadProfile();
 
             } else {
 
@@ -788,7 +789,95 @@ function setupLogin() {
     );
 
 }
+async function loadProfile() {
 
+    const profileFullName =
+        document.getElementById(
+            "profileFullName"
+        );
+
+    const profileEmail =
+        document.getElementById(
+            "profileEmail"
+        );
+
+    if (
+        !profileFullName
+        || !profileEmail
+    ) {
+        return;
+    }
+
+
+    const employeeId =
+        sessionStorage.getItem(
+            "loggedEmployee"
+        )
+        || localStorage.getItem(
+            "loggedEmployee"
+        );
+
+
+    if (!employeeId) {
+
+        profileFullName.textContent = "-";
+        profileEmail.textContent = "-";
+
+        return;
+    }
+
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("employees")
+                .select(
+                    "name, surname, email"
+                )
+                .eq(
+                    "id",
+                    employeeId
+                )
+                .single();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        const fullName =
+            [
+                data?.name,
+                data?.surname
+            ]
+                .filter(Boolean)
+                .join(" ");
+
+
+        profileFullName.textContent =
+            fullName || "-";
+
+        profileEmail.textContent =
+            data?.email || "E-mail nie je zadaný";
+
+
+    } catch (error) {
+
+        console.error(
+            "Chyba pri načítaní profilu:",
+            error
+        );
+
+        profileFullName.textContent =
+            "Profil sa nepodarilo načítať";
+
+        profileEmail.textContent = "-";
+
+    }
+
+}
 
 function clearLoginMessage() {
 
