@@ -786,3 +786,6 @@ select:focus-visible {
 .modal-actions button {
     flex: 1;
 }
+#emailModal[hidden] {
+    display: none !important;
+}
