@@ -97,7 +97,7 @@
     "chip": "00970012429877",
     "hasChip": true,
     "active": true,
-    "pin": null,
+    "pin": null
   },
   {
     "personalNumber": "ZAT000092",
@@ -106,7 +106,7 @@
     "chip": "00010002766045",
     "hasChip": true,
     "active": true,
-    "pin": null,
+    "pin": null
   },
   {
     "personalNumber": "ZAT000161",
