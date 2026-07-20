@@ -254,103 +254,37 @@ const changeEmailButton =
         "changeEmailButton"
     );
 
+const emailModal =
+    document.getElementById(
+        "emailModal"
+    );
+
+const cancelEmailButton =
+    document.getElementById(
+        "cancelEmailButton"
+    );
+
 changeEmailButton?.addEventListener(
     "click",
-    async () => {
+    () => {
 
-        const newEmail =
-            prompt(
-                "Zadajte nový e-mail:"
-            );
+        document.getElementById(
+            "newEmailInput"
+        ).value = "";
 
-        if (newEmail === null) {
-            return;
-        }
-
-        const email =
-            newEmail.trim();
-
-        if (
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-                email
-            )
-        ) {
-
-            alert(
-                "Zadajte platný e-mail."
-            );
-
-            return;
-        }
-
-        const employeeId =
-            sessionStorage.getItem(
-                "loggedEmployee"
-            )
-            || localStorage.getItem(
-                "loggedEmployee"
-            );
-
-        if (!employeeId) {
-            return;
-        }
-
-        const [surname, name] =
-            employeeId.split("_");
-
-        const { error } =
-            await supabaseClient
-                .from("employees")
-                .update({
-                    email: email
-                })
-                .eq(
-                    "surname",
-                    surname
-                )
-                .eq(
-                    "name",
-                    name
-                );
-
-        if (error) {
-
-            console.error(
-                "Chyba pri ukladaní e-mailu:",
-                error
-            );
-
-            alert(
-                "E-mail sa nepodarilo uložiť."
-            );
-
-            return;
-        }
-
-        alert(
-            "E-mail bol uložený."
-        );
-
-        loadProfile();
+        emailModal.hidden = false;
 
     }
 );
-    document
-        .querySelectorAll("[data-back-home]")
-        .forEach(button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+cancelEmailButton?.addEventListener(
+    "click",
+    () => {
 
-                    showScreen("homeScreen");
+        emailModal.hidden = true;
 
-                }
-            );
-
-        });
-
-
+    }
+);
     logoutButton?.addEventListener(
         "click",
         () => {
