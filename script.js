@@ -6,6 +6,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
     await loadEmployees();
+    
+    updatePermissions();
 
     setupNavigation();
     setupLogin();
@@ -324,6 +326,7 @@ openDashboardButton?.addEventListener(
 
             clearLoginMessage();
             showScreen("homeScreen");
+            updatePermissions();
 
         }
     );
@@ -716,6 +719,7 @@ function setupLogin() {
                 employeeId
             );
 
+            updatePermissions();
 
             // Dlhodobé prihlásenie iba pri zaškrtnutí
             if (rememberMe.checked) {
