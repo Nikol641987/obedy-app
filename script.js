@@ -828,6 +828,8 @@ async function loadProfile() {
 
 
     try {
+        const [surname, name] =
+    employeeId.split("_");
 
         const { data, error } =
             await supabaseClient
@@ -836,9 +838,13 @@ async function loadProfile() {
                     "name, surname, email"
                 )
                 .eq(
-                    "id",
-                    employeeId
-                )
+    "surname",
+    surname
+)
+.eq(
+    "name",
+    name
+)
                 .single();
 
 
