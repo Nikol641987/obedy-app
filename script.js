@@ -91,6 +91,22 @@ function getCurrentUserRole() {
 
     return option?.dataset?.role || "";
 }
+function updatePermissions() {
+
+    const role = getCurrentUserRole();
+
+    const openIssueButton =
+        document.getElementById("openIssueButton");
+
+    const hasIssueAccess =
+        role === "admin" ||
+        role === "issue";
+
+    if (openIssueButton) {
+        openIssueButton.hidden = !hasIssueAccess;
+    }
+
+}
 
 // =====================================
 // NAVIGÁCIA
@@ -119,13 +135,6 @@ function setupNavigation() {
     const logoutButton =
         document.getElementById("logoutButton");
 
-    const currentRole = getCurrentUserRole();
-
-if (openIssueButton) {
-    openIssueButton.hidden =
-        currentRole !== "admin"
-        && currentRole !== "issue";
-}
 
     openOrderButton?.addEventListener(
         "click",
