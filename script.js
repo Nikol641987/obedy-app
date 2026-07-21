@@ -1039,7 +1039,6 @@ async function forgotPin() {
         );
     }
 }
-}
 async function loadProfile() {
 
     const profileFullName =
