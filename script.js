@@ -689,7 +689,9 @@ function setupLogin() {
         document.getElementById(
             "loginButton"
         );
-
+    
+const forgotPinButton = document.getElementById("forgotPinButton");
+    
     const select =
         document.getElementById(
             "employeeSelect"
@@ -778,13 +780,21 @@ function setupLogin() {
     }
 
 
-    select.addEventListener(
-        "change",
-        updatePinMode
-    );
+  select.addEventListener(
+    "change",
+    updatePinMode
+);
 
+updatePinMode();
+    forgotPinButton?.addEventListener(
+    "click",
+    forgotPin
+);
 
-    updatePinMode();
+forgotPinButton?.addEventListener(
+    "click",
+    forgotPin
+);
 
 
     loginButton.addEventListener(
