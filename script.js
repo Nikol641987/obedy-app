@@ -118,6 +118,23 @@ function updatePermissions() {
 
 function setupNavigation() {
 
+    const backButtons =
+    document.querySelectorAll(
+        "[data-back-home]"
+    );
+
+backButtons.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            showScreen("homeScreen");
+
+        }
+    );
+
+});
     const openOrderButton =
         document.getElementById("openOrderButton");
 
