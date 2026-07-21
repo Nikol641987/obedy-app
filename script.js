@@ -313,6 +313,51 @@ cancelEmailButton?.addEventListener(
 
     }
 );
+    cancelEmailButton?.addEventListener(
+    "click",
+    () => {
+
+        emailModal.hidden = true;
+
+    }
+);
+
+const savePinButton =
+    document.getElementById("savePinButton");
+
+savePinButton?.addEventListener("click", () => {
+
+    const newPin =
+        document.getElementById("newPinInput").value.trim();
+
+    if (!/^\d{4}$/.test(newPin)) {
+        alert("PIN musí mať presne 4 číslice.");
+        return;
+    }
+
+    const employeeId =
+        getCurrentEmployeeId();
+
+    if (!employeeId) {
+        alert("Nie ste prihlásený.");
+        return;
+    }
+
+    localStorage.setItem(
+        `pin_${employeeId}`,
+        newPin
+    );
+
+    pinModal.hidden = true;
+
+    alert("PIN bol úspešne zmenený.");
+
+});
+
+const saveEmailButton =
+    document.getElementById(
+        "saveEmailButton"
+    );
     const saveEmailButton =
     document.getElementById(
         "saveEmailButton"
