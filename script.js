@@ -962,7 +962,83 @@ updatePinMode();
 
         }
     );
+    }
+async function forgotPin() {
 
+    const select =
+        document.getElementById(
+            "employeeSelect"
+        );
+
+    if (!select || !select.value) {
+
+        showLoginError(
+            "Najprv vyberte zamestnanca."
+        );
+
+        return;
+    }
+
+    const selectedOption =
+        select.options[
+            select.selectedIndex
+        ];
+
+    const name =
+        selectedOption.dataset.name;
+
+    const surname =
+        selectedOption.dataset.surname;
+
+    if (!name || !surname) {
+
+        showLoginError(
+            "Údaje zamestnanca sa nepodarilo načítať."
+        );
+
+        return;
+    }
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("employees")
+                .select("email")
+                .eq("name", name)
+                .eq("surname", surname)
+                .single();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data?.email) {
+
+            alert(
+                "Pre tento účet nie je uložená e-mailová adresa na obnovu PIN-u.\n\nPo prihlásení si ju doplň vo svojom profile, aby si si v prípade zabudnutého PIN-u mohol(a) jednoducho nastaviť nový."
+            );
+
+            return;
+        }
+
+        alert(
+            "Overovací kód bude odoslaný na e-mail:\n" +
+            data.email
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Chyba pri obnove PIN-u:",
+            error
+        );
+
+        alert(
+            "E-mailovú adresu sa nepodarilo overiť."
+        );
+    }
+}
 }
 async function loadProfile() {
 
