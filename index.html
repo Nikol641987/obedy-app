@@ -95,8 +95,6 @@
 
     <div class="content-card">
 
-        <h2>Prihlásenie</h2>
-
         <div class="chip-login-box">
 
             <img
@@ -445,6 +443,30 @@
 
     </div>
 
+</div>
+    <div id="pinModal" class="email-modal" hidden>
+    <div class="modal-content">
+        <h2>Zmeniť PIN</h2>
+
+        <label for="newPinInput">Nový PIN</label>
+        <input
+            id="newPinInput"
+            type="password"
+            inputmode="numeric"
+            maxlength="4"
+            placeholder="Zadajte nový 4-miestny PIN"
+        >
+
+        <div class="modal-actions">
+            <button id="cancelPinButton" class="secondary-button">
+                Zrušiť
+            </button>
+
+            <button id="savePinButton" class="primary-button">
+                Uložiť
+            </button>
+        </div>
+    </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
