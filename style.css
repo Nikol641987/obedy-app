@@ -749,7 +749,8 @@ select:focus-visible {
     display: none !important;
 }
 
-#emailModal .modal-content {
+#emailModal .modal-content,
+#pinModal .modal-content {
     background: #ffffff;
     width: calc(100% - 40px);
     max-width: 460px;
@@ -788,6 +789,7 @@ select:focus-visible {
 .modal-actions button {
     flex: 1;
 }
-#emailModal[hidden] {
+#emailModal[hidden],
+#pinModal[hidden] {
     display: none !important;
 }
