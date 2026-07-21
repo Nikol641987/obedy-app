@@ -354,10 +354,7 @@ savePinButton?.addEventListener("click", () => {
 
 });
 
-const saveEmailButton =
-    document.getElementById(
-        "saveEmailButton"
-    );
+
     const saveEmailButton =
     document.getElementById(
         "saveEmailButton"
