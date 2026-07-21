@@ -791,11 +791,6 @@ updatePinMode();
     forgotPin
 );
 
-forgotPinButton?.addEventListener(
-    "click",
-    forgotPin
-);
-
 
     loginButton.addEventListener(
         "click",
