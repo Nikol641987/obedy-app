@@ -1054,11 +1054,22 @@ if (functionError) {
     return;
 }
 
-alert(
-    "Overovací kód bol odoslaný na:\n\n" +
-    data.email
+const enteredCode = prompt(
+    "Na e-mail " +
+    data.email +
+    " sme poslali 6-miestny overovací kód.\n\nZadajte ho:"
 );
 
+if (enteredCode === null) {
+    return;
+}
+
+if (enteredCode.trim() !== code) {
+    alert("Zadaný overovací kód nie je správny.");
+    return;
+}
+
+alert("Overovací kód je správny.");
     } catch (error) {
 
         console.error(
