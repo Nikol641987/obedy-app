@@ -793,3 +793,16 @@ select:focus-visible {
 #pinModal[hidden] {
     display: none !important;
 }
+.link-button {
+    background: none;
+    border: none;
+    color: #0d6efd;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+.link-button:hover {
+    color: #084298;
+}
