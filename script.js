@@ -270,7 +270,10 @@ const changeEmailButton =
     document.getElementById(
         "changeEmailButton"
     );
-
+const changePinButton = document.getElementById("changePinButton");
+const pinModal = document.getElementById("pinModal");
+const cancelPinButton = document.getElementById("cancelPinButton");
+    
 const emailModal =
     document.getElementById(
         "emailModal"
@@ -294,6 +297,14 @@ changeEmailButton?.addEventListener(
     }
 );
 
+    changePinButton?.addEventListener("click", () => {
+    document.getElementById("newPinInput").value = "";
+    pinModal.hidden = false;
+});
+
+cancelPinButton?.addEventListener("click", () => {
+    pinModal.hidden = true;
+});
 cancelEmailButton?.addEventListener(
     "click",
     () => {
