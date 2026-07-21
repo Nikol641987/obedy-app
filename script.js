@@ -1022,10 +1022,42 @@ async function forgotPin() {
             return;
         }
 
-        alert(
-            "Overovací kód bude odoslaný na e-mail:\n" +
-            data.email
-        );
+       const code =
+    Math.floor(
+        100000 + Math.random() * 900000
+    ).toString();
+
+sessionStorage.setItem(
+    "pinResetCode",
+    code
+);
+
+const { error: functionError } =
+    await supabaseClient.functions.invoke(
+        "send-pin-code",
+        {
+            body: {
+                email: data.email,
+                code: code
+            }
+        }
+    );
+
+if (functionError) {
+
+    console.error(functionError);
+
+    alert(
+        "E-mail sa nepodarilo odoslať."
+    );
+
+    return;
+}
+
+alert(
+    "Overovací kód bol odoslaný na:\n\n" +
+    data.email
+);
 
     } catch (error) {
 
