@@ -825,12 +825,13 @@ select:focus-visible {
 }
 
 #resetPinModal .modal-content {
-    width: 100%;
-    max-width: 380px;
+    width: 380px !important;
+    max-width: 380px !important;
+    height: auto !important;
 
     background: #fff;
+    padding: 24px;
     border-radius: 16px;
 
-    padding: 24px;
     box-shadow: 0 12px 35px rgba(0,0,0,.25);
 }
