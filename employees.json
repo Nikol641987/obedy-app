@@ -338,7 +338,7 @@
    "personalNumber": "None",
     "name": "Testovacia",
     "surname": "Osoba",
-    "chip": "00430001016690",
+    "chip": "",
     "hasChip": true,
     "active": true,
     "pin": null
