@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
+
 // =====================================
 // PREPÍNANIE OBRAZOVIEK
 // =====================================
@@ -364,7 +365,7 @@ sessionStorage.removeItem("pinResetCode");
 sessionStorage.removeItem("pinResetEmployeeId");
 
 setTimeout(() => {
-    alert("PIN bol úspešne zmenený.");
+
     showScreen("loginScreen");
 }, 50);
 
