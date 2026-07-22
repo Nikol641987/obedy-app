@@ -293,7 +293,7 @@
     "name": "Nikola",
     "surname": "Lukáčová",
     "chip": "0000990436",
-    "hasChip": false,
+    "hasChip": true,
     "active": true,
     "pin": null,
     "role": "admin"
