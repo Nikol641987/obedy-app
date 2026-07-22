@@ -358,14 +358,15 @@ if (!employeeId) {
         newPin
     );
 
-    pinModal.hidden = true;
+pinModal.hidden = true;
 
 sessionStorage.removeItem("pinResetCode");
 sessionStorage.removeItem("pinResetEmployeeId");
 
-alert("PIN bol úspešne zmenený.");
-
-showScreen("loginScreen");
+setTimeout(() => {
+    alert("PIN bol úspešne zmenený.");
+    showScreen("loginScreen");
+}, 50);
 
 });
 
