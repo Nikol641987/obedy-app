@@ -824,10 +824,9 @@ select:focus-visible {
     display: none;
 }
 
-#resetPinModal .modal-content {
-    width: 380px !important;
-    max-width: 380px !important;
-    height: auto !important;
+#resetPinModal .reset-pin-box {
+    width: 380px;
+    max-width: calc(100% - 40px);
 
     background: #fff;
     padding: 24px;
