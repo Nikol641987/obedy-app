@@ -314,14 +314,7 @@ cancelEmailButton?.addEventListener(
 
     }
 );
-    cancelEmailButton?.addEventListener(
-    "click",
-    () => {
-
-        emailModal.hidden = true;
-
-    }
-);
+  
 
 const savePinButton =
     document.getElementById("savePinButton");
@@ -364,12 +357,19 @@ pinModal.hidden = true;
 sessionStorage.removeItem("pinResetCode");
 sessionStorage.removeItem("pinResetEmployeeId");
 
-setTimeout(() => {
+showScreen("loginScreen");
 
-    showScreen("loginScreen");
-}, 50);
+const loginMessage =
+    document.getElementById("loginMessage");
 
-});
+if (loginMessage) {
+
+    loginMessage.textContent =
+        "✅ PIN bol úspešne zmenený. Teraz sa môžete prihlásiť.";
+
+    loginMessage.className =
+        "message success-message";
+}
 
 
     const saveEmailButton =
