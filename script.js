@@ -3013,32 +3013,26 @@ function setupChipLogin() {
         );
 
 
-        if (
-            requestedScreen ===
-            "orderScreen"
-        ) {
+        updatePermissions();
 
-            await openOrderScreen(
-                employeeId
-            );
+if (requestedScreen === "orderScreen") {
 
-        } else if (
-            requestedScreen ===
-            "myOrdersScreen"
-        ) {
+    await openOrderScreen(employeeId);
 
-            openMyOrdersScreen(
-                employeeId
-            );
+} else if (requestedScreen === "myOrdersScreen") {
 
-        } else {
+    openMyOrdersScreen(employeeId);
 
-            showScreen(
-                requestedScreen
-            );
+} else if (requestedScreen === "profileScreen") {
 
-        }
+    await loadProfile();
+    showScreen("profileScreen");
 
+} else {
+
+    showScreen(requestedScreen);
+
+}
 
         chipBuffer = "";
         processingChip = false;
