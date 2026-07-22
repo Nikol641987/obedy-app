@@ -1069,7 +1069,31 @@ if (enteredCode.trim() !== code) {
     return;
 }
 
-alert("Overovací kód je správny.");
+const newPin = prompt(
+    "Zadajte nový 4-miestny PIN:"
+);
+
+if (newPin === null) {
+    return;
+}
+
+if (!/^\d{4}$/.test(newPin.trim())) {
+
+    alert(
+        "PIN musí obsahovať presne 4 číslice."
+    );
+
+    return;
+}
+
+localStorage.setItem(
+    `pin_${select.value}`,
+    newPin.trim()
+);
+
+alert(
+    "PIN bol úspešne zmenený. Teraz sa môžete prihlásiť novým PIN-om."
+);
     } catch (error) {
 
         console.error(
