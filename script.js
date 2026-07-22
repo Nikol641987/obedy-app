@@ -360,7 +360,12 @@ if (!employeeId) {
 
     pinModal.hidden = true;
 
-    alert("PIN bol úspešne zmenený.");
+sessionStorage.removeItem("pinResetCode");
+sessionStorage.removeItem("pinResetEmployeeId");
+
+alert("PIN bol úspešne zmenený.");
+
+showScreen("loginScreen");
 
 });
 
