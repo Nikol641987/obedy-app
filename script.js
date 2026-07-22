@@ -1054,46 +1054,55 @@ if (functionError) {
     return;
 }
 
-const enteredCode = prompt(
-    "Na e-mail " +
-    data.email +
-    " sme poslali 6-miestny overovací kód.\n\nZadajte ho:"
+sessionStorage.setItem(
+    "pinResetEmployeeId",
+    select.value
 );
 
-if (enteredCode === null) {
-    return;
-}
-
-if (enteredCode.trim() !== code) {
-    alert("Zadaný overovací kód nie je správny.");
-    return;
-}
-
-const newPin = prompt(
-    "Zadajte nový 4-miestny PIN:"
-);
-
-if (newPin === null) {
-    return;
-}
-
-if (!/^\d{4}$/.test(newPin.trim())) {
-
-    alert(
-        "PIN musí obsahovať presne 4 číslice."
+const resetPinModal =
+    document.getElementById(
+        "resetPinModal"
     );
 
+const resetPinText =
+    document.getElementById(
+        "resetPinText"
+    );
+
+const resetCodeInput =
+    document.getElementById(
+        "resetCodeInput"
+    );
+
+const resetCodeError =
+    document.getElementById(
+        "resetCodeError"
+    );
+
+if (
+    !resetPinModal
+    || !resetPinText
+    || !resetCodeInput
+    || !resetCodeError
+) {
+    alert(
+        "Okno na obnovu PIN-u sa nepodarilo otvoriť."
+    );
     return;
 }
 
-localStorage.setItem(
-    `pin_${select.value}`,
-    newPin.trim()
-);
+resetPinText.textContent =
+    "Na e-mail " +
+    data.email +
+    " sme poslali 6-miestny overovací kód.";
 
-alert(
-    "PIN bol úspešne zmenený. Teraz sa môžete prihlásiť novým PIN-om."
-);
+resetCodeInput.value = "";
+resetCodeError.textContent = "";
+resetPinModal.hidden = false;
+
+setTimeout(() => {
+    resetCodeInput.focus();
+}, 100);
     } catch (error) {
 
         console.error(
