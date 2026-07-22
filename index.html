@@ -475,11 +475,58 @@
         </div>
     </div>
 </div>
-    <div
+<div
     id="resetPinModal"
-   class="email-modal"
+    class="email-modal"
     hidden
 >
+    <div class="reset-pin-box">
+
+        <h2>Obnova PIN-u</h2>
+
+        <p>
+            Na váš e-mail bol odoslaný overovací kód.
+        </p>
+
+        <label for="resetCodeInput">
+            Overovací kód
+        </label>
+
+        <input
+            id="resetCodeInput"
+            type="text"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="Zadajte 6-miestny kód"
+        >
+
+        <p
+            id="resetCodeError"
+            class="message error-message"
+        ></p>
+
+        <div class="modal-actions">
+
+            <button
+                id="cancelResetPinButton"
+                class="secondary-button"
+                type="button"
+            >
+                Zrušiť
+            </button>
+
+            <button
+                id="verifyResetCodeButton"
+                class="main-button"
+                type="button"
+            >
+                Overiť kód
+            </button>
+
+        </div>
+
+    </div>
+</div>
 
    <div class="modal-content reset-pin-content">
         <p
