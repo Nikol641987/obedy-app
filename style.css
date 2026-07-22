@@ -806,3 +806,31 @@ select:focus-visible {
 .link-button:hover {
     color: #084298;
 }
+/* Obnova PIN-u */
+
+#resetPinModal {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 9999;
+}
+
+#resetPinModal[hidden] {
+    display: none;
+}
+
+#resetPinModal .modal-content {
+    width: 100%;
+    max-width: 380px;
+
+    background: #fff;
+    border-radius: 16px;
+
+    padding: 24px;
+    box-shadow: 0 12px 35px rgba(0,0,0,.25);
+}
