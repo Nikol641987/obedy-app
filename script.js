@@ -325,54 +325,62 @@ savePinButton?.addEventListener("click", () => {
         document.getElementById("newPinInput").value.trim();
 
     if (!/^\d{4}$/.test(newPin)) {
+
         alert("PIN musí mať presne 4 číslice.");
+
         return;
     }
 
-   let employeeId =
-    getCurrentEmployeeId();
+    let employeeId =
+        getCurrentEmployeeId();
 
-if (!employeeId) {
+    if (!employeeId) {
 
-    employeeId =
-        sessionStorage.getItem(
-            "pinResetEmployeeId"
-        );
-}
+        employeeId =
+            sessionStorage.getItem(
+                "pinResetEmployeeId"
+            );
+    }
 
-if (!employeeId) {
+    if (!employeeId) {
 
-    alert("Nepodarilo sa zistiť zamestnanca.");
+        alert("Nepodarilo sa zistiť zamestnanca.");
 
-    return;
-}
+        return;
+    }
 
     localStorage.setItem(
         `pin_${employeeId}`,
         newPin
     );
 
-pinModal.hidden = true;
+    pinModal.hidden = true;
 
-sessionStorage.removeItem("pinResetCode");
-sessionStorage.removeItem("pinResetEmployeeId");
+    sessionStorage.removeItem(
+        "pinResetCode"
+    );
 
-showScreen("loginScreen");
+    sessionStorage.removeItem(
+        "pinResetEmployeeId"
+    );
 
-const loginMessage =
-    document.getElementById("loginMessage");
+    showScreen("loginScreen");
 
-if (loginMessage) {
+    const loginMessage =
+        document.getElementById(
+            "loginMessage"
+        );
 
-    loginMessage.textContent =
-        "✅ PIN bol úspešne zmenený. Teraz sa môžete prihlásiť.";
+    if (loginMessage) {
 
-    loginMessage.className =
-        "message success-message";
-    });
-}
+        loginMessage.textContent =
+            "✅ PIN bol úspešne zmenený. Teraz sa môžete prihlásiť.";
 
+        loginMessage.className =
+            "message success-message";
+    }
 
+});
     const saveEmailButton =
     document.getElementById(
         "saveEmailButton"
