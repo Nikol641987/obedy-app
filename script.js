@@ -335,13 +335,23 @@ savePinButton?.addEventListener("click", () => {
         return;
     }
 
-    const employeeId =
-        getCurrentEmployeeId();
+   let employeeId =
+    getCurrentEmployeeId();
 
-    if (!employeeId) {
-        alert("Nie ste prihlásený.");
-        return;
-    }
+if (!employeeId) {
+
+    employeeId =
+        sessionStorage.getItem(
+            "pinResetEmployeeId"
+        );
+}
+
+if (!employeeId) {
+
+    alert("Nepodarilo sa zistiť zamestnanca.");
+
+    return;
+}
 
     localStorage.setItem(
         `pin_${employeeId}`,
