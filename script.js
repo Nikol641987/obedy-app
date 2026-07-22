@@ -1120,7 +1120,10 @@ const { error: functionError } =
             }
         }
     );
-
+        
+console.log("Kód:", code);
+console.log("Function error:", functionError);
+        
 if (functionError) {
 
     console.error(functionError);
