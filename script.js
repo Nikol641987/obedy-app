@@ -436,6 +436,84 @@ saveEmailButton?.addEventListener(
 
     }
 );
+    const verifyResetCodeButton =
+    document.getElementById(
+        "verifyResetCodeButton"
+    );
+
+const cancelResetPinButton =
+    document.getElementById(
+        "cancelResetPinButton"
+    );
+
+verifyResetCodeButton?.addEventListener(
+    "click",
+    () => {
+
+        const resetCodeInput =
+            document.getElementById(
+                "resetCodeInput"
+            );
+
+        const resetCodeError =
+            document.getElementById(
+                "resetCodeError"
+            );
+
+        const enteredCode =
+            resetCodeInput.value.trim();
+
+        const correctCode =
+            sessionStorage.getItem(
+                "pinResetCode"
+            );
+
+        if (!enteredCode) {
+
+            resetCodeError.textContent =
+                "Zadajte overovací kód.";
+
+            return;
+        }
+
+        if (enteredCode !== correctCode) {
+
+            resetCodeError.textContent =
+                "Zadaný overovací kód nie je správny.";
+
+            return;
+        }
+
+        resetCodeError.textContent = "";
+
+        alert(
+            "Kód je správny."
+        );
+
+    }
+);
+
+cancelResetPinButton?.addEventListener(
+    "click",
+    () => {
+
+        const resetPinModal =
+            document.getElementById(
+                "resetPinModal"
+            );
+
+        resetPinModal.hidden = true;
+
+        sessionStorage.removeItem(
+            "pinResetCode"
+        );
+
+        sessionStorage.removeItem(
+            "pinResetEmployeeId"
+        );
+
+    }
+);
     logoutButton?.addEventListener(
         "click",
         () => {
