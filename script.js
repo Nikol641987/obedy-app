@@ -3014,14 +3014,17 @@ function setupChipLogin() {
                 return;
             }
 
-
+const resetCodeInput =
+    document.getElementById("resetCodeInput");
+            
             // Pri ručnom písaní PIN-u čítačku nesnímame
-            if (
-                document.activeElement === pinInput
-                || document.activeElement === pinConfirm
-            ) {
-                return;
-            }
+           if (
+    document.activeElement === pinInput
+    || document.activeElement === pinConfirm
+    || document.activeElement === resetCodeInput
+) {
+    return;
+}
 
 
             if (event.key === "Enter") {
