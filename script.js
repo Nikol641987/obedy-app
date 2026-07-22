@@ -1039,32 +1039,45 @@ updatePinMode();
                 "requestedScreen"
             );
 
+if (
+    requestedScreen ===
+    "orderScreen"
+) {
 
-            if (
-                requestedScreen ===
-                "orderScreen"
-            ) {
+    openOrderScreen(
+        employeeId
+    );
 
-                openOrderScreen(
-                    employeeId
-                );
+} else if (
+    requestedScreen ===
+    "myOrdersScreen"
+) {
 
-            } else if (
-                requestedScreen ===
-                "myOrdersScreen"
-            ) {
+    openMyOrdersScreen(
+        employeeId
+    );
 
-                openMyOrdersScreen(
-                    employeeId
-                );
+} else if (
+    requestedScreen ===
+    "profileScreen"
+) {
 
-            } else {
+    loadProfile().then(() => {
 
-                showScreen(
-                    requestedScreen
-                );
+        showScreen(
+            "profileScreen"
+        );
 
-            }
+    });
+
+} else {
+
+    showScreen(
+        requestedScreen
+    );
+
+}
+    
 
         }
     );
