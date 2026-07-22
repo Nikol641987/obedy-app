@@ -241,30 +241,30 @@ openDashboardButton?.addEventListener(
 
 
     openProfileButton?.addEventListener(
-        "click",
-        () => {
+    "click",
+    async () => {
 
-            const employeeId =
-                getCurrentEmployeeId();
+        const employeeId =
+            getCurrentEmployeeId();
 
-            if (employeeId) {
+        if (employeeId) {
 
-                showScreen("profileScreen");
-                loadProfile();
+            await loadProfile();
+            showScreen("profileScreen");
 
-            } else {
+        } else {
 
-                sessionStorage.setItem(
-                    "requestedScreen",
-                    "profileScreen"
-                );
+            sessionStorage.setItem(
+                "requestedScreen",
+                "profileScreen"
+            );
 
-                showScreen("loginScreen");
-
-            }
+            showScreen("loginScreen");
 
         }
-    );
+
+    }
+);
 
 const changeEmailButton =
     document.getElementById(
