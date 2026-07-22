@@ -484,11 +484,13 @@ verifyResetCodeButton?.addEventListener(
             return;
         }
 
-        resetCodeError.textContent = "";
+       resetCodeError.textContent = "";
 
-        alert(
-            "Kód je správny."
-        );
+document.getElementById("resetPinModal").hidden = true;
+
+document.getElementById("newPinInput").value = "";
+
+document.getElementById("pinModal").hidden = false;
 
     }
 );
