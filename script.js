@@ -369,6 +369,7 @@ if (loginMessage) {
 
     loginMessage.className =
         "message success-message";
+    });
 }
 
 
