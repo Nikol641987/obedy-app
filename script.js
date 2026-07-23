@@ -1939,9 +1939,16 @@ function setCurrentDate() {
 
     if (!currentDate) return;
 
+    const orderDate =
+        getOrderDate();
+
+    const date =
+        new Date(
+            `${orderDate}T12:00:00`
+        );
 
     currentDate.textContent =
-        new Date().toLocaleDateString(
+        date.toLocaleDateString(
             "sk-SK",
             {
                 weekday: "long",
