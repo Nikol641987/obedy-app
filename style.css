@@ -958,10 +958,11 @@ select:focus-visible {
 ========================== */
 
 .week-subtitle {
-    text-align: center;
-    color: #777;
-    margin-bottom: 24px;
-    font-size: 0.95rem;
+    text-align: left;
+    color: #666;
+    margin: -10px 0 24px;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 #weekCards {
