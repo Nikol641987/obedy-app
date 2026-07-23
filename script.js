@@ -2213,8 +2213,7 @@ const orderSuccessModal =
 const orderSuccessText =
     document.getElementById("orderSuccessText");
 
-if (orderSuccessModal) {
-
+if (orderSuccessModal && orderSuccessText) {
 
     orderSuccessText.textContent =
         isEdit
