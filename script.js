@@ -1387,10 +1387,44 @@ function openWeekSelectionScreen(employeeId) {
         employeeId
     );
 
+    const weekCards =
+        document.getElementById("weekCards");
+
+    weekCards.innerHTML = `
+        <div class="week-card">
+            <h3>Pondelok</h3>
+            <div class="date">27. 7. 2026</div>
+            <div class="status">⚪ Neobjednané</div>
+        </div>
+
+        <div class="week-card">
+            <h3>Utorok</h3>
+            <div class="date">28. 7. 2026</div>
+            <div class="status">⚪ Neobjednané</div>
+        </div>
+
+        <div class="week-card">
+            <h3>Streda</h3>
+            <div class="date">29. 7. 2026</div>
+            <div class="status">⚪ Neobjednané</div>
+        </div>
+
+        <div class="week-card">
+            <h3>Štvrtok</h3>
+            <div class="date">30. 7. 2026</div>
+            <div class="status">⚪ Neobjednané</div>
+        </div>
+
+        <div class="week-card">
+            <h3>Piatok</h3>
+            <div class="date">31. 7. 2026</div>
+            <div class="status">⚪ Neobjednané</div>
+        </div>
+    `;
+
     showScreen("weekSelectionScreen");
 
 }
-
 // =====================================
 // OTVORENIE OBJEDNÁVKY
 // =====================================
