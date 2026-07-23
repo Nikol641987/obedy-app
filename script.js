@@ -3,6 +3,11 @@
 // Kompletný script.js
 // =====================================
 
+// =====================================
+// AKTUÁLNE VYBRANÝ DEŇ OBJEDNÁVKY
+// =====================================
+
+let selectedOrderDate = null;
 document.addEventListener("DOMContentLoaded", async () => {
 
     await loadEmployees();
