@@ -3681,34 +3681,29 @@ function setupChipIssue() {
                     .join("");
 
 
-            issueMessage.innerHTML = `
-                <strong>✅ ${escapeHtml(employeeName)}</strong>
-                <br><br>
+            const issueResultModal =
+    document.getElementById("issueResultModal");
 
-                ${mealsHtml}
+document.getElementById("issueResultIcon").textContent = "✅";
 
-                <br>
-                Obed bol úspešne vydaný.
-            `;
+document.getElementById("issueResultName").textContent =
+    employeeName;
 
-            issueMessage.className =
-                "message success-message";
-            await renderIssueDashboard();
+document.getElementById("issueResultMeals").innerHTML =
+    mealsHtml;
 
+document.getElementById("issueResultText").textContent =
+    "Obed bol úspešne vydaný.";
 
-            setTimeout(
-                () => {
+issueResultModal.hidden = false;
 
-                    issueMessage.textContent = "";
+await renderIssueDashboard();
 
-                    issueMessage.className =
-                        "message";
+setTimeout(() => {
 
-                },
-                5000
-            
-            );
+    issueResultModal.hidden = true;
 
+}, 5000);
 
         } catch (error) {
 
