@@ -1380,7 +1380,11 @@ function showLoginError(message) {
 // VÝBER DŇA OBJEDNÁVKY
 // =====================================
 
-function openWeekSelectionScreen(employeeId) {
+// =====================================
+// VÝBER DŇA OBJEDNÁVKY
+// =====================================
+
+async function openWeekSelectionScreen(employeeId) {
 
     sessionStorage.setItem(
         "loggedEmployee",
@@ -1388,16 +1392,21 @@ function openWeekSelectionScreen(employeeId) {
     );
 
     const weekCards =
-        document.getElementById("weekCards");
+        document.getElementById(
+            "weekCards"
+        );
 
     const weekTitle =
-        document.getElementById("weekTitle");
+        document.getElementById(
+            "weekTitle"
+        );
 
     if (!weekCards || !weekTitle) {
         return;
     }
 
-    const now = new Date();
+    const now =
+        new Date();
 
     const currentDay =
         now.getDay();
@@ -1427,14 +1436,6 @@ function openWeekSelectionScreen(employeeId) {
         0
     );
 
-    const weekdays = [
-        "Pondelok",
-        "Utorok",
-        "Streda",
-        "Štvrtok",
-        "Piatok"
-    ];
-
     const friday =
         new Date(monday);
 
@@ -1442,8 +1443,97 @@ function openWeekSelectionScreen(employeeId) {
         monday.getDate() + 4
     );
 
+    const mondayForDatabase =
+        formatDateForDatabase(monday);
+
+    const fridayForDatabase =
+        formatDateForDatabase(friday);
+
     weekTitle.textContent =
         `Týždeň ${formatShortDate(monday)} – ${formatShortDate(friday)}`;
+
+    weekCards.innerHTML = `
+        <div class="week-loading">
+            Načítavam objednávky...
+        </div>
+    `;
+
+    showScreen(
+        "weekSelectionScreen"
+    );
+
+    let weeklyOrders = [];
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("meal_orders")
+                .select(
+                    "order_date, menu_id, menu_name, dining, takeaway, no_soup, issued"
+                )
+                .eq(
+                    "employee_id",
+                    employeeId
+                )
+                .gte(
+                    "order_date",
+                    mondayForDatabase
+                )
+                .lte(
+                    "order_date",
+                    fridayForDatabase
+                )
+                .order(
+                    "order_date",
+                    {
+                        ascending: true
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        weeklyOrders =
+            data || [];
+
+    } catch (error) {
+
+        console.error(
+            "Chyba pri načítaní týždenných objednávok:",
+            error
+        );
+
+        weekCards.innerHTML = `
+            <div class="message error">
+                Objednávky sa nepodarilo načítať.
+            </div>
+        `;
+
+        return;
+    }
+
+    const ordersByDate = {};
+
+    weeklyOrders.forEach(order => {
+
+        if (!ordersByDate[order.order_date]) {
+            ordersByDate[order.order_date] = [];
+        }
+
+        ordersByDate[order.order_date].push(
+            order
+        );
+    });
+
+    const weekdays = [
+        "Pondelok",
+        "Utorok",
+        "Streda",
+        "Štvrtok",
+        "Piatok"
+    ];
 
     weekCards.innerHTML = "";
 
@@ -1460,8 +1550,14 @@ function openWeekSelectionScreen(employeeId) {
             const dateForDatabase =
                 formatDateForDatabase(date);
 
+            const dayOrders =
+                ordersByDate[dateForDatabase]
+                || [];
+
             const card =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             card.className =
                 "week-card";
@@ -1469,17 +1565,141 @@ function openWeekSelectionScreen(employeeId) {
             card.dataset.date =
                 dateForDatabase;
 
-            card.innerHTML = `
-                <h3>${weekday}</h3>
+            const heading =
+                document.createElement(
+                    "h3"
+                );
 
-                <div class="date">
-                    ${formatShortDate(date)}
-                </div>
+            heading.textContent =
+                weekday;
 
-                <div class="status">
-                    ⚪ Neobjednané
-                </div>
-            `;
+            const dateElement =
+                document.createElement(
+                    "div"
+                );
+
+            dateElement.className =
+                "date";
+
+            dateElement.textContent =
+                formatShortDate(date);
+
+            card.appendChild(
+                heading
+            );
+
+            card.appendChild(
+                dateElement
+            );
+
+            if (dayOrders.length === 0) {
+
+                const status =
+                    document.createElement(
+                        "div"
+                    );
+
+                status.className =
+                    "status not-ordered";
+
+                status.textContent =
+                    "⚪ Neobjednané";
+
+                card.appendChild(
+                    status
+                );
+
+            } else {
+
+                const orderDetails =
+                    document.createElement(
+                        "div"
+                    );
+
+                orderDetails.className =
+                    "week-order-details";
+
+                dayOrders.forEach(order => {
+
+                    const meal =
+                        document.createElement(
+                            "div"
+                        );
+
+                    meal.className =
+                        "week-order-meal";
+
+                    const menuName =
+                        order.menu_name
+                        || `Menu ${order.menu_id}`;
+
+                    let servingType = "";
+
+                    if (order.takeaway) {
+
+                        servingType =
+                            " 📦 Zabaliť";
+
+                    } else if (order.dining) {
+
+                        servingType =
+                            " 🍽️ Výdaj";
+
+                    }
+
+                    meal.textContent =
+                        `${menuName}${servingType}`;
+
+                    orderDetails.appendChild(
+                        meal
+                    );
+                });
+
+                const hasNoSoup =
+                    dayOrders.some(
+                        order =>
+                            Boolean(
+                                order.no_soup
+                            )
+                    );
+
+                if (hasNoSoup) {
+
+                    const soup =
+                        document.createElement(
+                            "div"
+                        );
+
+                    soup.className =
+                        "week-order-soup";
+
+                    soup.textContent =
+                        "🥣 Bez polievky";
+
+                    orderDetails.appendChild(
+                        soup
+                    );
+                }
+
+                const status =
+                    document.createElement(
+                        "div"
+                    );
+
+                status.className =
+                    "status ordered";
+
+                status.textContent =
+                    "🟢 Objednané";
+
+                card.appendChild(
+                    orderDetails
+                );
+
+                card.appendChild(
+                    status
+                );
+            }
 
             card.addEventListener(
                 "click",
@@ -1491,19 +1711,14 @@ function openWeekSelectionScreen(employeeId) {
                     openOrderScreen(
                         employeeId
                     );
-
                 }
             );
 
-            weekCards.appendChild(card);
-
+            weekCards.appendChild(
+                card
+            );
         }
     );
-
-    showScreen(
-        "weekSelectionScreen"
-    );
-
 }
 // =====================================
 // OTVORENIE OBJEDNÁVKY
