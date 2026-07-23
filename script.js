@@ -177,7 +177,7 @@ backButtons.forEach(button => {
 
             if (employeeId) {
 
-                openOrderScreen(employeeId);
+               openWeekSelectionScreen(employeeId);
 
             } else {
 
