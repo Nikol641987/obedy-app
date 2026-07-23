@@ -3614,20 +3614,58 @@ function setupChipIssue() {
 
             if (allIssued) {
 
-                issueMessage.innerHTML = `
-                    <strong>❌ ${escapeHtml(employeeName)}</strong><br><br>
-                    Obed bol tomuto zamestnancovi už vydaný.
+    const mealsHtml =
+        data
+            .map(item => {
+
+                const methods = [];
+
+                if (item.dining) {
+                    methods.push("V jedálni");
+                }
+
+                if (item.takeaway) {
+                    methods.push("Zabaliť");
+                }
+
+                return `
+                    <div>
+                        <strong>${escapeHtml(item.menu_name)}</strong>
+                        – ${escapeHtml(methods.join(" + "))}
+                    </div>
                 `;
 
-                issueMessage.className =
-                    "message error-message";
+            })
+            .join("");
 
-                processingChip = false;
+    const issueResultModal =
+        document.getElementById("issueResultModal");
 
-                return;
+    document.getElementById("issueResultIcon").textContent =
+        "❌";
 
-            }
+    document.getElementById("issueResultName").textContent =
+        employeeName;
 
+    document.getElementById("issueResultMeals").innerHTML =
+        mealsHtml;
+
+    document.getElementById("issueResultText").textContent =
+        "Obed bol tomuto zamestnancovi už vydaný.";
+
+    issueResultModal.hidden = false;
+
+    setTimeout(() => {
+
+        issueResultModal.hidden = true;
+
+    }, 5000);
+
+    processingChip = false;
+
+    return;
+
+}
 
             const { error: updateError } =
                 await supabaseClient
