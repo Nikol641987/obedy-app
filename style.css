@@ -953,3 +953,51 @@ select:focus-visible {
     font-size: 1.3rem;
     font-weight: 700;
 }
+/* ==========================
+   VÝBER TÝŽDŇA
+========================== */
+
+.week-subtitle {
+    text-align: center;
+    color: #777;
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+}
+
+#weekCards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.week-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 4px 12px rgba(0,0,0,.05);
+    cursor: pointer;
+    transition: .2s;
+}
+
+.week-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.week-card h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.week-card .date {
+    color: #777;
+    font-size: .9rem;
+    margin-top: 4px;
+}
+
+.week-card .status {
+    margin-top: 12px;
+    font-weight: 600;
+}
