@@ -2735,17 +2735,62 @@ function setupManualIssue() {
                     );
 
 
-                if (allIssued) {
+               if (allIssued) {
 
-                    issueMessage.textContent =
-                        "Obed bol tomuto zamestnancovi už vydaný.";
+    const selectedOption =
+        issueEmployeeSelect.options[
+            issueEmployeeSelect.selectedIndex
+        ];
 
-                    issueMessage.className =
-                        "message";
+    const employeeName =
+        selectedOption?.textContent?.trim()
+        || "Zamestnanec";
 
-                    return;
+    const mealsText =
+        data
+            .map(item => {
 
+                const methods = [];
+
+                if (item.dining) {
+                    methods.push("V jedálni");
                 }
+
+                if (item.takeaway) {
+                    methods.push("Zabaliť");
+                }
+
+                return `${item.menu_name} – ${methods.join(" + ")}`;
+
+            })
+            .join("<br>");
+
+    const issueResultModal =
+        document.getElementById("issueResultModal");
+
+    document.getElementById("issueResultIcon").textContent =
+        "❌";
+
+    document.getElementById("issueResultName").textContent =
+        employeeName;
+
+    document.getElementById("issueResultMeals").innerHTML =
+        mealsText;
+
+    document.getElementById("issueResultText").textContent =
+        "Obed bol tomuto zamestnancovi už vydaný.";
+
+    issueResultModal.hidden = false;
+
+    setTimeout(() => {
+
+        issueResultModal.hidden = true;
+
+    }, 4000);
+
+    return;
+
+}
 
 
                 const { error: updateError } =
