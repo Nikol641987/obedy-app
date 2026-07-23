@@ -1376,6 +1376,20 @@ function showLoginError(message) {
 
 }
 
+// =====================================
+// VÝBER DŇA OBJEDNÁVKY
+// =====================================
+
+function openWeekSelectionScreen(employeeId) {
+
+    sessionStorage.setItem(
+        "loggedEmployee",
+        employeeId
+    );
+
+    showScreen("weekSelectionScreen");
+
+}
 
 // =====================================
 // OTVORENIE OBJEDNÁVKY
