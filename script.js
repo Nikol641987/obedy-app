@@ -2203,37 +2203,42 @@ function setupOrderButton() {
 
 
                 const isEdit =
-                    confirmOrderButton
-                        .dataset.edit ===
-                    "true";
+    confirmOrderButton.dataset.edit === "true";
 
+const orderSuccessModal =
+    document.getElementById("orderSuccessModal");
 
-                if (orderMessage) {
+const orderSuccessTitle =
+    document.getElementById("orderSuccessTitle");
 
-                    orderMessage.textContent =
-                        isEdit
+const orderSuccessText =
+    document.getElementById("orderSuccessText");
 
-                            ? "Objednávka bola úspešne upravená."
+if (orderSuccessModal) {
 
-                            : "Objednávka bola úspešne uložená.";
+    orderSuccessTitle.textContent =
+        isEdit
+            ? "Objednávka upravená"
+            : "Objednávka uložená";
 
+    orderSuccessText.textContent =
+        isEdit
+            ? "Objednávka bola úspešne upravená."
+            : "Objednávka bola úspešne uložená.";
 
-                    orderMessage.className =
-                        "message success-message";
+    orderSuccessModal.hidden = false;
 
-                }
+}
 
+setTimeout(() => {
 
-                setTimeout(
-                    () => {
+    if (orderSuccessModal) {
+        orderSuccessModal.hidden = true;
+    }
 
-                        showScreen(
-                            "homeScreen"
-                        );
+    showScreen("homeScreen");
 
-                    },
-                    1200
-                );
+}, 5000);
 
 
             } catch (error) {
