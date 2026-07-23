@@ -97,22 +97,27 @@ function getCurrentUserRole() {
 function updatePermissions() {
 
     const role = getCurrentUserRole();
-    
+
     console.log("Aktuálna rola:", role);
 
     const openIssueButton =
         document.getElementById("openIssueButton");
 
-    const hasIssueAccess =
-        role === "admin" ||
-        role === "issue";
+    const openDashboardButton =
+        document.getElementById("openDashboardButton");
 
+    // Výdaj obedov vidí každý
     if (openIssueButton) {
-        openIssueButton.hidden = !hasIssueAccess;
+        openIssueButton.hidden = false;
+    }
+
+    // Stav výdaja obedov vidí iba admin a issue
+    if (openDashboardButton) {
+        openDashboardButton.hidden =
+            !(role === "admin" || role === "issue");
     }
 
 }
-
 // =====================================
 // NAVIGÁCIA
 // =====================================
