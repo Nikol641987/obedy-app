@@ -2232,7 +2232,7 @@ setTimeout(() => {
 
     showScreen("homeScreen");
 
-}, 5000);
+}, 4000);
 
 
             } catch (error) {
@@ -2849,7 +2849,7 @@ function setupManualIssue() {
                             "Nemám čip";
 
                     },
-                    5000
+                    4000
                 );
 
 
@@ -3659,7 +3659,7 @@ function setupChipIssue() {
 
         issueResultModal.hidden = true;
 
-    }, 5000);
+    }, 4000);
 
     processingChip = false;
 
@@ -3741,7 +3741,7 @@ setTimeout(() => {
 
     issueResultModal.hidden = true;
 
-}, 5000);
+}, 4000);
 
         } catch (error) {
 
