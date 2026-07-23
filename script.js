@@ -2992,7 +2992,7 @@ function setupChipLogin() {
 
         employeeSelect.value =
             employeeId;
-
+updatePermissions();
 
         if (loginMessage) {
 
