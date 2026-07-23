@@ -1075,14 +1075,6 @@ if (
 
     });
 
-} else if (
-    requestedScreen === "profileScreen"
-) {
-
-    await loadProfile();
-
-    showScreen("profileScreen");
-
 } else {
 
     showScreen(
@@ -1090,7 +1082,6 @@ if (
     );
 
 }
-    
 
         }
     );
