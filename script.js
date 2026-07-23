@@ -2208,18 +2208,13 @@ function setupOrderButton() {
 const orderSuccessModal =
     document.getElementById("orderSuccessModal");
 
-const orderSuccessTitle =
-    document.getElementById("orderSuccessTitle");
+
 
 const orderSuccessText =
     document.getElementById("orderSuccessText");
 
 if (orderSuccessModal) {
 
-    orderSuccessTitle.textContent =
-        isEdit
-            ? "Objednávka upravená"
-            : "Objednávka uložená";
 
     orderSuccessText.textContent =
         isEdit
