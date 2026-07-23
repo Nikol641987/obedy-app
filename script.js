@@ -2852,27 +2852,28 @@ function setupManualIssue() {
                         .join(" | ");
 
 
-   issueMessage.innerHTML = `
-<div class="issue-success">
+  const issueResultModal =
+    document.getElementById("issueResultModal");
 
-    <div class="issue-success-icon">
-        ✅
-    </div>
+document.getElementById("issueResultIcon").textContent =
+    "✅";
 
-    <div class="issue-success-name">
-        ${employeeName}
-    </div>
+document.getElementById("issueResultName").textContent =
+    employeeName;
 
-    <div class="issue-success-meal">
-        ${mealsText}
-    </div>
+document.getElementById("issueResultMeals").innerHTML =
+    mealsText.replaceAll(" | ", "<br>");
 
-    <div class="issue-success-text">
-        Obed bol úspešne vydaný
-    </div>
+document.getElementById("issueResultText").textContent =
+    "Obed bol úspešne vydaný.";
 
-</div>
-`;
+issueResultModal.hidden = false;
+
+setTimeout(() => {
+
+    issueResultModal.hidden = true;
+
+}, 4000);
 
                 issueMessage.className =
                     "message success-message";
