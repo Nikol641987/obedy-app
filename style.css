@@ -837,3 +837,61 @@ select:focus-visible {
 [hidden] {
     display: none !important;
 }
+
+/* OKNO PO ÚSPEŠNOM ULOŽENÍ OBJEDNÁVKY */
+
+#orderSuccessModal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+#orderSuccessModal[hidden] {
+    display: none !important;
+}
+
+#orderSuccessModal .order-success-content {
+    width: min(90vw, 420px);
+    margin: 0;
+    padding: 32px 24px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    text-align: center;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.order-success-icon {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: #e8f7ed;
+    color: #16803c;
+
+    font-size: 40px;
+    font-weight: 700;
+}
+
+#orderSuccessText {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
