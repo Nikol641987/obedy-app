@@ -1390,39 +1390,119 @@ function openWeekSelectionScreen(employeeId) {
     const weekCards =
         document.getElementById("weekCards");
 
-    weekCards.innerHTML = `
-        <div class="week-card">
-            <h3>Pondelok</h3>
-            <div class="date">27. 7. 2026</div>
-            <div class="status">⚪ Neobjednané</div>
-        </div>
+    const weekTitle =
+        document.getElementById("weekTitle");
 
-        <div class="week-card">
-            <h3>Utorok</h3>
-            <div class="date">28. 7. 2026</div>
-            <div class="status">⚪ Neobjednané</div>
-        </div>
+    if (!weekCards || !weekTitle) {
+        return;
+    }
 
-        <div class="week-card">
-            <h3>Streda</h3>
-            <div class="date">29. 7. 2026</div>
-            <div class="status">⚪ Neobjednané</div>
-        </div>
+    const now = new Date();
 
-        <div class="week-card">
-            <h3>Štvrtok</h3>
-            <div class="date">30. 7. 2026</div>
-            <div class="status">⚪ Neobjednané</div>
-        </div>
+    const currentDay =
+        now.getDay();
 
-        <div class="week-card">
-            <h3>Piatok</h3>
-            <div class="date">31. 7. 2026</div>
-            <div class="status">⚪ Neobjednané</div>
-        </div>
-    `;
+    const isFridayAfterNoon =
+        currentDay === 5
+        && now.getHours() >= 12;
 
-    showScreen("weekSelectionScreen");
+    const monday =
+        new Date(now);
+
+    const daysFromMonday =
+        currentDay === 0
+            ? -6
+            : 1 - currentDay;
+
+    monday.setDate(
+        now.getDate()
+        + daysFromMonday
+        + (isFridayAfterNoon ? 7 : 0)
+    );
+
+    monday.setHours(
+        12,
+        0,
+        0,
+        0
+    );
+
+    const weekdays = [
+        "Pondelok",
+        "Utorok",
+        "Streda",
+        "Štvrtok",
+        "Piatok"
+    ];
+
+    const friday =
+        new Date(monday);
+
+    friday.setDate(
+        monday.getDate() + 4
+    );
+
+    weekTitle.textContent =
+        `Týždeň ${formatShortDate(monday)} – ${formatShortDate(friday)}`;
+
+    weekCards.innerHTML = "";
+
+    weekdays.forEach(
+        (weekday, index) => {
+
+            const date =
+                new Date(monday);
+
+            date.setDate(
+                monday.getDate() + index
+            );
+
+            const dateForDatabase =
+                formatDateForDatabase(date);
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "week-card";
+
+            card.dataset.date =
+                dateForDatabase;
+
+            card.innerHTML = `
+                <h3>${weekday}</h3>
+
+                <div class="date">
+                    ${formatShortDate(date)}
+                </div>
+
+                <div class="status">
+                    ⚪ Neobjednané
+                </div>
+            `;
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    selectedOrderDate =
+                        dateForDatabase;
+
+                    openOrderScreen(
+                        employeeId
+                    );
+
+                }
+            );
+
+            weekCards.appendChild(card);
+
+        }
+    );
+
+    showScreen(
+        "weekSelectionScreen"
+    );
 
 }
 // =====================================
@@ -2579,6 +2659,37 @@ async function loadMyOrders(
 // DÁTUM PRE DATABÁZU
 // =====================================
 
+function formatDateForDatabase(date) {
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+function formatShortDate(date) {
+
+    return date.toLocaleDateString(
+        "sk-SK",
+        {
+            day: "numeric",
+            month: "numeric",
+            year: "numeric"
+        }
+    );
+
+}
 function getOrderDate() {
 
     return selectedOrderDate || getTodayDate();
