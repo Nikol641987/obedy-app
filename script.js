@@ -1430,7 +1430,7 @@ async function checkTodayOrder(
 ) {
 
     const today =
-        getTodayDate();
+    getOrderDate();
 
     const orderMessage =
         document.getElementById(
@@ -2049,7 +2049,7 @@ function setupOrderButton() {
 
 
             const orderDate =
-                getTodayDate();
+    getOrderDate();
 
             const groupedMenus = {};
 
