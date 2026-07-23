@@ -2531,6 +2531,11 @@ async function loadMyOrders(
 // DÁTUM PRE DATABÁZU
 // =====================================
 
+function getOrderDate() {
+
+    return selectedOrderDate || getTodayDate();
+
+}
 function getTodayDate() {
 
     const today =
