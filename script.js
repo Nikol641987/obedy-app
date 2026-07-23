@@ -2875,8 +2875,6 @@ setTimeout(() => {
 
 }, 4000);
 
-                issueMessage.className =
-                    "message success-message";
 
 
                 setTimeout(
