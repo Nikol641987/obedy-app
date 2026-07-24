@@ -1907,21 +1907,13 @@ async function checkTodayOrder(
 
 
         const now =
-            new Date();
+    new Date();
 
-        const deadline =
-            new Date();
+const deadline =
+    new Date(`${today}T08:30:00`);
 
-        deadline.setHours(
-            16,
-            30,
-            0,
-            0
-        );
-
-        const canEdit =
-            now < deadline;
-
+const canEdit =
+    now < deadline;
 
         // Dnes nemá objednávku
         if (
@@ -1934,9 +1926,9 @@ async function checkTodayOrder(
                 orderIntroText.textContent =
                     canEdit
 
-                        ? "🍽️ Dnes ešte nemáš objednaný obed. Objednať si ho môžeš do 8:30."
+                        ? "🍽️ Na tento deň ešte nemáš objednaný obed. Objednať si ho môžeš do 8:30."
 
-                        : "⏰ Dnes nemáš objednaný obed. Objednávky sú už uzavreté.";
+: "🔒 Na tento deň nemáš objednaný obed. Objednávky sú už uzavreté.";
 
 
                 orderIntroText.style.color =
@@ -1995,9 +1987,9 @@ async function checkTodayOrder(
             orderIntroText.textContent =
                 canEdit
 
-                    ? "✅ Dnešný obed máš úspešne objednaný. Do 8:30 môžeš objednávku ešte upraviť."
+                    ? "✅ Obed je úspešne objednaný. Do 8:30 môžeš objednávku ešte upraviť."
 
-                    : "🔒 Dnešný obed máš úspešne objednaný. Objednávku už nie je možné upraviť.";
+: "🔒 Objednávka je uzavretá. Tento obed už nie je možné upraviť.";
 
 
             orderIntroText.style.color =
