@@ -1640,12 +1640,12 @@ async function openWeekSelectionScreen(employeeId) {
                         servingType =
                             " 📦 Zabaliť";
 
-                    } else if (order.dining) {
+                  } else if (order.dining) {
 
-                        servingType =
-                            " 🍽️ Výdaj";
+    servingType =
+        " 🍽️ V jedálni";
 
-                    }
+}
 
                     meal.textContent =
                         `${menuName}${servingType}`;
