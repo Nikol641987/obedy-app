@@ -1556,10 +1556,6 @@ async function openWeekSelectionScreen(employeeId) {
 const deadline =
     new Date(date);
 
-deadline.setDate(
-    deadline.getDate() - 1
-);
-
 deadline.setHours(
     8,
     30,
@@ -1616,6 +1612,7 @@ const isClosed =
         );
 
     if (isClosed) {
+    
 
         status.className =
             "status closed";
@@ -1710,16 +1707,27 @@ const isClosed =
                 }
 
                 const status =
-                    document.createElement(
-                        "div"
-                    );
+    document.createElement(
+        "div"
+    );
 
-                status.className =
-                    "status ordered";
+if (isClosed) {
 
-                status.textContent =
-                    "🟢 Objednané";
+    status.className =
+        "status closed";
 
+    status.textContent =
+        "🔒 Objednané – uzavreté";
+
+} else {
+
+    status.className =
+        "status ordered";
+
+    status.textContent =
+        "🟢 Objednané";
+
+}
                 card.appendChild(
                     orderDetails
                 );
