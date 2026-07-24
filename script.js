@@ -1610,22 +1610,34 @@ const isClosed =
 
             if (dayOrders.length === 0) {
 
-                const status =
-                    document.createElement(
-                        "div"
-                    );
+    const status =
+        document.createElement(
+            "div"
+        );
 
-                status.className =
-                    "status not-ordered";
+    if (isClosed) {
 
-                status.textContent =
-                    "⚪ Neobjednané";
+        status.className =
+            "status closed";
 
-                card.appendChild(
-                    status
-                );
+        status.textContent =
+            "🔒 Uzavreté";
 
-            } else {
+    } else {
+
+        status.className =
+            "status not-ordered";
+
+        status.textContent =
+            "⚪ Neobjednané";
+
+    }
+
+    card.appendChild(
+        status
+    );
+
+} else {
 
                 const orderDetails =
                     document.createElement(
