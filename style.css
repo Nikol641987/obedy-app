@@ -1003,3 +1003,27 @@ select:focus-visible {
     margin-top: 12px;
     font-weight: 600;
 }
+.week-order-meal {
+    margin-top: 14px;
+}
+
+.week-order-meal:first-child {
+    margin-top: 0;
+}
+
+.week-serving-type {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.week-menu-name {
+    line-height: 1.35;
+}
+
+.week-order-details {
+    margin-top: 14px;
+}
+
+.week-order-details + .status {
+    margin-top: 22px;
+}
