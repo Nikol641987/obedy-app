@@ -1910,7 +1910,7 @@ async function checkTodayOrder(
     new Date();
 
 const deadline =
-    new Date(`${today}T08:30:00`);
+    new Date(`${today}T16:30:00`);
 
 const canEdit =
     now < deadline;
