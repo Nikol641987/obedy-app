@@ -1672,8 +1672,15 @@ const isClosed =
 
 }
 
-                    meal.textContent =
-                        `${menuName}${servingType}`;
+                   meal.innerHTML = `
+    <div class="week-serving-type">
+        ${servingType.trim()}
+    </div>
+
+    <div class="week-menu-name">
+        ${menuName}
+    </div>
+`;
 
                     orderDetails.appendChild(
                         meal
@@ -1717,7 +1724,7 @@ if (isClosed) {
         "status closed";
 
     status.textContent =
-        "🔒 Objednané – uzavreté";
+    "🔒 Objednávka uzavretá";
 
 } else {
 
