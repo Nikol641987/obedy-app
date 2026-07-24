@@ -1557,7 +1557,7 @@ const deadline =
     new Date(date);
 
 deadline.setHours(
-    8,
+    16,
     30,
     0,
     0
