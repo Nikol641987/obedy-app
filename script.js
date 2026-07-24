@@ -1553,7 +1553,23 @@ async function openWeekSelectionScreen(employeeId) {
             const dayOrders =
                 ordersByDate[dateForDatabase]
                 || [];
+const deadline =
+    new Date(date);
 
+deadline.setDate(
+    deadline.getDate() - 1
+);
+
+deadline.setHours(
+    8,
+    30,
+    0,
+    0
+);
+
+const isClosed =
+    new Date() > deadline;
+            
             const card =
                 document.createElement(
                     "div"
