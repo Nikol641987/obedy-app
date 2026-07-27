@@ -2818,26 +2818,26 @@ async function loadMyOrders(
                                     [];
 
 
-                                if (
-                                    item.dining
-                                ) {
+                             if (
+    item.dining
+) {
 
-                                    methods.push(
-                                        "V jedálni"
-                                    );
+    methods.push(
+        "🍽️ V jedálni"
+    );
 
-                                }
+}
 
 
-                                if (
-                                    item.takeaway
-                                ) {
+if (
+    item.takeaway
+) {
 
-                                    methods.push(
-                                        "Zabaliť"
-                                    );
+    methods.push(
+        "📦 Zabaliť"
+    );
 
-                                }
+}
 
 
                                 const soupText =
