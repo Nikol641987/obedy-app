@@ -4402,11 +4402,62 @@ async function generateMonthlyReport() {
             throw error;
         }
 
-        summary.textContent =
-            `Načítaných objednávok: ${data.length}`;
+        const employeeTotals = {};
 
-        summary.className =
-            "message success-message";
+data.forEach(order => {
+
+    const employeeName =
+        order.employee_name
+        || order.employee_id
+        || "Neznámy zamestnanec";
+
+    if (!employeeTotals[employeeName]) {
+        employeeTotals[employeeName] = 0;
+    }
+
+    employeeTotals[employeeName] += 1;
+
+});
+
+const sortedEmployees =
+    Object.entries(employeeTotals)
+        .sort((a, b) =>
+            a[0].localeCompare(
+                b[0],
+                "sk"
+            )
+        );
+
+summary.textContent =
+    `Spolu objednaných obedov: ${data.length}`;
+
+summary.className =
+    "message success-message";
+
+container.innerHTML = `
+    <div class="monthly-report-table">
+
+        <div class="monthly-report-row monthly-report-header">
+            <div>Zamestnanec</div>
+            <div>Počet obedov</div>
+        </div>
+
+        ${sortedEmployees
+            .map(([employeeName, total]) => `
+                <div class="monthly-report-row">
+                    <div>
+                        ${escapeHtml(employeeName)}
+                    </div>
+
+                    <div>
+                        ${total}
+                    </div>
+                </div>
+            `)
+            .join("")}
+
+    </div>
+`;
 
     } catch (error) {
 
