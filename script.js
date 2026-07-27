@@ -4333,3 +4333,49 @@ function setupMonthlyReport() {
     );
 
 }
+async function generateMonthlyReport() {
+
+    const monthInput =
+        document.getElementById(
+            "monthlyReportMonth"
+        );
+
+    const summary =
+        document.getElementById(
+            "monthlyReportSummary"
+        );
+
+    const container =
+        document.getElementById(
+            "monthlyReportContainer"
+        );
+
+    if (
+        !monthInput
+        || !summary
+        || !container
+    ) {
+        return;
+    }
+
+    if (!monthInput.value) {
+
+        summary.textContent =
+            "Vyberte mesiac.";
+
+        summary.className =
+            "message error-message";
+
+        return;
+
+    }
+
+    summary.textContent =
+        "Načítavam údaje...";
+
+    summary.className =
+        "message";
+
+    container.innerHTML = "";
+
+}
