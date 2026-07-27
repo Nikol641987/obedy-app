@@ -4377,5 +4377,46 @@ async function generateMonthlyReport() {
         "message";
 
     container.innerHTML = "";
+    const [year, month] =
+        monthInput.value.split("-");
 
+    const fromDate =
+        `${year}-${month}-01`;
+
+    const lastDay =
+        new Date(year, month, 0).getDate();
+
+    const toDate =
+        `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("meal_orders")
+                .select("*")
+                .gte("order_date", fromDate)
+                .lte("order_date", toDate);
+
+        if (error) {
+            throw error;
+        }
+
+        summary.textContent =
+            `Načítaných objednávok: ${data.length}`;
+
+        summary.className =
+            "message success-message";
+
+    } catch (error) {
+
+        console.error(error);
+
+        summary.textContent =
+            "Výkaz sa nepodarilo načítať.";
+
+        summary.className =
+            "message error-message";
+
+    }
 }
