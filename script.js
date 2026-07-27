@@ -4316,6 +4316,9 @@ setTimeout(() => {
 // 17. MESAČNÝ VÝKAZ OBEDOV
 // =====================================
 
+let monthlyReportRows = [];
+let monthlyReportSelectedMonth = "";
+
 function setupMonthlyReport() {
 
     const generateButton =
@@ -4323,16 +4326,24 @@ function setupMonthlyReport() {
             "generateMonthlyReportButton"
         );
 
-    if (!generateButton) {
-        return;
-    }
+    const exportButton =
+        document.getElementById(
+            "exportMonthlyReportButton"
+        );
 
-    generateButton.addEventListener(
+    generateButton?.addEventListener(
         "click",
         generateMonthlyReport
     );
 
+    exportButton?.addEventListener(
+        "click",
+        exportMonthlyReportToExcel
+    );
+
 }
+
+
 async function generateMonthlyReport() {
 
     const monthInput =
@@ -4350,6 +4361,12 @@ async function generateMonthlyReport() {
             "monthlyReportContainer"
         );
 
+    const exportButton =
+        document.getElementById(
+            "exportMonthlyReportButton"
+        );
+
+
     if (
         !monthInput
         || !summary
@@ -4357,6 +4374,7 @@ async function generateMonthlyReport() {
     ) {
         return;
     }
+
 
     if (!monthInput.value) {
 
@@ -4367,8 +4385,8 @@ async function generateMonthlyReport() {
             "message error-message";
 
         return;
-
     }
+
 
     summary.textContent =
         "Načítavam údaje...";
@@ -4377,6 +4395,12 @@ async function generateMonthlyReport() {
         "message";
 
     container.innerHTML = "";
+
+    if (exportButton) {
+        exportButton.hidden = true;
+    }
+
+
     const [year, month] =
         monthInput.value.split("-");
 
@@ -4384,84 +4408,287 @@ async function generateMonthlyReport() {
         `${year}-${month}-01`;
 
     const lastDay =
-        new Date(year, month, 0).getDate();
+        new Date(
+            Number(year),
+            Number(month),
+            0
+        ).getDate();
 
     const toDate =
         `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
 
+
     try {
 
-        const { data, error } =
-            await supabaseClient
-                .from("meal_orders")
-                .select("*")
-                .gte("order_date", fromDate)
-                .lte("order_date", toDate);
+        const [
+            ordersResult,
+            employeesResponse
+        ] = await Promise.all([
 
-        if (error) {
-            throw error;
+            supabaseClient
+                .from("meal_orders")
+                .select(`
+                    employee_id,
+                    employee_name,
+                    order_date
+                `)
+                .gte(
+                    "order_date",
+                    fromDate
+                )
+                .lte(
+                    "order_date",
+                    toDate
+                ),
+
+            fetch("employees.json")
+
+        ]);
+
+
+        if (ordersResult.error) {
+            throw ordersResult.error;
         }
 
-        const employeeTotals = {};
 
-data.forEach(order => {
+        if (!employeesResponse.ok) {
 
-    const employeeName =
-        order.employee_name
-        || order.employee_id
-        || "Neznámy zamestnanec";
+            throw new Error(
+                "Nepodarilo sa načítať employees.json."
+            );
 
-    if (!employeeTotals[employeeName]) {
-        employeeTotals[employeeName] = 0;
-    }
+        }
 
-    employeeTotals[employeeName] += 1;
 
-});
+        const orders =
+            ordersResult.data || [];
 
-const sortedEmployees =
-    Object.entries(employeeTotals)
-        .sort((a, b) =>
-            a[0].localeCompare(
-                b[0],
-                "sk"
-            )
-        );
+        const employees =
+            await employeesResponse.json();
 
-summary.textContent =
-    `Spolu objednaných obedov: ${data.length}`;
 
-summary.className =
-    "message success-message";
+        const employeeMap =
+            new Map();
 
-container.innerHTML = `
-    <div class="monthly-report-table">
 
-        <div class="monthly-report-row monthly-report-header">
-            <div>Zamestnanec</div>
-            <div>Počet obedov</div>
-        </div>
+        employees.forEach(employee => {
 
-        ${sortedEmployees
-            .map(([employeeName, total]) => `
-                <div class="monthly-report-row">
+            const personalNumber =
+                String(
+                    employee.personalNumber || ""
+                ).trim();
+
+            const fullName =
+                [
+                    employee.surname,
+                    employee.name
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .trim();
+
+            const oldEmployeeId =
+                `${employee.surname}_${employee.name}`;
+
+
+            if (personalNumber) {
+
+                employeeMap.set(
+                    personalNumber,
+                    {
+                        personalNumber,
+                        fullName
+                    }
+                );
+
+            }
+
+
+            employeeMap.set(
+                oldEmployeeId,
+                {
+                    personalNumber,
+                    fullName
+                }
+            );
+
+
+            if (fullName) {
+
+                employeeMap.set(
+                    fullName,
+                    {
+                        personalNumber,
+                        fullName
+                    }
+                );
+
+            }
+
+        });
+
+
+        const employeeTotals =
+            new Map();
+
+
+        orders.forEach(order => {
+
+            const employeeId =
+                String(
+                    order.employee_id || ""
+                ).trim();
+
+            const savedName =
+                String(
+                    order.employee_name || ""
+                ).trim();
+
+            const employee =
+                employeeMap.get(employeeId)
+                || employeeMap.get(savedName);
+
+            const personalNumber =
+                employee?.personalNumber
+                || employeeId
+                || "-";
+
+            const fullName =
+                employee?.fullName
+                || savedName
+                || employeeId
+                || "Neznámy zamestnanec";
+
+
+            const employeeKey =
+                personalNumber !== "-"
+                    ? personalNumber
+                    : fullName;
+
+
+            if (
+                !employeeTotals.has(
+                    employeeKey
+                )
+            ) {
+
+                employeeTotals.set(
+                    employeeKey,
+                    {
+                        personalNumber,
+                        fullName,
+                        total: 0
+                    }
+                );
+
+            }
+
+
+            employeeTotals.get(
+                employeeKey
+            ).total += 1;
+
+        });
+
+
+        monthlyReportRows =
+            [...employeeTotals.values()]
+                .sort((a, b) =>
+
+                    a.fullName.localeCompare(
+                        b.fullName,
+                        "sk"
+                    )
+
+                );
+
+
+        monthlyReportSelectedMonth =
+            monthInput.value;
+
+
+        summary.textContent =
+            `Spolu objednaných obedov: ${orders.length}`;
+
+        summary.className =
+            "message success-message";
+
+
+        if (
+            monthlyReportRows.length === 0
+        ) {
+
+            container.innerHTML = `
+                <p>
+                    Za vybraný mesiac nie sú uložené žiadne objednávky.
+                </p>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = `
+            <div class="monthly-report-table">
+
+                <div class="monthly-report-row monthly-report-header">
+
                     <div>
-                        ${escapeHtml(employeeName)}
+                        Osobné číslo
                     </div>
 
                     <div>
-                        ${total}
+                        Zamestnanec
                     </div>
+
+                    <div>
+                        Počet obedov
+                    </div>
+
                 </div>
-            `)
-            .join("")}
 
-    </div>
-`;
+                ${monthlyReportRows
+                    .map(employee => `
+                        <div class="monthly-report-row">
+
+                            <div>
+                                ${escapeHtml(
+                                    employee.personalNumber
+                                )}
+                            </div>
+
+                            <div>
+                                ${escapeHtml(
+                                    employee.fullName
+                                )}
+                            </div>
+
+                            <div>
+                                ${employee.total}
+                            </div>
+
+                        </div>
+                    `)
+                    .join("")}
+
+            </div>
+        `;
+
+
+        if (exportButton) {
+            exportButton.hidden = false;
+        }
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Chyba mesačného výkazu:",
+            error
+        );
+
+        monthlyReportRows = [];
 
         summary.textContent =
             "Výkaz sa nepodarilo načítať.";
@@ -4469,5 +4696,130 @@ container.innerHTML = `
         summary.className =
             "message error-message";
 
+        container.innerHTML = "";
+
+        if (exportButton) {
+            exportButton.hidden = true;
+        }
+
     }
+
+}
+
+
+function exportMonthlyReportToExcel() {
+
+    if (
+        monthlyReportRows.length === 0
+    ) {
+
+        alert(
+            "Najprv vygenerujte mesačný výkaz."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        typeof XLSX === "undefined"
+    ) {
+
+        alert(
+            "Knižnica na vytvorenie Excelu sa nenačítala."
+        );
+
+        return;
+
+    }
+
+
+    const excelData = [
+
+        [
+            "Osobné číslo",
+            "Zamestnanec",
+            "Počet obedov"
+        ],
+
+        ...monthlyReportRows.map(
+            employee => [
+
+                employee.personalNumber,
+
+                employee.fullName,
+
+                employee.total
+
+            ]
+        )
+
+    ];
+
+
+    const totalMeals =
+        monthlyReportRows.reduce(
+            (
+                sum,
+                employee
+            ) => sum + employee.total,
+            0
+        );
+
+
+    excelData.push([]);
+
+    excelData.push([
+        "",
+        "Spolu objednaných obedov",
+        totalMeals
+    ]);
+
+
+    const worksheet =
+        XLSX.utils.aoa_to_sheet(
+            excelData
+        );
+
+
+    worksheet["!cols"] = [
+
+        {
+            wch: 18
+        },
+
+        {
+            wch: 32
+        },
+
+        {
+            wch: 18
+        }
+
+    ];
+
+
+    const workbook =
+        XLSX.utils.book_new();
+
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Mesačný výkaz"
+    );
+
+
+    const [
+        year,
+        month
+    ] = monthlyReportSelectedMonth.split("-");
+
+
+    XLSX.writeFile(
+        workbook,
+        `Mesacny_vykaz_obedov_${month}_${year}.xlsx`
+    );
+
 }
