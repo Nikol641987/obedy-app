@@ -1046,3 +1046,46 @@ select:focus-visible {
 .week-menu-name {
     margin-left: 22px;
 }
+/* =====================================
+   MESAČNÝ VÝKAZ OBEDOV
+===================================== */
+
+.monthly-report-table {
+    margin-top: 24px;
+    border: 1px solid #d9e1ea;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.monthly-report-row {
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.monthly-report-row:last-child {
+    border-bottom: none;
+}
+
+.monthly-report-header {
+    background: #eef4fb;
+    color: #24589a;
+    font-weight: 700;
+}
+
+.monthly-report-row > div:last-child {
+    text-align: center;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+
+    .monthly-report-row {
+        grid-template-columns: 1fr 110px;
+        padding: 12px;
+    }
+
+}
