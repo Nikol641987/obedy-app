@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupManualIssue();
     setupChipLogin();
     setupChipIssue();
+    setupMonthlyReport();
 
 });
 
@@ -4311,4 +4312,24 @@ setTimeout(() => {
     );
 
 }
+// =====================================
+// 17. MESAČNÝ VÝKAZ OBEDOV
+// =====================================
 
+function setupMonthlyReport() {
+
+    const generateButton =
+        document.getElementById(
+            "generateMonthlyReportButton"
+        );
+
+    if (!generateButton) {
+        return;
+    }
+
+    generateButton.addEventListener(
+        "click",
+        generateMonthlyReport
+    );
+
+}
