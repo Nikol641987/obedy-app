@@ -383,6 +383,51 @@
     </div>
 
 </section>
+    <!-- MESAČNÝ VÝKAZ OBEDOV -->
+<section id="monthlyReportScreen" class="app-screen" hidden>
+
+    <button class="back-button" data-back-home>
+        ← Späť
+    </button>
+
+    <div class="content-card">
+
+        <h2>Mesačný výkaz obedov</h2>
+
+        <div class="form-group">
+
+            <label for="monthlyReportMonth">
+                Vyber mesiac
+            </label>
+
+            <input
+                type="month"
+                id="monthlyReportMonth"
+                class="form-control"
+            >
+
+        </div>
+
+        <button
+            id="generateMonthlyReportButton"
+            class="main-button"
+            type="button"
+        >
+            Generovať výkaz
+        </button>
+
+        <div
+            id="monthlyReportSummary"
+            class="message"
+        ></div>
+
+        <div
+            id="monthlyReportContainer"
+        ></div>
+
+    </div>
+
+</section>
     <!-- MOJE OBEDY -->
     <section id="myOrdersScreen" class="app-screen" hidden>
 
