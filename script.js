@@ -160,7 +160,8 @@ backButtons.forEach(button => {
 
     const openMyOrdersButton =
         document.getElementById("openMyOrdersButton");
-
+const openMonthlyReportButton =
+    document.getElementById("openMonthlyReportButton");
     const openProfileButton =
         document.getElementById("openProfileButton");
 
@@ -221,6 +222,14 @@ openDashboardButton?.addEventListener(
         showScreen("dashboardScreen");
 
         await renderIssueDashboard();
+
+    }
+);
+    openMonthlyReportButton?.addEventListener(
+    "click",
+    () => {
+
+        showScreen("monthlyReportScreen");
 
     }
 );
