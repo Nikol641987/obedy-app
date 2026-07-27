@@ -3784,26 +3784,24 @@ totalCount.textContent =
 
 
                                 return `
-                                    <div class="issue-meal-row">
+    <div class="issue-meal-row">
 
-                                        <div class="issue-menu">
-                                            🍽️ ${escapeHtml(
-                                                order.menu_name
-                                                || "Obed"
-                                            )}
-                                        </div>
+        <div class="issue-type">
+            ${
+                order.takeaway
+                    ? "📦 Zabaliť"
+                    : "🍽️ V jedálni"
+            }
+        </div>
 
-                                        <div class="issue-type">
-                                            ${
-                                                order.takeaway
-                                                    ? "📦"
-                                                    : "🍴"
-                                            }
-                                            ${escapeHtml(methodText)}
-                                        </div>
+        <div class="issue-menu">
+            ${escapeHtml(
+                order.menu_name || "Obed"
+            )}
+        </div>
 
-                                    </div>
-                                `;
+    </div>
+`;
 
                             })
                             .join("");
