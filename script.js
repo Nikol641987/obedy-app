@@ -4,7 +4,7 @@
 // =====================================
 
 // =====================================
-// AKTUÁLNE VYBRANÝ DEŇ OBJEDNÁVKY
+// 1. Štart aplikácie
 // =====================================
 
 let selectedOrderDate = null;
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 // =====================================
-// PREPÍNANIE OBRAZOVIEK
+// 2. PREPÍNANIE OBRAZOVIEK
 // =====================================
 
 function showScreen(screenId) {
@@ -70,7 +70,7 @@ if (screenId === "loginScreen") {
 
 
 // =====================================
-// AKTUÁLNE PRIHLÁSENÝ ZAMESTNANEC
+// 3. AKTUÁLNE PRIHLÁSENÝ ZAMESTNANEC
 // =====================================
 
 function getCurrentEmployeeId() {
@@ -124,7 +124,7 @@ function updatePermissions() {
 
 }
 // =====================================
-// NAVIGÁCIA
+// 4. NAVIGÁCIA
 // =====================================
 
 function setupNavigation() {
@@ -624,7 +624,7 @@ cancelResetPinButton?.addEventListener(
 
 
 // =====================================
-// NAČÍTANIE ZAMESTNANCOV
+// 5. NAČÍTANIE ZAMESTNANCOV
 // =====================================
 
 async function loadEmployees() {
@@ -796,7 +796,7 @@ function hasEmployeeOption(
 
 
 // =====================================
-// PRIHLÁSENIE A VLASTNÝ PIN
+// 6. PRIHLÁSENIE A VLASTNÝ PIN
 // =====================================
 
 function setupLogin() {
@@ -1376,12 +1376,9 @@ function showLoginError(message) {
 
 }
 
-// =====================================
-// VÝBER DŇA OBJEDNÁVKY
-// =====================================
 
 // =====================================
-// VÝBER DŇA OBJEDNÁVKY
+// 7. VÝBER DŇA OBJEDNÁVKY
 // =====================================
 
 async function openWeekSelectionScreen(employeeId) {
@@ -1764,7 +1761,7 @@ if (isClosed) {
     );
 }
 // =====================================
-// OTVORENIE OBJEDNÁVKY
+// 8. OTVORENIE OBJEDNÁVKY
 // =====================================
 
 async function openOrderScreen(
@@ -1808,7 +1805,7 @@ async function openOrderScreen(
 
 
 // =====================================
-// KONTROLA DNEŠNEJ OBJEDNÁVKY
+// 9. KONTROLA DNEŠNEJ OBJEDNÁVKY
 // =====================================
 
 async function checkTodayOrder(
@@ -2127,7 +2124,7 @@ const canEdit =
 
 
 // =====================================
-// POZDRAV ZAMESTNANCA
+// 10. POZDRAV ZAMESTNANCA
 // =====================================
 
 function setWelcomeEmployee(
@@ -2177,7 +2174,7 @@ function setWelcomeEmployee(
 
 
 // =====================================
-// DÁTUM
+// 11. DÁTUM
 // =====================================
 
 function setCurrentDate() {
@@ -2212,7 +2209,7 @@ function setCurrentDate() {
 
 
 // =====================================
-// NAČÍTANIE MENU
+// 12. NAČÍTANIE MENU
 // =====================================
 
 async function loadMenus() {
@@ -2333,7 +2330,7 @@ async function loadMenus() {
 
 
 // =====================================
-// ULOŽENIE OBJEDNÁVKY
+// 13. ULOŽENIE OBJEDNÁVKY
 // =====================================
 
 function setupOrderButton() {
@@ -2669,7 +2666,7 @@ setTimeout(() => {
 
 
 // =====================================
-// MOJE OBEDY
+// 14. MOJE OBEDY
 // =====================================
 
 function openMyOrdersScreen(
@@ -2913,7 +2910,7 @@ if (
 
 
 // =====================================
-// DÁTUM PRE DATABÁZU
+// 15. DÁTUM PRE DATABÁZU
 // =====================================
 
 function formatDateForDatabase(date) {
@@ -2994,7 +2991,7 @@ function formatOrderDate(date) {
 
 
 // =====================================
-// BEZPEČNÉ ZOBRAZENIE TEXTU
+// 16. BEZPEČNÉ ZOBRAZENIE TEXTU
 // =====================================
 
 function escapeHtml(text) {
