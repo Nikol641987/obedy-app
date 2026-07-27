@@ -691,21 +691,27 @@ select:focus-visible {
     margin-bottom:10px;
 
 }
-
 .issue-menu{
 
     font-size:15px;
 
-    margin-bottom:6px;
+    line-height:1.35;
+
+    margin-left:22px;
 
 }
 
 .issue-type{
 
-    color:var(--muted);
+    font-weight:700;
 
-    font-size:14px;
+    margin-bottom:4px;
 
+    color:inherit;
+
+    font-size:15px;
+
+}
 }
 .issue-meal-row{
     padding:10px 0;
