@@ -1059,7 +1059,7 @@ select:focus-visible {
 
 .monthly-report-row {
     display: grid;
-    grid-template-columns: 1fr 180px;
+    grid-template-columns: 180px 1fr 150px;
     align-items: center;
     gap: 20px;
     padding: 14px 18px;
@@ -1076,16 +1076,18 @@ select:focus-visible {
     font-weight: 700;
 }
 
-.monthly-report-row > div:last-child {
+.monthly-report-row > div:nth-child(3) {
     text-align: center;
     font-weight: 700;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 
     .monthly-report-row {
-        grid-template-columns: 1fr 110px;
+        grid-template-columns: 140px 1fr 90px;
+        gap: 10px;
         padding: 12px;
+        font-size: 0.9rem;
     }
 
 }
