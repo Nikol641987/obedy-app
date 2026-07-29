@@ -4622,14 +4622,18 @@ async function generateMonthlyReport() {
             employeeRow.total += 1;
 
 
-            const orderDate =
-                String(order.order_date || "");
+           const orderDate =
+    String(order.order_date || "")
+        .trim();
 
+const datePart =
+    orderDate.split("T")[0];
 
-            const day =
-                Number(
-                    orderDate.slice(8, 10)
-                );
+const dateParts =
+    datePart.split("-");
+
+const day =
+    Number(dateParts[2]);
 
 
             if (
