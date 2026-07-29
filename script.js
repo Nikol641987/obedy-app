@@ -5106,14 +5106,14 @@ function exportDailyReportToExcel() {
     ];
 
 
-    worksheet["!autofilter"] = {
+   worksheet["!autofilter"] = {
 
-        ref:
-            `A4:${XLSX.utils.encode_col(
-                headerRow.length - 1
-            )}${employeeRows.length + 5}`
+    ref:
+        `A4:${XLSX.utils.encode_col(
+            headerRow.length - 1
+        )}${employeeRows.length + 4}`
 
-    };
+};
 
 
     worksheet["!merges"] = [
