@@ -4312,12 +4312,16 @@ setTimeout(() => {
     );
 
 }
-// =====================================
+
+// // =====================================
 // 17. MESAČNÝ VÝKAZ OBEDOV
 // =====================================
 
 let monthlyReportRows = [];
+let monthlyReportDailyRows = [];
 let monthlyReportSelectedMonth = "";
+let monthlyReportDaysInMonth = 0;
+
 
 function setupMonthlyReport() {
 
@@ -4331,6 +4335,12 @@ function setupMonthlyReport() {
             "exportMonthlyReportButton"
         );
 
+    const dailyExportButton =
+        document.getElementById(
+            "exportDailyReportButton"
+        );
+
+
     generateButton?.addEventListener(
         "click",
         generateMonthlyReport
@@ -4339,6 +4349,11 @@ function setupMonthlyReport() {
     exportButton?.addEventListener(
         "click",
         exportMonthlyReportToExcel
+    );
+
+    dailyExportButton?.addEventListener(
+        "click",
+        exportDailyReportToExcel
     );
 
 }
@@ -4364,6 +4379,11 @@ async function generateMonthlyReport() {
     const exportButton =
         document.getElementById(
             "exportMonthlyReportButton"
+        );
+
+    const dailyExportButton =
+        document.getElementById(
+            "exportDailyReportButton"
         );
 
 
@@ -4396,16 +4416,23 @@ async function generateMonthlyReport() {
 
     container.innerHTML = "";
 
+
     if (exportButton) {
         exportButton.hidden = true;
+    }
+
+    if (dailyExportButton) {
+        dailyExportButton.hidden = true;
     }
 
 
     const [year, month] =
         monthInput.value.split("-");
 
+
     const fromDate =
         `${year}-${month}-01`;
+
 
     const lastDay =
         new Date(
@@ -4413,6 +4440,7 @@ async function generateMonthlyReport() {
             Number(month),
             0
         ).getDate();
+
 
     const toDate =
         `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
@@ -4478,6 +4506,7 @@ async function generateMonthlyReport() {
                     employee.personalNumber || ""
                 ).trim();
 
+
             const fullName =
                 [
                     employee.surname,
@@ -4486,6 +4515,7 @@ async function generateMonthlyReport() {
                     .filter(Boolean)
                     .join(" ")
                     .trim();
+
 
             const oldEmployeeId =
                 `${employee.surname}_${employee.name}`;
@@ -4539,19 +4569,23 @@ async function generateMonthlyReport() {
                     order.employee_id || ""
                 ).trim();
 
+
             const savedName =
                 String(
                     order.employee_name || ""
                 ).trim();
 
+
             const employee =
                 employeeMap.get(employeeId)
                 || employeeMap.get(savedName);
+
 
             const personalNumber =
                 employee?.personalNumber
                 || employeeId
                 || "-";
+
 
             const fullName =
                 employee?.fullName
@@ -4566,32 +4600,53 @@ async function generateMonthlyReport() {
                     : fullName;
 
 
-            if (
-                !employeeTotals.has(
-                    employeeKey
-                )
-            ) {
+            if (!employeeTotals.has(employeeKey)) {
 
                 employeeTotals.set(
                     employeeKey,
                     {
                         personalNumber,
                         fullName,
-                        total: 0
+                        total: 0,
+                        days: {}
                     }
                 );
 
             }
 
 
-            employeeTotals.get(
-                employeeKey
-            ).total += 1;
+            const employeeRow =
+                employeeTotals.get(employeeKey);
+
+
+            employeeRow.total += 1;
+
+
+            const orderDate =
+                String(order.order_date || "");
+
+
+            const day =
+                Number(
+                    orderDate.slice(8, 10)
+                );
+
+
+            if (
+                Number.isInteger(day)
+                && day >= 1
+                && day <= lastDay
+            ) {
+
+                employeeRow.days[day] =
+                    (employeeRow.days[day] || 0) + 1;
+
+            }
 
         });
 
 
-        monthlyReportRows =
+        monthlyReportDailyRows =
             [...employeeTotals.values()]
                 .sort((a, b) =>
 
@@ -4603,8 +4658,27 @@ async function generateMonthlyReport() {
                 );
 
 
+        monthlyReportRows =
+            monthlyReportDailyRows.map(
+                employee => ({
+                    personalNumber:
+                        employee.personalNumber,
+
+                    fullName:
+                        employee.fullName,
+
+                    total:
+                        employee.total
+                })
+            );
+
+
         monthlyReportSelectedMonth =
             monthInput.value;
+
+
+        monthlyReportDaysInMonth =
+            lastDay;
 
 
         summary.textContent =
@@ -4681,6 +4755,11 @@ async function generateMonthlyReport() {
         }
 
 
+        if (dailyExportButton) {
+            dailyExportButton.hidden = false;
+        }
+
+
     } catch (error) {
 
         console.error(
@@ -4688,7 +4767,12 @@ async function generateMonthlyReport() {
             error
         );
 
+
         monthlyReportRows = [];
+        monthlyReportDailyRows = [];
+        monthlyReportSelectedMonth = "";
+        monthlyReportDaysInMonth = 0;
+
 
         summary.textContent =
             "Výkaz sa nepodarilo načítať.";
@@ -4698,8 +4782,14 @@ async function generateMonthlyReport() {
 
         container.innerHTML = "";
 
+
         if (exportButton) {
             exportButton.hidden = true;
+        }
+
+
+        if (dailyExportButton) {
+            dailyExportButton.hidden = true;
         }
 
     }
@@ -4820,6 +4910,254 @@ function exportMonthlyReportToExcel() {
     XLSX.writeFile(
         workbook,
         `Mesacny_vykaz_obedov_${month}_${year}.xlsx`
+    );
+
+}
+
+
+function exportDailyReportToExcel() {
+
+    if (
+        monthlyReportDailyRows.length === 0
+        || !monthlyReportSelectedMonth
+    ) {
+
+        alert(
+            "Najprv vygenerujte mesačný výkaz."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        typeof XLSX === "undefined"
+    ) {
+
+        alert(
+            "Knižnica na vytvorenie Excelu sa nenačítala."
+        );
+
+        return;
+
+    }
+
+
+    const [
+        year,
+        month
+    ] = monthlyReportSelectedMonth.split("-");
+
+
+    const dayColumns =
+        Array.from(
+            {
+                length:
+                    monthlyReportDaysInMonth
+            },
+            (_, index) => index + 1
+        );
+
+
+    const headerRow = [
+
+        "Osobné číslo",
+
+        "Zamestnanec",
+
+        ...dayColumns.map(
+            day =>
+                `${String(day).padStart(2, "0")}.${month}`
+        ),
+
+        "Spolu"
+
+    ];
+
+
+    const dailyTotals =
+        dayColumns.map(day =>
+
+            monthlyReportDailyRows.reduce(
+                (
+                    sum,
+                    employee
+                ) =>
+                    sum
+                    + (
+                        employee.days[day]
+                        || 0
+                    ),
+                0
+            )
+
+        );
+
+
+    const totalMeals =
+        monthlyReportDailyRows.reduce(
+            (
+                sum,
+                employee
+            ) =>
+                sum + employee.total,
+            0
+        );
+
+
+    const titleRow = [
+
+        `Denný výkaz objednaných obedov – ${month}/${year}`
+
+    ];
+
+
+    const generatedRow = [
+
+        `Vygenerované: ${new Date().toLocaleString("sk-SK")}`
+
+    ];
+
+
+    const totalRow = [
+
+        "",
+
+        "Spolu za deň",
+
+        ...dailyTotals,
+
+        totalMeals
+
+    ];
+
+
+    const employeeRows =
+        monthlyReportDailyRows.map(
+            employee => [
+
+                employee.personalNumber,
+
+                employee.fullName,
+
+                ...dayColumns.map(day => {
+
+                    const count =
+                        employee.days[day]
+                        || 0;
+
+                    return count > 0
+                        ? count
+                        : "";
+
+                }),
+
+                employee.total
+
+            ]
+        );
+
+
+    const excelData = [
+
+        titleRow,
+
+        generatedRow,
+
+        [],
+
+        headerRow,
+
+        totalRow,
+
+        ...employeeRows
+
+    ];
+
+
+    const worksheet =
+        XLSX.utils.aoa_to_sheet(
+            excelData
+        );
+
+
+    worksheet["!cols"] = [
+
+        {
+            wch: 18
+        },
+
+        {
+            wch: 30
+        },
+
+        ...dayColumns.map(() => ({
+            wch: 7
+        })),
+
+        {
+            wch: 10
+        }
+
+    ];
+
+
+    worksheet["!autofilter"] = {
+
+        ref:
+            `A4:${XLSX.utils.encode_col(
+                headerRow.length - 1
+            )}${employeeRows.length + 5}`
+
+    };
+
+
+    worksheet["!merges"] = [
+
+        {
+            s: {
+                r: 0,
+                c: 0
+            },
+
+            e: {
+                r: 0,
+                c:
+                    headerRow.length - 1
+            }
+        },
+
+        {
+            s: {
+                r: 1,
+                c: 0
+            },
+
+            e: {
+                r: 1,
+                c:
+                    headerRow.length - 1
+            }
+        }
+
+    ];
+
+
+    const workbook =
+        XLSX.utils.book_new();
+
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Denný výkaz"
+    );
+
+
+    XLSX.writeFile(
+        workbook,
+        `Denny_vykaz_obedov_${month}_${year}.xlsx`
     );
 
 }
