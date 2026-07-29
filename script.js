@@ -5065,20 +5065,19 @@ function exportDailyReportToExcel() {
 
     const excelData = [
 
-        titleRow,
+    titleRow,
 
-        generatedRow,
+    generatedRow,
 
-        [],
+    [],
 
-        headerRow,
+    headerRow,
 
-        totalRow,
+    ...employeeRows,
 
-        ...employeeRows
+    totalRow
 
-    ];
-
+];
 
     const worksheet =
         XLSX.utils.aoa_to_sheet(
