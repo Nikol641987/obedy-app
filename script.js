@@ -246,6 +246,15 @@ openDashboardButton?.addEventListener(
     }
 );
 
+    openAdminButton?.addEventListener(
+    "click",
+    () => {
+
+        showScreen("adminScreen");
+
+    }
+);
+    
     openMyOrdersButton?.addEventListener(
         "click",
         () => {
