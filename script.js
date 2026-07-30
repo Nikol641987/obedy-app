@@ -111,6 +111,8 @@ function updatePermissions() {
 
     const openDashboardButton =
         document.getElementById("openDashboardButton");
+    const openAdminButton =
+    document.getElementById("openAdminButton");
 
     // Výdaj obedov vidí každý
     if (openIssueButton) {
@@ -122,7 +124,11 @@ function updatePermissions() {
         openDashboardButton.hidden =
             !(role === "admin" || role === "issue");
     }
-
+// Administráciu vidí iba admin
+if (openAdminButton) {
+    openAdminButton.hidden =
+        role !== "admin";
+}
 }
 // =====================================
 // 4. NAVIGÁCIA
@@ -161,8 +167,13 @@ backButtons.forEach(button => {
 
     const openMyOrdersButton =
         document.getElementById("openMyOrdersButton");
+    
 const openMonthlyReportButton =
     document.getElementById("openMonthlyReportButton");
+
+    const openAdminButton =
+    document.getElementById("openAdminButton");
+    
     const openProfileButton =
         document.getElementById("openProfileButton");
 
