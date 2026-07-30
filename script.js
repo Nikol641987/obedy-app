@@ -325,7 +325,7 @@ addEmployeeButton?.addEventListener(
 );
 saveEmployeeButton?.addEventListener(
     "click",
-    () => {
+    async () => {
 
         const employeeData = {
 
@@ -359,7 +359,58 @@ saveEmployeeButton?.addEventListener(
         console.log(
             employeeData
         );
+if (!editingEmployee) {
 
+    const { error } =
+        await supabaseClient
+            .from("employees")
+            .insert({
+
+                name:
+                    employeeData.name,
+
+                surname:
+                    employeeData.surname,
+
+                employee_number:
+                    employeeData.personalNumber,
+
+                chip:
+                    employeeData.chip || null,
+
+                has_chip:
+                    Boolean(employeeData.chip),
+
+                active:
+                    true
+
+            });
+
+    if (error) {
+
+        console.error(
+            error
+        );
+
+        alert(
+            "Zamestnanca sa nepodarilo uložiť."
+        );
+
+        return;
+
+    }
+
+    alert(
+        "Zamestnanec bol uložený."
+    );
+
+    employeeModal.hidden =
+        true;
+
+    await renderAdminEmployees();
+
+}
+        
     }
 );
     
