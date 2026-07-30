@@ -3612,23 +3612,30 @@ async function renderIssueDashboard() {
         document.getElementById("issueCards");
 
     const waitingCount =
-        document.getElementById("waitingCount");
+    document.getElementById("waitingCount");
 
-    const issuedCount =
-        document.getElementById("issuedCount");
+const issuedCount =
+    document.getElementById("issuedCount");
 
-    const totalCount =
-        document.getElementById("totalCount");
+const diningCount =
+    document.getElementById("diningCount");
 
+const takeawayCount =
+    document.getElementById("takeawayCount");
 
-    if (
-        !issueCards
-        || !waitingCount
-        || !issuedCount
-        || !totalCount
-    ) {
-        return;
-    }
+const totalCount =
+    document.getElementById("totalCount");
+
+   if (
+    !issueCards
+    || !waitingCount
+    || !issuedCount
+    || !diningCount
+    || !takeawayCount
+    || !totalCount
+) {
+    return;
+}
 
 
     issueCards.innerHTML = `
@@ -3731,8 +3738,7 @@ async function renderIssueDashboard() {
 
                 });
 
-
-        const waitingMeals =
+const waitingMeals =
     orders.filter(order =>
         !order.issued
     ).length;
@@ -3742,15 +3748,30 @@ const issuedMeals =
         order.issued
     ).length;
 
+const diningMeals =
+    orders.filter(order =>
+        order.dining
+    ).length;
+
+const takeawayMeals =
+    orders.filter(order =>
+        order.takeaway
+    ).length;
+
 waitingCount.textContent =
     waitingMeals;
 
 issuedCount.textContent =
     issuedMeals;
 
+diningCount.textContent =
+    diningMeals;
+
+takeawayCount.textContent =
+    takeawayMeals;
+
 totalCount.textContent =
     orders.length;
-
 
         if (employees.length === 0) {
 
