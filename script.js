@@ -388,18 +388,15 @@ if (!editingEmployee) {
 
     if (error) {
 
-        console.error(
-            error
-        );
+    console.error(error);
 
-        alert(
-            "Zamestnanca sa nepodarilo uložiť."
-        );
+    alert(
+        error.message
+    );
 
-        return;
+    return;
 
-    }
-
+}
     alert(
         "Zamestnanec bol uložený."
     );
