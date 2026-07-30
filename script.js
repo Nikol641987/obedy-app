@@ -180,6 +180,9 @@ const adminEmployeesButton =
     const addEmployeeButton =
     document.getElementById("addEmployeeButton");
 
+    const importEmployeesButton =
+    document.getElementById("importEmployeesButton");
+
     const cancelEmployeeButton =
     document.getElementById("cancelEmployeeButton");
 
@@ -280,6 +283,22 @@ openDashboardButton?.addEventListener(
 
     }
 );
+
+    importEmployeesButton?.addEventListener(
+    "click",
+    async () => {
+
+        const response =
+            await fetch("employees.json");
+
+        const employees =
+            await response.json();
+
+        console.log(employees);
+
+    }
+);
+    
 addEmployeeButton?.addEventListener(
     "click",
     () => {
