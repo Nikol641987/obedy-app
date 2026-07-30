@@ -311,20 +311,12 @@ openDashboardButton?.addEventListener(
                 employee.chip || null,
 
             has_chip:
-                employee.hasChip,
-
-            active:
-                employee.active,
-
-            role:
-                employee.role
-
-        })
-    );
-
+               
+                
 console.log(
     employeesForImport
 );
+    
 const { error } =
     await supabaseClient
         .from("employees")
@@ -950,22 +942,21 @@ window.adminEmployeesData =
 
         employees.forEach(employee => {
 
-            if (!employee.active) return;
+            if (employee.active === false) return;
 
 
             const option =
                 document.createElement("option");
 
+option.value =
+    employee.employee_number
+    && employee.employee_number !== "None"
 
-            option.value =
-                employee.personalNumber
-                && employee.personalNumber !== "None"
+        ? String(
+            employee.employee_number
+        )
 
-                    ? String(
-                        employee.personalNumber
-                    )
-
-                    : `${employee.surname}_${employee.name}`;
+        : `${employee.surname}_${employee.name}`;
 
 
             option.textContent =
@@ -982,9 +973,9 @@ window.adminEmployeesData =
                 employee.chip || "";
 
             option.dataset.hasChip =
-                employee.hasChip
-                    ? "true"
-                    : "false";
+    employee.has_chip
+        ? "true"
+        : "false";
             option.dataset.role =
     employee.role || "";
 
@@ -1022,6 +1013,7 @@ window.adminEmployeesData =
 
 
         const rememberMe =
+            
             document.getElementById(
                 "rememberMe"
             );
@@ -4777,9 +4769,9 @@ async function generateMonthlyReport() {
         employees.forEach(employee => {
 
             const personalNumber =
-                String(
-                    employee.personalNumber || ""
-                ).trim();
+    String(
+        employee.employee_number || ""
+    ).trim();
 
 
             const fullName =
