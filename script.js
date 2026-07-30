@@ -696,7 +696,9 @@ async function loadEmployees() {
 
         const employees =
             await response.json();
-
+        
+window.adminEmployeesData =
+    employees;
 
         employees.sort((a, b) => {
 
@@ -5344,7 +5346,11 @@ function exportDailyReportToExcel() {
 
 }
 async function renderAdminEmployees() {
-
+    
+const searchInput =
+    document.getElementById(
+        "adminEmployeesSearch"
+    );
     const container =
         document.getElementById(
             "adminEmployeesContainer"
@@ -5354,6 +5360,7 @@ async function renderAdminEmployees() {
         return;
     }
 
+    
     container.innerHTML =
         "<p>Načítavam zamestnancov...</p>";
 
@@ -5393,8 +5400,11 @@ async function renderAdminEmployees() {
             return;
         }
 
+        const renderEmployeesList =
+    employeesToRender => {
+        
         container.innerHTML =
-            employees
+            employeesToRender
                 .map(employee => {
 
                     const fullName =
@@ -5446,7 +5456,48 @@ async function renderAdminEmployees() {
 
                 })
                 .join("");
+        };
+        renderEmployeesList(
+    employees
+);
 
+        if (searchInput) {
+
+    searchInput.value = "";
+
+    searchInput.oninput = () => {
+
+        const searchValue =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+        const filteredEmployees =
+            employees.filter(employee => {
+
+                const fullName =
+                    `${employee.surname || ""} ${employee.name || ""}`
+                        .toLowerCase();
+
+                const personalNumber =
+                    String(
+                        employee.personalNumber || ""
+                    ).toLowerCase();
+
+                return (
+                    fullName.includes(searchValue) ||
+                    personalNumber.includes(searchValue)
+                );
+
+            });
+
+        renderEmployeesList(
+            filteredEmployees
+        );
+
+    };
+
+}
     } catch (error) {
 
         console.error(
