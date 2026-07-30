@@ -5587,17 +5587,14 @@ const searchInput =
 
     try {
 
-        const response =
-            await fetch("employees.json");
+      const { data: employees, error } =
+    await supabaseClient
+        .from("employees")
+        .select("*");
 
-        if (!response.ok) {
-            throw new Error(
-                "Nepodarilo sa načítať employees.json."
-            );
-        }
-
-        const employees =
-            await response.json();
+if (error) {
+    throw error;
+}
 
         employees.sort((a, b) => {
 
