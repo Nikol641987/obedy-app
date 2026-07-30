@@ -1146,3 +1146,12 @@ select:focus-visible {
     }
 
 }
+.admin-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 20px 0;
+}
+
+#addEmployeeButton {
+    width: auto;
+}
