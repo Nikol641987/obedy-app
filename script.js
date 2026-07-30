@@ -4954,6 +4954,28 @@ function exportDailyReportToExcel() {
     ] = monthlyReportSelectedMonth.split("-");
 
 
+    const monthNames = [
+        "január",
+        "február",
+        "marec",
+        "apríl",
+        "máj",
+        "jún",
+        "júl",
+        "august",
+        "september",
+        "október",
+        "november",
+        "december"
+    ];
+
+
+    const monthName =
+        monthNames[
+            Number(month) - 1
+        ];
+
+
     const dayColumns =
         Array.from(
             {
@@ -4970,10 +4992,33 @@ function exportDailyReportToExcel() {
 
         "Zamestnanec",
 
-        ...dayColumns.map(
-            day =>
-                `${String(day).padStart(2, "0")}.${month}`
-        ),
+        ...dayColumns.map(day => {
+
+            const date =
+                new Date(
+                    Number(year),
+                    Number(month) - 1,
+                    day
+                );
+
+            const dayOfWeek =
+                date.getDay();
+
+            let weekendText = "";
+
+            if (dayOfWeek === 6) {
+                weekendText = " So";
+            }
+
+            if (dayOfWeek === 0) {
+                weekendText = " Ne";
+            }
+
+            return (
+                `${String(day).padStart(2, "0")}.${month}${weekendText}`
+            );
+
+        }),
 
         "Spolu"
 
@@ -5012,7 +5057,7 @@ function exportDailyReportToExcel() {
 
     const titleRow = [
 
-        `Denný výkaz objednaných obedov – ${month}/${year}`
+        `Denný výkaz obedov – ${monthName} ${year}`
 
     ];
 
@@ -5020,6 +5065,13 @@ function exportDailyReportToExcel() {
     const generatedRow = [
 
         `Vygenerované: ${new Date().toLocaleString("sk-SK")}`
+
+    ];
+
+
+    const employeeCountRow = [
+
+        `Počet zamestnancov: ${monthlyReportDailyRows.length}`
 
     ];
 
@@ -5065,19 +5117,22 @@ function exportDailyReportToExcel() {
 
     const excelData = [
 
-    titleRow,
+        titleRow,
 
-    generatedRow,
+        generatedRow,
 
-    [],
+        employeeCountRow,
 
-    headerRow,
+        [],
 
-    ...employeeRows,
+        headerRow,
 
-    totalRow
+        ...employeeRows,
 
-];
+        totalRow
+
+    ];
+
 
     const worksheet =
         XLSX.utils.aoa_to_sheet(
@@ -5088,16 +5143,33 @@ function exportDailyReportToExcel() {
     worksheet["!cols"] = [
 
         {
-            wch: 18
+            wch: 16
         },
 
         {
             wch: 30
         },
 
-        ...dayColumns.map(() => ({
-            wch: 7
-        })),
+        ...dayColumns.map(day => {
+
+            const date =
+                new Date(
+                    Number(year),
+                    Number(month) - 1,
+                    day
+                );
+
+            const isWeekend =
+                date.getDay() === 0
+                || date.getDay() === 6;
+
+            return {
+                wch: isWeekend
+                    ? 9
+                    : 7
+            };
+
+        }),
 
         {
             wch: 10
@@ -5106,14 +5178,14 @@ function exportDailyReportToExcel() {
     ];
 
 
-   worksheet["!autofilter"] = {
+    worksheet["!autofilter"] = {
 
-    ref:
-        `A4:${XLSX.utils.encode_col(
-            headerRow.length - 1
-        )}${employeeRows.length + 4}`
+        ref:
+            `A5:${XLSX.utils.encode_col(
+                headerRow.length - 1
+            )}${employeeRows.length + 5}`
 
-};
+    };
 
 
     worksheet["!merges"] = [
@@ -5142,9 +5214,61 @@ function exportDailyReportToExcel() {
                 c:
                     headerRow.length - 1
             }
+        },
+
+        {
+            s: {
+                r: 2,
+                c: 0
+            },
+
+            e: {
+                r: 2,
+                c:
+                    headerRow.length - 1
+            }
         }
 
     ];
+
+
+    worksheet["!freeze"] = {
+
+        xSplit: 2,
+
+        ySplit: 5
+
+    };
+
+
+    worksheet["!pageSetup"] = {
+
+        orientation: "landscape",
+
+        fitToWidth: 1,
+
+        fitToHeight: 0,
+
+        paperSize: 9
+
+    };
+
+
+    worksheet["!margins"] = {
+
+        left: 0.3,
+
+        right: 0.3,
+
+        top: 0.5,
+
+        bottom: 0.5,
+
+        header: 0.2,
+
+        footer: 0.2
+
+    };
 
 
     const workbook =
