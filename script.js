@@ -260,9 +260,11 @@ openDashboardButton?.addEventListener(
 
     adminEmployeesButton?.addEventListener(
     "click",
-    () => {
+    async () => {
 
         showScreen("adminEmployeesScreen");
+
+        await renderAdminEmployees();
 
     }
 );
@@ -5340,4 +5342,122 @@ function exportDailyReportToExcel() {
         `Denny_vykaz_obedov_${month}_${year}.xlsx`
     );
 
+}
+async function renderAdminEmployees() {
+
+    const container =
+        document.getElementById(
+            "adminEmployeesContainer"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML =
+        "<p>Načítavam zamestnancov...</p>";
+
+    try {
+
+        const response =
+            await fetch("employees.json");
+
+        if (!response.ok) {
+            throw new Error(
+                "Nepodarilo sa načítať employees.json."
+            );
+        }
+
+        const employees =
+            await response.json();
+
+        employees.sort((a, b) => {
+
+            const employeeA =
+                `${a.surname || ""} ${a.name || ""}`;
+
+            const employeeB =
+                `${b.surname || ""} ${b.name || ""}`;
+
+            return employeeA.localeCompare(
+                employeeB,
+                "sk"
+            );
+        });
+
+        if (employees.length === 0) {
+
+            container.innerHTML =
+                "<p>V zozname nie sú žiadni zamestnanci.</p>";
+
+            return;
+        }
+
+        container.innerHTML =
+            employees
+                .map(employee => {
+
+                    const fullName =
+                        `${employee.surname || ""} ${employee.name || ""}`.trim();
+
+                    const personalNumber =
+                        employee.personalNumber || "-";
+
+                    const chip =
+                        employee.chip || "-";
+
+                    const role =
+                        employee.role || "-";
+
+                    const status =
+                        employee.active
+                            ? "Aktívny"
+                            : "Neaktívny";
+
+                    return `
+                        <article class="admin-employee-card">
+
+                            <h3>
+                                ${escapeHtml(fullName)}
+                            </h3>
+
+                            <p>
+                                <strong>Osobné číslo:</strong>
+                                ${escapeHtml(personalNumber)}
+                            </p>
+
+                            <p>
+                                <strong>Čip:</strong>
+                                ${escapeHtml(chip)}
+                            </p>
+
+                            <p>
+                                <strong>Rola:</strong>
+                                ${escapeHtml(role)}
+                            </p>
+
+                            <p>
+                                <strong>Stav:</strong>
+                                ${escapeHtml(status)}
+                            </p>
+
+                        </article>
+                    `;
+
+                })
+                .join("");
+
+    } catch (error) {
+
+        console.error(
+            "Chyba pri načítaní zamestnancov:",
+            error
+        );
+
+        container.innerHTML = `
+            <p class="error-message">
+                Zamestnancov sa nepodarilo načítať.
+            </p>
+        `;
+    }
 }
