@@ -409,13 +409,65 @@ role:
         "Zamestnanec bol uložený."
     );
 
+   employeeModal.hidden =
+    true;
+
+await renderAdminEmployees();
+
+} else {
+
+    const { error } =
+        await supabaseClient
+            .from("employees")
+            .update({
+
+                name:
+                    employeeData.name,
+
+                surname:
+                    employeeData.surname,
+
+                employee_number:
+                    employeeData.personalNumber,
+
+                chip:
+                    employeeData.chip || null,
+
+                has_chip:
+                    Boolean(employeeData.chip),
+
+                role:
+                    employeeData.role
+
+            })
+            .eq(
+                "id",
+                editingEmployee.id
+            );
+
+    if (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+        return;
+    }
+
+    alert(
+        "Zamestnanec bol upravený."
+    );
+
     employeeModal.hidden =
         true;
+
+    editingEmployee =
+        null;
 
     await renderAdminEmployees();
 
 }
-        
+
     }
 );
     
