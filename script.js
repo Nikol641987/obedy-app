@@ -174,6 +174,9 @@ const openMonthlyReportButton =
     const openAdminButton =
     document.getElementById("openAdminButton");
     
+const adminEmployeesButton =
+    document.getElementById("adminEmployeesButton");
+    
     const openProfileButton =
         document.getElementById("openProfileButton");
 
@@ -251,6 +254,15 @@ openDashboardButton?.addEventListener(
     () => {
 
         showScreen("adminScreen");
+
+    }
+);
+
+    adminEmployeesButton?.addEventListener(
+    "click",
+    () => {
+
+        showScreen("adminEmployeesScreen");
 
     }
 );
