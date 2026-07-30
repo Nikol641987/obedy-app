@@ -294,7 +294,37 @@ openDashboardButton?.addEventListener(
         const employees =
             await response.json();
 
-        console.log(employees);
+       const employeesForImport =
+    employees.map(
+        employee => ({
+
+            employee_number:
+                employee.personalNumber,
+
+            name:
+                employee.name,
+
+            surname:
+                employee.surname,
+
+            chip:
+                employee.chip || null,
+
+            has_chip:
+                employee.hasChip,
+
+            active:
+                employee.active,
+
+            role:
+                employee.role
+
+        })
+    );
+
+console.log(
+    employeesForImport
+);
 
     }
 );
