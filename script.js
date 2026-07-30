@@ -5620,8 +5620,8 @@ if (error) {
                     const fullName =
                         `${employee.surname || ""} ${employee.name || ""}`.trim();
 
-                    const personalNumber =
-                        employee.personalNumber || "-";
+                   const personalNumber =
+    employee.employee_number || "-";
 
                     const chip =
                         employee.chip || "-";
