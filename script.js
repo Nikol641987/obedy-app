@@ -284,66 +284,6 @@ openDashboardButton?.addEventListener(
     }
 );
 
-    importEmployeesButton?.addEventListener(
-    "click",
-    async () => {
-
-        const response =
-            await fetch("employees.json");
-
-        const employees =
-            await response.json();
-
-       const employeesForImport =
-    employees.map(
-        employee => ({
-
-            employee_number:
-                employee.personalNumber,
-
-            name:
-                employee.name,
-
-            surname:
-                employee.surname,
-
-            chip:
-                employee.chip || null,
-
-            has_chip:
-               
-                
-console.log(
-    employeesForImport
-);
-    
-const { error } =
-    await supabaseClient
-        .from("employees")
-        .insert(
-            employeesForImport
-        );
-
-if (error) {
-
-    console.error(error);
-
-    alert(
-        error.message
-    );
-
-    return;
-
-}
-
-alert(
-    "Zamestnanci boli úspešne importovaní."
-);
-
-await renderAdminEmployees();
-        
-    }
-);
     
 addEmployeeButton?.addEventListener(
     "click",
