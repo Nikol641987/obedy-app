@@ -1248,3 +1248,22 @@ select:focus-visible {
     width: auto;
     min-width: 120px;
 }
+#adminScreen > .back-button {
+    display: block;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 18px;
+    padding: 0;
+    text-align: left;
+}
+
+#adminScreen .content-card {
+    max-width: 1100px;
+    margin: 0 auto 40px;
+    text-align: center;
+}
+
+#adminScreen .admin-grid {
+    display: flex;
+    justify-content: center;
+}
