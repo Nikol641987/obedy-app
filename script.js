@@ -5508,7 +5508,11 @@ const searchInput =
         document.getElementById(
             "adminEmployeesContainer"
         );
-
+const employeeModal =
+    document.getElementById(
+        "employeeModal"
+    );
+    
     if (!container) {
         return;
     }
@@ -5634,7 +5638,7 @@ if (error) {
             editingEmployee =
                 employees.find(employee =>
                     String(
-                        employee.personalNumber
+                       employee.employee_number
                     ) === personalNumber
                 );
             if (!editingEmployee) {
@@ -5654,7 +5658,7 @@ document.getElementById(
 document.getElementById(
     "employeePersonalNumberInput"
 ).value =
-    editingEmployee.personalNumber || "";
+    editingEmployee.employee_number || "";
 
 document.getElementById(
     "employeeChipInput"
@@ -5691,9 +5695,9 @@ employeeModal.hidden =
                         .toLowerCase();
 
                 const personalNumber =
-                    String(
-                        employee.personalNumber || ""
-                    ).toLowerCase();
+    String(
+        employee.employee_number || ""
+    ).toLowerCase();
 
                 return (
                     fullName.includes(searchValue) ||
