@@ -183,6 +183,9 @@ const adminEmployeesButton =
     const cancelEmployeeButton =
     document.getElementById("cancelEmployeeButton");
 
+    const saveEmployeeButton =
+    document.getElementById("saveEmployeeButton");
+
     const employeeModal =
     document.getElementById("employeeModal");
     
@@ -317,6 +320,45 @@ addEmployeeButton?.addEventListener(
         document
             .getElementById("employeeModal")
             .hidden = true;
+
+    }
+);
+saveEmployeeButton?.addEventListener(
+    "click",
+    () => {
+
+        const employeeData = {
+
+            name:
+                document.getElementById(
+                    "employeeNameInput"
+                ).value.trim(),
+
+            surname:
+                document.getElementById(
+                    "employeeSurnameInput"
+                ).value.trim(),
+
+            personalNumber:
+                document.getElementById(
+                    "employeePersonalNumberInput"
+                ).value.trim(),
+
+            chip:
+                document.getElementById(
+                    "employeeChipInput"
+                ).value.trim(),
+
+            role:
+                document.getElementById(
+                    "employeeRoleInput"
+                ).value
+
+        };
+
+        console.log(
+            employeeData
+        );
 
     }
 );
