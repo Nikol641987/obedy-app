@@ -182,6 +182,9 @@ const adminEmployeesButton =
 
     const cancelEmployeeButton =
     document.getElementById("cancelEmployeeButton");
+
+    const employeeModal =
+    document.getElementById("employeeModal");
     
     const openProfileButton =
         document.getElementById("openProfileButton");
@@ -277,6 +280,9 @@ openDashboardButton?.addEventListener(
 addEmployeeButton?.addEventListener(
     "click",
     () => {
+
+        editingEmployee =
+            null;
 
         document
             .getElementById("employeeModal")
@@ -5372,6 +5378,9 @@ function exportDailyReportToExcel() {
     );
 
 }
+
+let editingEmployee =
+    null;
 async function renderAdminEmployees() {
     
 const searchInput =
@@ -5499,6 +5508,56 @@ const searchInput =
     employees
 );
 
+        document
+    .querySelectorAll(".edit-employee-button")
+    .forEach(button => {
+
+        button.onclick = () => {
+
+            const personalNumber =
+                button.dataset.personalNumber;
+
+            editingEmployee =
+                employees.find(employee =>
+                    String(
+                        employee.personalNumber
+                    ) === personalNumber
+                );
+            if (!editingEmployee) {
+    return;
+}
+
+document.getElementById(
+    "employeeNameInput"
+).value =
+    editingEmployee.name || "";
+
+document.getElementById(
+    "employeeSurnameInput"
+).value =
+    editingEmployee.surname || "";
+
+document.getElementById(
+    "employeePersonalNumberInput"
+).value =
+    editingEmployee.personalNumber || "";
+
+document.getElementById(
+    "employeeChipInput"
+).value =
+    editingEmployee.chip || "";
+
+document.getElementById(
+    "employeeRoleInput"
+).value =
+    editingEmployee.role || "employee";
+
+employeeModal.hidden =
+    false;
+
+        };
+
+    });
         if (searchInput) {
 
     searchInput.value = "";
