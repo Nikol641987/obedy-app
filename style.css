@@ -1230,3 +1230,11 @@ select:focus-visible {
 #employeeModal .modal-actions button {
     width: 100%;
 }
+#adminEmployeesScreen > .back-button {
+    display: block;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 18px;
+    padding: 0;
+    text-align: left;
+}
