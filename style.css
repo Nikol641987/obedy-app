@@ -1238,3 +1238,13 @@ select:focus-visible {
     padding: 0;
     text-align: left;
 }
+.admin-employee-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.edit-employee-button {
+    width: auto;
+    min-width: 120px;
+}
