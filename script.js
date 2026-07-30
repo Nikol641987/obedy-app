@@ -284,9 +284,28 @@ addEmployeeButton?.addEventListener(
         editingEmployee =
             null;
 
-        document
-            .getElementById("employeeModal")
-            .hidden = false;
+        document.getElementById(
+            "employeeNameInput"
+        ).value = "";
+
+        document.getElementById(
+            "employeeSurnameInput"
+        ).value = "";
+
+        document.getElementById(
+            "employeePersonalNumberInput"
+        ).value = "";
+
+        document.getElementById(
+            "employeeChipInput"
+        ).value = "";
+
+        document.getElementById(
+            "employeeRoleInput"
+        ).value = "employee";
+
+        employeeModal.hidden =
+            false;
 
     }
 );
