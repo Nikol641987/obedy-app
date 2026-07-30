@@ -5477,6 +5477,17 @@ const searchInput =
                                 <strong>Stav:</strong>
                                 ${escapeHtml(status)}
                             </p>
+<div class="admin-employee-actions">
+
+    <button
+        class="secondary-button edit-employee-button"
+        data-personal-number="${escapeHtml(personalNumber)}"
+        type="button"
+    >
+        ✏️ Upraviť
+    </button>
+
+</div>
 
                         </article>
                     `;
