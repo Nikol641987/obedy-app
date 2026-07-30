@@ -1155,3 +1155,25 @@ select:focus-visible {
 #addEmployeeButton {
     width: auto;
 }
+#employeeModal .modal-content {
+    width: 90%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+#employeeModal label {
+    display: block;
+    margin: 14px 0 6px;
+    font-weight: 600;
+}
+
+#employeeModal input,
+#employeeModal select {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+#employeeModal .modal-actions {
+    margin-top: 24px;
+}
