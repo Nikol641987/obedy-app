@@ -382,7 +382,10 @@ if (!editingEmployee) {
                     Boolean(employeeData.chip),
 
                 active:
-                    true
+    true,
+
+role:
+    employeeData.role
 
             });
 
