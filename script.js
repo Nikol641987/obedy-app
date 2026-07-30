@@ -179,6 +179,9 @@ const adminEmployeesButton =
 
     const addEmployeeButton =
     document.getElementById("addEmployeeButton");
+
+    const cancelEmployeeButton =
+    document.getElementById("cancelEmployeeButton");
     
     const openProfileButton =
         document.getElementById("openProfileButton");
@@ -278,6 +281,17 @@ addEmployeeButton?.addEventListener(
         document
             .getElementById("employeeModal")
             .hidden = false;
+
+    }
+);
+
+    cancelEmployeeButton?.addEventListener(
+    "click",
+    () => {
+
+        document
+            .getElementById("employeeModal")
+            .hidden = true;
 
     }
 );
