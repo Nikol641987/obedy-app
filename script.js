@@ -325,7 +325,31 @@ openDashboardButton?.addEventListener(
 console.log(
     employeesForImport
 );
+const { error } =
+    await supabaseClient
+        .from("employees")
+        .insert(
+            employeesForImport
+        );
 
+if (error) {
+
+    console.error(error);
+
+    alert(
+        error.message
+    );
+
+    return;
+
+}
+
+alert(
+    "Zamestnanci boli úspešne importovaní."
+);
+
+await renderAdminEmployees();
+        
     }
 );
     
