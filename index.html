@@ -525,24 +525,8 @@
 
 </div>
     <!-- ADMINISTRÁCIA -->
+
 <section id="adminScreen" class="app-screen" hidden>
-    <section id="adminEmployeesScreen" class="app-screen" hidden>
-
-    <button class="back-button" data-back-home>
-        ← Späť
-    </button>
-
-    <div class="content-card">
-
-        <h2>Zamestnanci</h2>
-
-        <div id="adminEmployeesContainer">
-
-        </div>
-
-    </div>
-
-</section>
 
     <button class="back-button" data-back-home>
         ← Späť
@@ -559,13 +543,37 @@
                 class="home-card"
             >
                 <span class="home-icon">👥</span>
-                <span class="home-title">Zamestnanci</span>
+                <span class="home-title">
+                    Zamestnanci
+                </span>
                 <span class="home-description">
                     Správa zamestnancov
                 </span>
             </button>
 
         </div>
+
+    </div>
+
+</section>
+
+
+<!-- SPRÁVA ZAMESTNANCOV -->
+<section
+    id="adminEmployeesScreen"
+    class="app-screen"
+    hidden
+>
+
+    <button class="back-button" data-back-home>
+        ← Späť
+    </button>
+
+    <div class="content-card">
+
+        <h2>Zamestnanci</h2>
+
+        <div id="adminEmployeesContainer"></div>
 
     </div>
 
@@ -704,6 +712,7 @@
 
     </div>
 </div>
+    
 <!-- VÝSLEDOK VÝDAJA OBEDA -->
 <div
     id="issueResultModal"
