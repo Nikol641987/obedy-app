@@ -490,13 +490,13 @@ await loadEmployees();
     );
 
     employeeModal.hidden =
-        true;
+    true;
 
-    editingEmployee =
-        null;
+editingEmployee =
+    null;
 
-    await renderAdminEmployees();
-
+await renderAdminEmployees();
+await loadEmployees();
 }
 
     }
