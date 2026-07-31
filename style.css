@@ -1353,3 +1353,39 @@ select:focus-visible {
         grid-template-columns: 1fr;
     }
 }
+#deactivateEmployeeWrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin: 20px 0 6px;
+    padding: 14px 16px;
+
+    border: 1px solid #dbe4ef;
+    border-radius: 14px;
+
+    background: #f8fbff;
+
+    color: #1f2937;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+#deactivateEmployeeWrapper[hidden] {
+    display: none !important;
+}
+
+#employeeModal #deactivateEmployeeCheckbox {
+    width: 20px;
+    height: 20px;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    flex: 0 0 auto;
+
+    accent-color: var(--tmv-blue);
+    cursor: pointer;
+}
