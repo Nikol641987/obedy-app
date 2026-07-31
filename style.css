@@ -1189,7 +1189,11 @@ select:focus-visible {
 
     background: #ffffff;
 }
-
+#adminEmployeesSearch:focus-visible {
+    outline: 3px solid rgba(47, 102, 173, 0.18);
+    outline-offset: -3px;
+    border-color: var(--tmv-blue);
+}
 
 /* KARTY ZAMESTNANCOV */
 
