@@ -916,19 +916,16 @@ async function loadEmployees() {
 
     try {
 
-        const response =
-            await fetch("employees.json");
+        const { data: employees, error } =
+    await supabaseClient
+        .from("employees")
+        .select("*");
 
-        if (!response.ok) {
+if (error) {
 
-            throw new Error(
-                "Nepodarilo sa načítať employees.json."
-            );
+    throw error;
 
-        }
-
-        const employees =
-            await response.json();
+}
         
 window.adminEmployeesData =
     employees;
