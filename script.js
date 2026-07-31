@@ -433,14 +433,15 @@ role:
 
 }
     alert(
-        "Zamestnanec bol uložený."
-    );
+    "Zamestnanec bol uložený."
+);
 
-   employeeModal.hidden =
+employeeModal.hidden =
     true;
 
 await renderAdminEmployees();
-
+await loadEmployees();
+    
 } else {
 
     const { error } =
