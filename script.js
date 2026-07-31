@@ -180,8 +180,6 @@ const adminEmployeesButton =
     const addEmployeeButton =
     document.getElementById("addEmployeeButton");
 
-    const importEmployeesButton =
-    document.getElementById("importEmployeesButton");
 
     const cancelEmployeeButton =
     document.getElementById("cancelEmployeeButton");
