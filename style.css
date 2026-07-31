@@ -1270,7 +1270,7 @@ select:focus-visible {
 #adminScreen .content-card {
     max-width: 1100px;
     margin: 0 auto 40px;
-    text-align: center;
+    text-align: left;
 }
 
 #adminScreen .admin-grid {
