@@ -1142,8 +1142,8 @@ select:focus-visible {
 
 #adminEmployeesScreen .admin-toolbar {
     display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
+    flex-direction: row;
+    justify-content: flex-start;
     align-items: center;
     gap: 16px;
 
