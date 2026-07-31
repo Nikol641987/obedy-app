@@ -1168,7 +1168,9 @@ select:focus-visible {
     line-height: 1.2;
     white-space: nowrap;
 }
-
+#adminEmployeesScreen #addEmployeeButton {
+    min-width: 250px;
+}
 
 /* VYHĽADÁVANIE */
 
@@ -1176,7 +1178,7 @@ select:focus-visible {
     display: block;
 
     width: 100%;
-    max-width: 255px;
+    max-width: 300px;
     height: 50px;
 
     margin: 0 0 26px;
