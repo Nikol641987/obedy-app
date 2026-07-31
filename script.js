@@ -5661,7 +5661,20 @@ if (error) {
         });
 
         if (employees.length === 0) {
+if (employeesToRender.length === 1) {
 
+    container.classList.add(
+        "single-result"
+    );
+
+} else {
+
+    container.classList.remove(
+        "single-result"
+    );
+
+}
+            
             container.innerHTML =
                 "<p>V zozname nie sú žiadni zamestnanci.</p>";
 
