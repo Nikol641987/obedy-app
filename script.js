@@ -5673,11 +5673,6 @@ if (error) {
 
                 })
                 .join("");
-        };
-        renderEmployeesList(
-    employees
-);
-
         document
     .querySelectorAll(".edit-employee-button")
     .forEach(button => {
@@ -5728,6 +5723,12 @@ employeeModal.hidden =
         };
 
     });
+        };
+        renderEmployeesList(
+    employees
+);
+
+        
         if (searchInput) {
 
     searchInput.value = "";
