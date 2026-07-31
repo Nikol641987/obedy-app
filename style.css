@@ -1389,3 +1389,27 @@ select:focus-visible {
     accent-color: var(--tmv-blue);
     cursor: pointer;
 }
+#employeeModal #employeeRoleInput {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+
+    padding: 10px 44px 10px 14px;
+
+    background-color: #ffffff;
+    color: #202631;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+
+    font-size: 16px;
+    line-height: 1.2;
+
+    appearance: auto;
+    -webkit-appearance: menulist;
+}
+
+#employeeModal #employeeRoleInput option {
+    color: #202631;
+    background: #ffffff;
+}
