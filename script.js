@@ -189,6 +189,11 @@ const adminEmployeesButton =
     const saveEmployeeButton =
     document.getElementById("saveEmployeeButton");
 
+    const deactivateEmployeeButton =
+    document.getElementById(
+        "deactivateEmployeeButton"
+    );
+
     const employeeModal =
     document.getElementById("employeeModal");
     
@@ -330,6 +335,61 @@ document.getElementById(
 
     }
 );
+
+    deactivateEmployeeButton?.addEventListener(
+    "click",
+    async () => {
+
+        if (!editingEmployee) {
+            return;
+        }
+
+        const confirmed =
+            confirm(
+                "Naozaj chcete deaktivovať tohto zamestnanca?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const { error } =
+            await supabaseClient
+                .from("employees")
+                .update({
+                    active: false
+                })
+                .eq(
+                    "id",
+                    editingEmployee.id
+                );
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                error.message
+            );
+
+            return;
+        }
+
+        employeeModal.hidden =
+            true;
+
+        editingEmployee =
+            null;
+
+        await renderAdminEmployees();
+
+        alert(
+            "Zamestnanec bol deaktivovaný."
+        );
+
+    }
+);
+    
 saveEmployeeButton?.addEventListener(
     "click",
     async () => {
