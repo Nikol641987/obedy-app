@@ -189,9 +189,9 @@ const adminEmployeesButton =
     const saveEmployeeButton =
     document.getElementById("saveEmployeeButton");
 
-    const deactivateEmployeeButton =
+    const deactivateEmployeeCheckbox =
     document.getElementById(
-        "deactivateEmployeeButton"
+        "deactivateEmployeeCheckbox"
     );
 
     const employeeModal =
@@ -340,59 +340,7 @@ document.getElementById(
     }
 );
 
-    deactivateEmployeeButton?.addEventListener(
-    "click",
-    async () => {
-
-        if (!editingEmployee) {
-            return;
-        }
-
-        const confirmed =
-            confirm(
-                "Naozaj chcete deaktivovať tohto zamestnanca?"
-            );
-
-        if (!confirmed) {
-            return;
-        }
-
-        const { error } =
-            await supabaseClient
-                .from("employees")
-                .update({
-                    active: false
-                })
-                .eq(
-                    "id",
-                    editingEmployee.id
-                );
-
-        if (error) {
-
-            console.error(error);
-
-            alert(
-                error.message
-            );
-
-            return;
-        }
-
-        employeeModal.hidden =
-            true;
-
-        editingEmployee =
-            null;
-
-        await renderAdminEmployees();
-
-        alert(
-            "Zamestnanec bol deaktivovaný."
-        );
-
-    }
-);
+    
     
 saveEmployeeButton?.addEventListener(
     "click",
@@ -430,6 +378,21 @@ saveEmployeeButton?.addEventListener(
         console.log(
             employeeData
         );
+        if (
+    editingEmployee
+    && deactivateEmployeeCheckbox.checked
+) {
+
+    const confirmed =
+        confirm(
+            "Naozaj chcete deaktivovať tohto zamestnanca?"
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+}
 if (!editingEmployee) {
 
     const { error } =
@@ -484,28 +447,31 @@ await renderAdminEmployees();
 
     const { error } =
         await supabaseClient
-            .from("employees")
-            .update({
+           .from("employees")
+.update({
 
-                name:
-                    employeeData.name,
+    name:
+        employeeData.name,
 
-                surname:
-                    employeeData.surname,
+    surname:
+        employeeData.surname,
 
-                employee_number:
-                    employeeData.personalNumber,
+    employee_number:
+        employeeData.personalNumber,
 
-                chip:
-                    employeeData.chip || null,
+    chip:
+        employeeData.chip || null,
 
-                has_chip:
-                    Boolean(employeeData.chip),
+    has_chip:
+        Boolean(employeeData.chip),
 
-                role:
-                    employeeData.role
+    role:
+        employeeData.role,
 
-            })
+    active:
+        !deactivateEmployeeCheckbox.checked
+
+})
             .eq(
                 "id",
                 editingEmployee.id
