@@ -4735,53 +4735,54 @@ async function generateMonthlyReport() {
 
     try {
 
-        const [
-            ordersResult,
-            employeesResponse
-        ] = await Promise.all([
+       const [
+    ordersResult,
+    employeesResult
+] = await Promise.all([
 
-            supabaseClient
-                .from("meal_orders")
-                .select(`
-                    employee_id,
-                    employee_name,
-                    order_date
-                `)
-                .gte(
-                    "order_date",
-                    fromDate
-                )
-                .lte(
-                    "order_date",
-                    toDate
-                ),
+    supabaseClient
+        .from("meal_orders")
+        .select(`
+            employee_id,
+            employee_name,
+            order_date
+        `)
+        .gte(
+            "order_date",
+            fromDate
+        )
+        .lte(
+            "order_date",
+            toDate
+        ),
 
-            fetch("employees.json")
+    supabaseClient
+        .from("employees")
+        .select(`
+            name,
+            surname,
+            employee_number
+        `)
 
-        ]);
-
-
-        if (ordersResult.error) {
-            throw ordersResult.error;
-        }
-
-
-        if (!employeesResponse.ok) {
-
-            throw new Error(
-                "Nepodarilo sa načítať employees.json."
-            );
-
-        }
+]);
 
 
-        const orders =
-            ordersResult.data || [];
-
-        const employees =
-            await employeesResponse.json();
+if (ordersResult.error) {
+    throw ordersResult.error;
+}
 
 
+if (employeesResult.error) {
+    throw employeesResult.error;
+}
+
+
+const orders =
+    ordersResult.data || [];
+
+const employees =
+    employeesResult.data || [];
+        
         const employeeMap =
             new Map();
 
