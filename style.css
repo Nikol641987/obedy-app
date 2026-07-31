@@ -1390,27 +1390,44 @@ select:focus-visible {
     accent-color: var(--tmv-blue);
     cursor: pointer;
 }
-#employeeModal #employeeRoleInput {
-    display: block;
-    width: 100%;
-    min-height: 48px;
+#deactivateEmployeeWrapper {
 
-    padding: 10px 44px 10px 14px;
+    display: flex;
+    align-items: center;
 
-    background-color: #ffffff;
-    color: #202631;
+    gap: 12px;
 
-    border: 1px solid #cbd5e1;
-    border-radius: 12px;
+    margin: 18px 0 12px;
 
-    font-size: 16px;
-    line-height: 1.2;
+    padding: 14px 16px;
 
-    appearance: auto;
-    -webkit-appearance: menulist;
+    border: 1px solid #dbe4ef;
+    border-radius: 14px;
+
+    background: #f8fbff;
+
+    cursor: pointer;
+
 }
 
-#employeeModal #employeeRoleInput option {
-    color: #202631;
-    background: #ffffff;
+#deactivateEmployeeWrapper label {
+
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+#employeeModal #deactivateEmployeeCheckbox {
+
+    width: 22px !important;
+    height: 22px !important;
+
+    margin: 0 !important;
+
+    flex: 0 0 auto;
+
 }
