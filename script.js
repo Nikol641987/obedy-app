@@ -5791,9 +5791,14 @@ document.getElementById(
     "employeeRoleInput"
 ).value =
     editingEmployee.role || "employee";
+            
 document.getElementById(
-    "deactivateEmployeeButton"
+    "deactivateEmployeeWrapper"
 ).hidden = false;
+
+document.getElementById(
+    "deactivateEmployeeCheckbox"
+).checked = false;
             
 employeeModal.hidden =
     false;
