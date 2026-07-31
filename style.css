@@ -1180,6 +1180,8 @@ select:focus-visible {
     height: 50px;
 
     margin: 0 0 26px;
+    margin-left: 0;
+
     padding: 0 15px;
 
     border: 1px solid var(--border);
