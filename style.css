@@ -1110,14 +1110,16 @@ select:focus-visible {
     margin-top: 24px;
 }
 #adminEmployeesContainer.single-result {
+    display: grid;
     grid-template-columns: minmax(280px, 560px);
     justify-content: start;
 }
 
 #adminEmployeesContainer.single-result .admin-employee-card {
     width: 100%;
+    max-width: 560px;
+    box-sizing: border-box;
 }
-
 .admin-employee-card {
     padding: 22px;
     background: #ffffff;
