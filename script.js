@@ -5789,8 +5789,13 @@ employeeModal.hidden =
 
     });
         };
-        renderEmployeesList(
-    employees
+  const activeEmployees =
+    employees.filter(employee =>
+        employee.active !== false
+    );
+
+renderEmployeesList(
+    activeEmployees
 );
 
         
@@ -5806,7 +5811,7 @@ employeeModal.hidden =
                 .toLowerCase();
 
         const filteredEmployees =
-            employees.filter(employee => {
+             activeEmployees.filter(employee => {
 
                 const fullName =
                     `${employee.surname || ""} ${employee.name || ""}`
