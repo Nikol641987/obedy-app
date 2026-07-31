@@ -311,7 +311,9 @@ addEmployeeButton?.addEventListener(
         document.getElementById(
             "employeeRoleInput"
         ).value = "employee";
-
+document.getElementById(
+    "deactivateEmployeeButton"
+).hidden = true;
         employeeModal.hidden =
             false;
 
@@ -5716,7 +5718,10 @@ document.getElementById(
     "employeeRoleInput"
 ).value =
     editingEmployee.role || "employee";
-
+document.getElementById(
+    "deactivateEmployeeButton"
+).hidden = false;
+            
 employeeModal.hidden =
     false;
 
