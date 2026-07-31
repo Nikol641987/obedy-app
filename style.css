@@ -1275,5 +1275,5 @@ select:focus-visible {
 
 #adminScreen .admin-grid {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
 }
