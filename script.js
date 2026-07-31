@@ -317,8 +317,12 @@ addEmployeeButton?.addEventListener(
             "employeeRoleInput"
         ).value = "employee";
 document.getElementById(
-    "deactivateEmployeeButton"
+    "deactivateEmployeeWrapper"
 ).hidden = true;
+
+document.getElementById(
+    "deactivateEmployeeCheckbox"
+).checked = false;
         employeeModal.hidden =
             false;
 
