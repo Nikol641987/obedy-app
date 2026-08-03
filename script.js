@@ -898,7 +898,22 @@ cancelResetPinButton?.addEventListener(
     );
 
 }
+const openRestaurantMenuButton =
+    document.getElementById(
+        "openRestaurantMenuButton"
+    );
 
+openRestaurantMenuButton?.addEventListener(
+    "click",
+    () => {
+
+        window.open(
+            "https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu-54?h=2aa4fbd1b6",
+            "_blank"
+        );
+
+    }
+);
 
 // =====================================
 // 5. NAČÍTANIE ZAMESTNANCOV
