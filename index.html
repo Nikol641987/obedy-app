@@ -267,37 +267,25 @@
 
 
 <!-- TÝŽDENNÉ MENU -->
-<section
-    id="weeklyMenuScreen"
-    class="app-screen weekly-menu-screen"
-    hidden
->
+<section id="weeklyMenuScreen" class="app-screen" hidden>
 
-    <div class="weekly-menu-topbar">
+    <button class="back-button" data-back-home>
+        ← Späť
+    </button>
+
+    <div class="content-card">
+
+        <h2>Týždenné menu</h2>
 
         <button
-            class="back-button"
-            data-back-home
+            id="openRestaurantMenuButton"
+            class="main-button"
+            type="button"
         >
-            ← Späť
+            🍽️ Otvoriť aktuálne menu Appetit
         </button>
 
-        <a
-            href="https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu-54?h=2aa4fbd1b6"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="weekly-menu-open-link"
-        >
-            Otvoriť samostatne
-        </a>
-
     </div>
-
-    <iframe
-        class="weekly-menu-full-frame"
-        src="https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu-54?h=2aa4fbd1b6"
-        title="Aktuálne týždenné menu reštaurácie Appetit"
-    ></iframe>
 
 </section>
 
