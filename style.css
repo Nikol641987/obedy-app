@@ -1462,3 +1462,13 @@ select:focus-visible {
     flex: 0 0 auto;
 
 }
+.weekly-menu-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 20px;
+    padding: 16px 22px;
+
+    text-decoration: none;
+}
