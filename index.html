@@ -542,23 +542,35 @@
 
         <h2>Administrácia</h2>
 
-        <div class="admin-grid">
+       <div class="admin-grid">
 
-            <button
-                id="adminEmployeesButton"
-                class="home-card"
-            >
-                <span class="home-icon">👥</span>
-                <span class="home-title">
-                    Zamestnanci
-                </span>
-                <span class="home-description">
-                    Správa zamestnancov
-                </span>
-            </button>
+    <button
+        id="adminEmployeesButton"
+        class="home-card"
+    >
+        <span class="home-icon">👥</span>
+        <span class="home-title">
+            Zamestnanci
+        </span>
+        <span class="home-description">
+            Správa zamestnancov
+        </span>
+    </button>
 
-        </div>
+    <button
+        id="adminWeeklyMenuButton"
+        class="home-card"
+    >
+        <span class="home-icon">🍽️</span>
+        <span class="home-title">
+            Týždenné menu
+        </span>
+        <span class="home-description">
+            Automatický import menu
+        </span>
+    </button>
 
+</div>
     </div>
 
 </section>
@@ -604,6 +616,43 @@
     </div>
 
 </section>
+    </section>
+
+<!-- TÝŽDENNÉ MENU -->
+
+<section
+    id="adminWeeklyMenuScreen"
+    class="app-screen"
+    hidden
+>
+
+    <button class="back-button" data-back-home>
+        ← Späť
+    </button>
+
+    <div class="content-card">
+
+        <h2>Týždenné menu</h2>
+
+        <button
+            id="downloadWeeklyMenuButton"
+            class="main-button"
+            type="button"
+        >
+            🔄 Načítať nové menu
+        </button>
+
+        <div
+            id="weeklyMenuImportResult"
+            class="message"
+        ></div>
+
+    </div>
+
+</section>
+
+<div
+    id="employeeModal"
     <div
     id="employeeModal"
     class="email-modal"
