@@ -1566,3 +1566,45 @@ select:focus-visible {
     padding: 20px;
 
 }
+.weekly-menu-week-picker {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    margin: 26px 0 20px;
+}
+
+.weekly-menu-week-picker label {
+    display: block;
+    margin-bottom: 7px;
+
+    color: var(--text);
+    font-weight: 700;
+}
+
+.weekly-menu-week-picker input {
+    width: 100%;
+    height: 52px;
+
+    padding: 0 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    background: #ffffff;
+    color: var(--text);
+
+    font: inherit;
+}
+
+.weekly-menu-week-picker input[readonly] {
+    background: #f3f6fa;
+}
+
+@media (max-width: 620px) {
+
+    .weekly-menu-week-picker {
+        grid-template-columns: 1fr;
+    }
+
+}
