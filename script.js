@@ -345,17 +345,7 @@ downloadWeeklyMenuButton?.addEventListener(
                 body: {}
             }
         );
-            saveWeeklyMenuButton?.addEventListener(
-    "click",
-    async () => {
-
-        const menu =
-    getWeeklyMenuData();
-
-console.log(menu);
-
-    }
-);
+           
             
             if (error) {
                 throw error;
@@ -397,6 +387,23 @@ console.log(menu);
                 "🔄 Načítať nové menu";
 
         }
+
+    }
+);
+    saveWeeklyMenuButton?.addEventListener(
+    "click",
+    () => {
+
+        const menu =
+            getWeeklyMenuData();
+
+        console.log(
+            "Údaje z formulára:",
+            menu
+        );
+
+        weeklyMenuImportResult.textContent =
+            "Tlačidlo Uložiť funguje. Ukladanie do databázy doplníme ďalej.";
 
     }
 );
