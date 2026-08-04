@@ -1466,3 +1466,42 @@ select:focus-visible {
     flex: 0 0 auto;
 
 }
+.weekly-menu-edit-form {
+    margin-top: 28px;
+}
+
+.weekly-menu-edit-form h3 {
+    margin: 0 0 20px;
+    color: var(--tmv-blue-dark);
+    font-size: 24px;
+}
+
+.weekly-menu-edit-form label {
+    display: block;
+    margin: 16px 0 7px;
+    font-weight: 700;
+}
+
+.weekly-menu-edit-form textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 12px 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    background: #ffffff;
+    color: var(--text);
+
+    font: inherit;
+    resize: vertical;
+}
+
+.weekly-menu-edit-form textarea:focus {
+    outline: 3px solid rgba(47, 102, 173, 0.16);
+    border-color: var(--tmv-blue);
+}
+
+#saveWeeklyMenuButton {
+    margin-top: 26px;
+}
