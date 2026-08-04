@@ -1976,6 +1976,57 @@ function clearLoginMessage() {
 
 function showLoginError(message) {
 
+    function showMessageModal(
+    title,
+    text
+) {
+
+    const modal =
+        document.getElementById(
+            "messageModal"
+        );
+
+    const titleElement =
+        document.getElementById(
+            "messageModalTitle"
+        );
+
+    const textElement =
+        document.getElementById(
+            "messageModalText"
+        );
+
+    if (
+        !modal
+        || !titleElement
+        || !textElement
+    ) {
+        return;
+    }
+
+    titleElement.textContent =
+        title;
+
+    textElement.textContent =
+        text;
+
+    modal.hidden = false;
+
+}
+    document
+    .getElementById(
+        "closeMessageModalButton"
+    )
+    ?.addEventListener(
+        "click",
+        () => {
+
+            document.getElementById(
+                "messageModal"
+            ).hidden = true;
+
+        }
+    );
     const loginMessage =
         document.getElementById(
             "loginMessage"
