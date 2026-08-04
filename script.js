@@ -6289,3 +6289,239 @@ async function recognizeWeeklyMenuImage(
     }
 
 }
+function cleanWeeklyMenuText(text) {
+
+    return String(text || "")
+        .replace(/\r/g, "")
+        .replace(/[ \t]+/g, " ")
+        .replace(/\n{2,}/g, "\n")
+        .trim();
+
+}
+
+
+function cleanMenuItem(text) {
+
+    return String(text || "")
+        // odstráni cenu na konci
+        .replace(
+            /\s*[\d.,:]*\s*(6,90|9,20)\s*€?\s*$/i,
+            ""
+        )
+
+        // odstráni zvyšky alergénov pred cenou
+        .replace(
+            /\s+[.,:+]?\d(?:[.,:]\d)*\s*$/g,
+            ""
+        )
+
+        .replace(/\s+/g, " ")
+        .trim();
+
+}
+
+
+function parseWeeklyMenuText(text) {
+
+    const normalizedText =
+        cleanWeeklyMenuText(text);
+
+    const dayDefinitions = [
+        {
+            key: "pondelok",
+            pattern: "Pondelok"
+        },
+        {
+            key: "utorok",
+            pattern: "Utorok"
+        },
+        {
+            key: "streda",
+            pattern: "Streda"
+        },
+        {
+            key: "stvrtok",
+            // OCR môže napísať Štvrtok alebo Štvrok
+            pattern: "Štv(?:r)?tok"
+        },
+        {
+            key: "piatok",
+            pattern: "Piatok"
+        }
+    ];
+
+    const result = {};
+
+    dayDefinitions.forEach(
+        (day, index) => {
+
+            const nextDay =
+                dayDefinitions[index + 1];
+
+            const endPattern =
+                nextDay
+                    ? `(?=${nextDay.pattern}\\s*:)`
+                    : `(?=Appetit Obedové menu|Polievka samostatne|Alergény:|$)`;
+
+            const dayRegex =
+                new RegExp(
+                    `${day.pattern}\\s*:\\s*([\\s\\S]*?)${endPattern}`,
+                    "i"
+                );
+
+            const dayMatch =
+                normalizedText.match(
+                    dayRegex
+                );
+
+            if (!dayMatch) {
+
+                result[day.key] = {
+                    soup: "",
+                    menu1: "",
+                    menu2: "",
+                    menu3: "",
+                    menu4: "",
+                    menu5: "",
+                    menu6: ""
+                };
+
+                return;
+            }
+
+            const dayText =
+                dayMatch[1].trim();
+
+            // Polievka je všetko pred Menu 1
+            const soupMatch =
+                dayText.match(
+                    /^([\s\S]*?)(?=\s*1\.\s*\d+g?\s*\/)/i
+                );
+
+            let soup =
+                soupMatch
+                    ? soupMatch[1]
+                    : "";
+
+            soup = soup
+                .replace(
+                    /^\s*0[,.]33[l1]\s*/i,
+                    ""
+                )
+                .replace(
+                    /\s*(?:1[.,:]*3?[.,:]*)?\s*2ks chlieb\s*$/i,
+                    ""
+                )
+                .replace(/\s+/g, " ")
+                .trim();
+
+            const parsedDay = {
+                soup,
+                menu1: "",
+                menu2: "",
+                menu3: "",
+                menu4: "",
+                menu5: "",
+                menu6: ""
+            };
+
+            for (
+                let menuNumber = 1;
+                menuNumber <= 6;
+                menuNumber++
+            ) {
+
+                const nextNumber =
+                    menuNumber + 1;
+
+                const menuRegex =
+                    new RegExp(
+                        `${menuNumber}\\.\\s*\\d+g?\\s*\\/([\\s\\S]*?)`
+                        + (
+                            menuNumber < 6
+                                ? `(?=\\s*${nextNumber}\\.\\s*\\d+g?\\s*\\/)`
+                                : "$"
+                        ),
+                        "i"
+                    );
+
+                const menuMatch =
+                    dayText.match(
+                        menuRegex
+                    );
+
+                if (menuMatch) {
+
+                    parsedDay[
+                        `menu${menuNumber}`
+                    ] = cleanMenuItem(
+                        menuMatch[1]
+                    );
+                }
+
+            }
+
+            result[day.key] =
+                parsedDay;
+
+        }
+    );
+
+    return result;
+
+}
+
+
+function fillWeeklyMenuForm(menuData) {
+
+    const days = [
+        "pondelok",
+        "utorok",
+        "streda",
+        "stvrtok",
+        "piatok"
+    ];
+
+    days.forEach(day => {
+
+        const dayData =
+            menuData[day];
+
+        if (!dayData) {
+            return;
+        }
+
+        const soupInput =
+            document.getElementById(
+                `${day}Soup`
+            );
+
+        if (soupInput) {
+            soupInput.value =
+                dayData.soup || "";
+        }
+
+        for (
+            let menuNumber = 1;
+            menuNumber <= 6;
+            menuNumber++
+        ) {
+
+            const input =
+                document.getElementById(
+                    `${day}Menu${menuNumber}`
+                );
+
+            if (input) {
+
+                input.value =
+                    dayData[
+                        `menu${menuNumber}`
+                    ] || "";
+            }
+
+        }
+
+    });
+
+}
