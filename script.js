@@ -6127,3 +6127,61 @@ weeklyMenuFrom?.addEventListener(
     "change",
     setWeeklyMenuDateRange
 );
+function getWeeklyMenuData() {
+
+    const data = {};
+
+    const days = [
+        "pondelok",
+        "utorok",
+        "streda",
+        "stvrtok",
+        "piatok"
+    ];
+
+    days.forEach(day => {
+
+        data[day] = {
+
+            soup:
+                document.getElementById(
+                    `${day}Soup`
+                )?.value ?? "",
+
+            menu1:
+                document.getElementById(
+                    `${day}Menu1`
+                )?.value ?? "",
+
+            menu2:
+                document.getElementById(
+                    `${day}Menu2`
+                )?.value ?? "",
+
+            menu3:
+                document.getElementById(
+                    `${day}Menu3`
+                )?.value ?? "",
+
+            menu4:
+                document.getElementById(
+                    `${day}Menu4`
+                )?.value ?? "",
+
+            menu5:
+                document.getElementById(
+                    `${day}Menu5`
+                )?.value ?? "",
+
+            menu6:
+                document.getElementById(
+                    `${day}Menu6`
+                )?.value ?? ""
+
+        };
+
+    });
+
+    return data;
+
+}
