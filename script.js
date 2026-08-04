@@ -303,6 +303,8 @@ openDashboardButton?.addEventListener(
     "click",
     () => {
 
+        renderWeeklyMenuForm();
+
         showScreen(
             "adminWeeklyMenuScreen"
         );
