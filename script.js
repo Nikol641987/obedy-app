@@ -322,13 +322,15 @@ downloadWeeklyMenuButton?.addEventListener(
 
         try {
 
-            const { data, error } =
-                await supabaseClient
-                    .functions
-                    .invoke(
-                        "check-appetit-menu"
-                    );
-
+           const { data, error } =
+    await supabaseClient
+        .functions
+        .invoke(
+            "check-appetit-menu",
+            {
+                body: {}
+            }
+        );
             if (error) {
                 throw error;
             }
