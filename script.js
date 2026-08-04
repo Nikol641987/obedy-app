@@ -6117,22 +6117,21 @@ function setWeeklyMenuDateRange() {
 
         const today =
             new Date();
+const dayOfWeek =
+    today.getDay();
 
-        const dayOfWeek =
-            today.getDay();
+const daysFromMonday =
+    dayOfWeek === 0
+        ? 6
+        : dayOfWeek - 1;
 
-        const daysUntilMonday =
-            dayOfWeek === 0
-                ? 1
-                : 8 - dayOfWeek;
+fromDate =
+    new Date(today);
 
-        fromDate =
-            new Date(today);
-
-        fromDate.setDate(
-            today.getDate()
-            + daysUntilMonday
-        );
+fromDate.setDate(
+    today.getDate()
+    - daysFromMonday
+);
 
         weeklyMenuFrom.value =
             formatDateForInput(
