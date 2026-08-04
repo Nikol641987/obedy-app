@@ -579,11 +579,12 @@ weeklyMenuImportResult.textContent =
                 throw error;
             }
 
-            weeklyMenuImportResult.textContent =
-                "✅ Menu bolo úspešne uložené.";
+           showMessageModal(
+    "✅ Hotovo",
+    "Menu bolo úspešne uložené."
+);
 
-            weeklyMenuImportResult.className =
-                "message success-message";
+weeklyMenuImportResult.textContent = "";
 
         } catch (error) {
 
@@ -592,12 +593,11 @@ weeklyMenuImportResult.textContent =
                 error
             );
 
-            weeklyMenuImportResult.textContent =
-                error?.message
-                || "Menu sa nepodarilo uložiť.";
-
-            weeklyMenuImportResult.className =
-                "message error-message";
+           showMessageModal(
+    "❌ Chyba",
+    error?.message
+    || "Menu sa nepodarilo uložiť."
+);
 
         } finally {
 
