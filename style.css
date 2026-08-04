@@ -1095,14 +1095,16 @@ select:focus-visible {
 ========================================= */
 
 #adminScreen,
-#adminEmployeesScreen {
+#adminEmployeesScreen,
+#adminWeeklyMenuScreen {
     width: min(100% - 28px, 760px);
     margin: 0 auto;
     padding-bottom: 48px;
 }
 
 #adminScreen > .back-button,
-#adminEmployeesScreen > .back-button {
+#adminEmployeesScreen > .back-button,
+#adminWeeklyMenuScreen > .back-button {
     display: block;
     width: 100%;
     margin: 0 0 12px;
@@ -1111,7 +1113,8 @@ select:focus-visible {
 }
 
 #adminScreen .content-card,
-#adminEmployeesScreen .content-card {
+#adminEmployeesScreen .content-card,
+#adminWeeklyMenuScreen .content-card {
     width: 100%;
     margin: 0;
     padding: 28px;
@@ -1359,15 +1362,17 @@ select:focus-visible {
 
 @media (max-width: 620px) {
 
-    #adminScreen,
-    #adminEmployeesScreen {
-        width: min(100% - 22px, 540px);
-    }
+  #adminScreen,
+#adminEmployeesScreen,
+#adminWeeklyMenuScreen {
+    width: min(100% - 22px, 540px);
+}
 
     #adminScreen .content-card,
-    #adminEmployeesScreen .content-card {
-        padding: 22px;
-    }
+#adminEmployeesScreen .content-card,
+#adminWeeklyMenuScreen .content-card {
+    padding: 22px;
+}
 
     #adminEmployeesScreen .admin-toolbar {
         flex-direction: column;
