@@ -5982,9 +5982,9 @@ function renderWeeklyMenuForm() {
 
                 <div class="weekly-menu-day-content">
 
-                    <label>
-                        Polievka
-                    </label>
+                    <label for="${key}Soup">
+    Polievka
+</label>
 
                     <textarea
                         id="${key}Soup"
@@ -5995,9 +5995,9 @@ function renderWeeklyMenuForm() {
         for (let i = 1; i <= 6; i++) {
 
             html += `
-                <label>
-                    Menu ${i}
-                </label>
+               <label for="${key}Menu${i}">
+    Menu ${i}
+</label>
 
                 <textarea
                     id="${key}Menu${i}"
