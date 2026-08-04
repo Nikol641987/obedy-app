@@ -6545,7 +6545,6 @@ function parseWeeklyMenuText(text) {
             pattern: "Streda"
         },
         {
-          {
     key: "stvrtok",
     // OCR môže napísať Štvrtok, Štvrok, Stvrtok alebo Stvrok
     pattern: "(?:Š|S)tv(?:rt|r)ok"
