@@ -185,6 +185,10 @@ const adminWeeklyMenuScreen =
 
 const downloadWeeklyMenuButton =
     document.getElementById("downloadWeeklyMenuButton");
+    const saveWeeklyMenuButton =
+    document.getElementById(
+        "saveWeeklyMenuButton"
+    );
 
 const weeklyMenuImportResult =
     document.getElementById("weeklyMenuImportResult");
@@ -341,6 +345,17 @@ downloadWeeklyMenuButton?.addEventListener(
                 body: {}
             }
         );
+            saveWeeklyMenuButton?.addEventListener(
+    "click",
+    async () => {
+
+        alert(
+            "Ukladanie menu pripravíme v ďalšom kroku."
+        );
+
+    }
+);
+            
             if (error) {
                 throw error;
             }
