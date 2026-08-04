@@ -1608,3 +1608,15 @@ select:focus-visible {
     }
 
 }
+.small-modal {
+
+    max-width: 420px;
+    text-align: center;
+
+}
+
+.small-modal p {
+
+    margin: 20px 0;
+
+}
