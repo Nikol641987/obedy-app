@@ -287,6 +287,16 @@ openDashboardButton?.addEventListener(
     }
 );
 
+  adminWeeklyMenuButton?.addEventListener(
+    "click",
+    () => {
+
+        showScreen(
+            "adminWeeklyMenuScreen"
+        );
+
+    }
+);
     
 addEmployeeButton?.addEventListener(
     "click",
