@@ -189,6 +189,12 @@ const downloadWeeklyMenuButton =
 const weeklyMenuImportResult =
     document.getElementById("weeklyMenuImportResult");
 
+    const weeklyMenuFrom =
+    document.getElementById("weeklyMenuFrom");
+
+const weeklyMenuTo =
+    document.getElementById("weeklyMenuTo");
+
     const addEmployeeButton =
     document.getElementById("addEmployeeButton");
 
@@ -299,11 +305,13 @@ openDashboardButton?.addEventListener(
     }
 );
 
-  adminWeeklyMenuButton?.addEventListener(
+ adminWeeklyMenuButton?.addEventListener(
     "click",
     () => {
 
         renderWeeklyMenuForm();
+
+        setWeeklyMenuDateRange();
 
         showScreen(
             "adminWeeklyMenuScreen"
@@ -6020,3 +6028,87 @@ function renderWeeklyMenuForm() {
     });
 
 }
+function formatDateForInput(date) {
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+
+function setWeeklyMenuDateRange() {
+
+    if (
+        !weeklyMenuFrom
+        || !weeklyMenuTo
+    ) {
+        return;
+    }
+
+    let fromDate;
+
+    if (weeklyMenuFrom.value) {
+
+        fromDate =
+            new Date(
+                `${weeklyMenuFrom.value}T12:00:00`
+            );
+
+    } else {
+
+        const today =
+            new Date();
+
+        const dayOfWeek =
+            today.getDay();
+
+        const daysUntilMonday =
+            dayOfWeek === 0
+                ? 1
+                : 8 - dayOfWeek;
+
+        fromDate =
+            new Date(today);
+
+        fromDate.setDate(
+            today.getDate()
+            + daysUntilMonday
+        );
+
+        weeklyMenuFrom.value =
+            formatDateForInput(
+                fromDate
+            );
+
+    }
+
+    const toDate =
+        new Date(fromDate);
+
+    toDate.setDate(
+        fromDate.getDate() + 4
+    );
+
+    weeklyMenuTo.value =
+        formatDateForInput(
+            toDate
+        );
+
+}
+
+
+weeklyMenuFrom?.addEventListener(
+    "change",
+    setWeeklyMenuDateRange
+);
