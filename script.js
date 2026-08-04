@@ -349,9 +349,10 @@ downloadWeeklyMenuButton?.addEventListener(
     "click",
     async () => {
 
-        alert(
-            "Ukladanie menu pripravíme v ďalšom kroku."
-        );
+        const menu =
+    getWeeklyMenuData();
+
+console.log(menu);
 
     }
 );
