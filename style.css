@@ -1505,3 +1505,64 @@ select:focus-visible {
 #saveWeeklyMenuButton {
     margin-top: 26px;
 }
+.weekly-menu-day {
+    margin-top: 16px;
+
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    background: #ffffff;
+}
+
+.weekly-menu-day summary {
+
+    list-style: none;
+    cursor: pointer;
+
+    padding: 18px 22px;
+
+    background: #f5f8fc;
+
+    color: var(--tmv-blue-dark);
+
+    font-size: 20px;
+    font-weight: 700;
+
+    user-select: none;
+
+}
+
+.weekly-menu-day summary::-webkit-details-marker {
+    display: none;
+}
+
+.weekly-menu-day summary::after {
+
+    content: "⌄";
+
+    float: right;
+
+    font-size: 22px;
+
+    transition: .2s;
+
+}
+
+.weekly-menu-day[open] summary::after {
+
+    transform: rotate(180deg);
+
+}
+
+.weekly-menu-day-content {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+
+    padding: 20px;
+
+}
