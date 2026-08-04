@@ -2826,7 +2826,6 @@ function setCurrentDate() {
 // =====================================
 // 12. NAČÍTANIE MENU
 // =====================================
-
 async function loadMenus() {
 
     const container =
@@ -2834,38 +2833,59 @@ async function loadMenus() {
             "menuContainer"
         );
 
-    if (!container) return;
-
+    if (!container) {
+        return;
+    }
 
     container.innerHTML =
         "<p>Načítavam menu...</p>";
 
-
     try {
 
-        const response =
-            await fetch("menus.json");
+        const orderDate =
+            getOrderDate();
 
-        if (!response.ok) {
+        const { data, error } =
+            await supabaseClient
+                .from("weekly_menu")
+                .select(
+                    "soup, menu1, menu2, menu3, menu4, menu5, menu6"
+                )
+                .eq(
+                    "menu_date",
+                    orderDate
+                )
+                .maybeSingle();
 
-            throw new Error(
-                "Nepodarilo sa načítať menus.json."
-            );
-
+        if (error) {
+            throw error;
         }
 
+        if (!data) {
 
-        const menus =
-            await response.json();
+            container.innerHTML =
+                "<p>Pre tento deň zatiaľ nie je uložené menu.</p>";
 
+            return;
+        }
+
+        const menus = [
+            data.menu1,
+            data.menu2,
+            data.menu3,
+            data.menu4,
+            data.menu5,
+            data.menu6
+        ]
+            .map((name, index) => ({
+                id: index + 1,
+                name: String(name || "").trim()
+            }))
+            .filter(menu => menu.name);
 
         container.innerHTML = "";
 
-
         menus.forEach(menu => {
-
-            if (!menu.active) return;
-
 
             const card =
                 document.createElement(
@@ -2875,12 +2895,11 @@ async function loadMenus() {
             card.className =
                 "menu-card";
 
-
             card.innerHTML = `
                 <div class="menu-card-header">
 
                     <span class="menu-number">
-                        Menu ${escapeHtml(menu.id)}
+                        Menu ${menu.id}
                     </span>
 
                 </div>
@@ -2896,7 +2915,7 @@ async function loadMenus() {
                         <input
                             type="checkbox"
                             class="meal-choice"
-                            data-menu-id="${escapeHtml(menu.id)}"
+                            data-menu-id="${menu.id}"
                             data-option="dining"
                         >
 
@@ -2911,7 +2930,7 @@ async function loadMenus() {
                         <input
                             type="checkbox"
                             class="meal-choice"
-                            data-menu-id="${escapeHtml(menu.id)}"
+                            data-menu-id="${menu.id}"
                             data-option="takeaway"
                         >
 
@@ -2924,20 +2943,21 @@ async function loadMenus() {
                 </div>
             `;
 
-
             container.appendChild(
                 card
             );
 
         });
 
-
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Chyba pri načítaní menu:",
+            error
+        );
 
         container.innerHTML =
-            "<p>Chyba pri načítaní menu.</p>";
+            "<p>Menu sa nepodarilo načítať.</p>";
 
     }
 
