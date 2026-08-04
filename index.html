@@ -634,13 +634,40 @@
 
         <h2>Týždenné menu</h2>
 
-        <button
-            id="downloadWeeklyMenuButton"
-            class="main-button"
-            type="button"
+<div class="weekly-menu-week-picker">
+
+    <div>
+        <label for="weeklyMenuFrom">
+            Od
+        </label>
+
+        <input
+            id="weeklyMenuFrom"
+            type="date"
         >
-            🔄 Načítať nové menu
-        </button>
+    </div>
+
+    <div>
+        <label for="weeklyMenuTo">
+            Do
+        </label>
+
+        <input
+            id="weeklyMenuTo"
+            type="date"
+            readonly
+        >
+    </div>
+
+</div>
+
+<button
+    id="downloadWeeklyMenuButton"
+    class="main-button"
+    type="button"
+>
+    🔄 Načítať nové menu
+</button>
 
         <div
             id="weeklyMenuImportResult"
