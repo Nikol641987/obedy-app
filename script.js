@@ -5937,3 +5937,84 @@ renderEmployeesList(
         `;
     }
 }
+function renderWeeklyMenuForm() {
+
+    const container =
+        document.getElementById(
+            "weeklyMenuAccordion"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const days = [
+        "Pondelok",
+        "Utorok",
+        "Streda",
+        "Štvrtok",
+        "Piatok"
+    ];
+
+    container.innerHTML = "";
+
+    days.forEach((day, index) => {
+
+        const key =
+            day.toLowerCase()
+                .normalize("NFD")
+                .replace(
+                    /[\u0300-\u036f]/g,
+                    ""
+                );
+
+        let html = `
+            <details
+                class="weekly-menu-day"
+                ${index === 0 ? "open" : ""}
+            >
+
+                <summary>
+                    ${day}
+                </summary>
+
+                <div class="weekly-menu-day-content">
+
+                    <label>
+                        Polievka
+                    </label>
+
+                    <textarea
+                        id="${key}Soup"
+                        rows="2"
+                    ></textarea>
+        `;
+
+        for (let i = 1; i <= 6; i++) {
+
+            html += `
+                <label>
+                    Menu ${i}
+                </label>
+
+                <textarea
+                    id="${key}Menu${i}"
+                    rows="2"
+                ></textarea>
+            `;
+        }
+
+        html += `
+                </div>
+
+            </details>
+        `;
+
+        container.insertAdjacentHTML(
+            "beforeend",
+            html
+        );
+
+    });
+
+}
