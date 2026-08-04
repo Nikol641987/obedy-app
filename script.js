@@ -431,18 +431,181 @@ weeklyMenuImportResult.textContent =
 );
     saveWeeklyMenuButton?.addEventListener(
     "click",
-    () => {
+    async () => {
 
-        const menu =
-            getWeeklyMenuData();
+        if (
+            !weeklyMenuFrom?.value
+            || !weeklyMenuTo?.value
+        ) {
 
-        console.log(
-            "Údaje z formulára:",
-            menu
-        );
+            weeklyMenuImportResult.textContent =
+                "Najprv vyber týždeň.";
+
+            weeklyMenuImportResult.className =
+                "message error-message";
+
+            return;
+        }
+
+        saveWeeklyMenuButton.disabled = true;
+        saveWeeklyMenuButton.textContent =
+            "Ukladám menu...";
 
         weeklyMenuImportResult.textContent =
-            "Tlačidlo Uložiť funguje. Ukladanie do databázy doplníme ďalej.";
+            "";
+
+        weeklyMenuImportResult.className =
+            "message";
+
+        try {
+
+            const menu =
+                getWeeklyMenuData();
+
+            const weekFrom =
+                weeklyMenuFrom.value;
+
+            const monday =
+                new Date(
+                    `${weekFrom}T12:00:00`
+                );
+
+            const days = [
+                {
+                    key: "pondelok",
+                    dayOfWeek: 1
+                },
+                {
+                    key: "utorok",
+                    dayOfWeek: 2
+                },
+                {
+                    key: "streda",
+                    dayOfWeek: 3
+                },
+                {
+                    key: "stvrtok",
+                    dayOfWeek: 4
+                },
+                {
+                    key: "piatok",
+                    dayOfWeek: 5
+                }
+            ];
+
+            const rows =
+                days.map(
+                    (
+                        day,
+                        index
+                    ) => {
+
+                        const menuDate =
+                            new Date(monday);
+
+                        menuDate.setDate(
+                            monday.getDate()
+                            + index
+                        );
+
+                        const dayMenu =
+                            menu[day.key];
+
+                        return {
+                            week_from:
+                                weekFrom,
+
+                            menu_date:
+                                formatDateForDatabase(
+                                    menuDate
+                                ),
+
+                            day_of_week:
+                                day.dayOfWeek,
+
+                            soup:
+                                dayMenu?.soup
+                                ?.trim()
+                                || null,
+
+                            menu1:
+                                dayMenu?.menu1
+                                ?.trim()
+                                || null,
+
+                            menu2:
+                                dayMenu?.menu2
+                                ?.trim()
+                                || null,
+
+                            menu3:
+                                dayMenu?.menu3
+                                ?.trim()
+                                || null,
+
+                            menu4:
+                                dayMenu?.menu4
+                                ?.trim()
+                                || null,
+
+                            menu5:
+                                dayMenu?.menu5
+                                ?.trim()
+                                || null,
+
+                            menu6:
+                                dayMenu?.menu6
+                                ?.trim()
+                                || null
+                        };
+
+                    }
+                );
+
+            const { error } =
+                await supabaseClient
+                    .from("weekly_menu")
+                    .upsert(
+                        rows,
+                        {
+                            onConflict:
+                                "week_from,day_of_week"
+                        }
+                    );
+
+            if (error) {
+                throw error;
+            }
+
+            weeklyMenuImportResult.textContent =
+                "✅ Menu bolo úspešne uložené.";
+
+            weeklyMenuImportResult.className =
+                "message success-message";
+
+        } catch (error) {
+
+            console.error(
+                "Chyba pri ukladaní menu:",
+                error
+            );
+
+            weeklyMenuImportResult.textContent =
+                error?.message
+                || "Menu sa nepodarilo uložiť.";
+
+            weeklyMenuImportResult.className =
+                "message error-message";
+
+        } finally {
+
+            saveWeeklyMenuButton.disabled =
+                false;
+
+            saveWeeklyMenuButton.textContent =
+                "💾 Uložiť menu";
+
+        }
 
     }
 );
