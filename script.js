@@ -1974,9 +1974,7 @@ function clearLoginMessage() {
 }
 
 
-function showLoginError(message) {
-
-    function showMessageModal(
+function showMessageModal(
     title,
     text
 ) {
@@ -2013,7 +2011,8 @@ function showLoginError(message) {
     modal.hidden = false;
 
 }
-    document
+
+document
     .getElementById(
         "closeMessageModalButton"
     )
@@ -2027,12 +2026,19 @@ function showLoginError(message) {
 
         }
     );
+
+function showLoginError(
+    message
+) {
+
     const loginMessage =
         document.getElementById(
             "loginMessage"
         );
 
-    if (!loginMessage) return;
+    if (!loginMessage) {
+        return;
+    }
 
     loginMessage.textContent =
         message;
@@ -2041,7 +2047,6 @@ function showLoginError(message) {
         "message error-message";
 
 }
-
 
 // =====================================
 // 7. VÝBER DŇA OBJEDNÁVKY
