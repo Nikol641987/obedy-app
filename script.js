@@ -358,15 +358,40 @@ downloadWeeklyMenuButton?.addEventListener(
                 );
             }
 
-            weeklyMenuImportResult.textContent =
-                data.menuAvailable === false
-                    ? "Aktuálne menu zatiaľ nie je dostupné."
-                    : `Menu bolo načítané. Veľkosť obrázka: ${data.imageSize} bajtov.`;
+            if (
+    data.menuAvailable === false
+) {
 
-            console.log(
-                "Výsledok kontroly menu:",
-                data
-            );
+    weeklyMenuImportResult.textContent =
+        "Aktuálne menu zatiaľ nie je dostupné.";
+
+    return;
+}
+
+weeklyMenuImportResult.textContent =
+    "Pripravujem rozpoznanie menu...";
+
+const recognizedText =
+    await recognizeWeeklyMenuImage(
+        data.imageBase64,
+        data.contentType,
+        weeklyMenuImportResult
+    );
+
+if (!recognizedText) {
+
+    throw new Error(
+        "Z obrázka sa nepodarilo rozpoznať žiadny text."
+    );
+}
+
+console.log(
+    "Rozpoznaný text menu:",
+    recognizedText
+);
+
+weeklyMenuImportResult.textContent =
+    "Menu bolo rozpoznané. Text nájdeš zatiaľ v konzole.";
 
         } catch (error) {
 
@@ -6191,5 +6216,77 @@ function getWeeklyMenuData() {
     });
 
     return data;
+
+}
+async function recognizeWeeklyMenuImage(
+    imageBase64,
+    contentType,
+    statusElement
+) {
+
+    if (!window.Tesseract) {
+        throw new Error(
+            "Tesseract.js sa nenačítal."
+        );
+    }
+
+    if (!imageBase64) {
+        throw new Error(
+            "Edge Function neposlala obrázok menu."
+        );
+    }
+
+    const imageDataUrl =
+        `data:${contentType || "image/jpeg"};base64,${imageBase64}`;
+
+    const worker =
+        await Tesseract.createWorker(
+            "slk",
+            1,
+            {
+                logger: message => {
+
+                    console.log(
+                        "OCR:",
+                        message
+                    );
+
+                    if (
+                        statusElement
+                        && message.status ===
+                            "recognizing text"
+                    ) {
+
+                        const percent =
+                            Math.round(
+                                (message.progress || 0)
+                                * 100
+                            );
+
+                        statusElement.textContent =
+                            `Rozpoznávam menu... ${percent} %`;
+                    }
+
+                }
+            }
+        );
+
+    try {
+
+        const result =
+            await worker.recognize(
+                imageDataUrl
+            );
+
+        return (
+            result?.data?.text
+            || ""
+        ).trim();
+
+    } finally {
+
+        await worker.terminate();
+
+    }
 
 }
