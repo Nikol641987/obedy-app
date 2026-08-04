@@ -390,8 +390,22 @@ console.log(
     recognizedText
 );
 
+const parsedMenu =
+    parseWeeklyMenuText(
+        recognizedText
+    );
+
+console.log(
+    "Rozdelené menu:",
+    parsedMenu
+);
+
+fillWeeklyMenuForm(
+    parsedMenu
+);
+
 weeklyMenuImportResult.textContent =
-    "Menu bolo rozpoznané. Text nájdeš zatiaľ v konzole.";
+    "✅ Menu bolo rozpoznané a vložené do formulára. Skontroluj text a klikni Uložiť menu.";
 
         } catch (error) {
 
