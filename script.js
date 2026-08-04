@@ -311,7 +311,7 @@ openDashboardButton?.addEventListener(
 
  adminWeeklyMenuButton?.addEventListener(
     "click",
-    () => {
+    async () => {
 
         renderWeeklyMenuForm();
 
@@ -320,6 +320,8 @@ openDashboardButton?.addEventListener(
         showScreen(
             "adminWeeklyMenuScreen"
         );
+
+        await loadWeeklyMenuFromDatabase();
 
     }
 );
@@ -6334,7 +6336,13 @@ fromDate.setDate(
 
 weeklyMenuFrom?.addEventListener(
     "change",
-    setWeeklyMenuDateRange
+    async () => {
+
+        setWeeklyMenuDateRange();
+
+        await loadWeeklyMenuFromDatabase();
+
+    }
 );
 function getWeeklyMenuData() {
 
@@ -6701,6 +6709,124 @@ function fillWeeklyMenuForm(menuData) {
 
     });
 
+}
+async function loadWeeklyMenuFromDatabase() {
+
+    const fromInput =
+        document.getElementById(
+            "weeklyMenuFrom"
+        );
+
+    const resultElement =
+        document.getElementById(
+            "weeklyMenuImportResult"
+        );
+
+    if (!fromInput?.value) {
+        return;
+    }
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("weekly_menu")
+                .select(`
+                    day_of_week,
+                    soup,
+                    menu1,
+                    menu2,
+                    menu3,
+                    menu4,
+                    menu5,
+                    menu6
+                `)
+                .eq(
+                    "week_from",
+                    fromInput.value
+                )
+                .order(
+                    "day_of_week",
+                    {
+                        ascending: true
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        const menuData = {
+            pondelok: {},
+            utorok: {},
+            streda: {},
+            stvrtok: {},
+            piatok: {}
+        };
+
+        const dayKeys = [
+            "pondelok",
+            "utorok",
+            "streda",
+            "stvrtok",
+            "piatok"
+        ];
+
+        (data || []).forEach(row => {
+
+            const key =
+                dayKeys[
+                    Number(row.day_of_week) - 1
+                ];
+
+            if (!key) {
+                return;
+            }
+
+            menuData[key] = {
+                soup: row.soup || "",
+                menu1: row.menu1 || "",
+                menu2: row.menu2 || "",
+                menu3: row.menu3 || "",
+                menu4: row.menu4 || "",
+                menu5: row.menu5 || "",
+                menu6: row.menu6 || ""
+            };
+
+        });
+
+        fillWeeklyMenuForm(
+            menuData
+        );
+
+        if (resultElement) {
+
+            resultElement.textContent =
+                data?.length
+                    ? "Uložené menu bolo načítané."
+                    : "Pre tento týždeň ešte nie je uložené menu.";
+
+            resultElement.className =
+                "message";
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Chyba pri načítaní uloženého menu:",
+            error
+        );
+
+        if (resultElement) {
+
+            resultElement.textContent =
+                error?.message
+                || "Uložené menu sa nepodarilo načítať.";
+
+            resultElement.className =
+                "message error-message";
+        }
+    }
 }
 async function loadWeeklyMenuFromDatabase() {
 
