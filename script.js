@@ -176,6 +176,18 @@ const openMonthlyReportButton =
     
 const adminEmployeesButton =
     document.getElementById("adminEmployeesButton");
+    
+    const adminWeeklyMenuButton =
+    document.getElementById("adminWeeklyMenuButton");
+
+const adminWeeklyMenuScreen =
+    document.getElementById("adminWeeklyMenuScreen");
+
+const downloadWeeklyMenuButton =
+    document.getElementById("downloadWeeklyMenuButton");
+
+const weeklyMenuImportResult =
+    document.getElementById("weeklyMenuImportResult");
 
     const addEmployeeButton =
     document.getElementById("addEmployeeButton");
@@ -294,6 +306,69 @@ openDashboardButton?.addEventListener(
         showScreen(
             "adminWeeklyMenuScreen"
         );
+
+    }
+);
+downloadWeeklyMenuButton?.addEventListener(
+    "click",
+    async () => {
+
+        downloadWeeklyMenuButton.disabled = true;
+        downloadWeeklyMenuButton.textContent =
+            "Načítavam menu...";
+
+        weeklyMenuImportResult.textContent =
+            "Kontrolujem aktuálne menu na SuperObed...";
+
+        try {
+
+            const { data, error } =
+                await supabaseClient
+                    .functions
+                    .invoke(
+                        "check-appetit-menu"
+                    );
+
+            if (error) {
+                throw error;
+            }
+
+            if (!data?.success) {
+                throw new Error(
+                    data?.error ||
+                    "Menu sa nepodarilo načítať."
+                );
+            }
+
+            weeklyMenuImportResult.textContent =
+                data.menuAvailable === false
+                    ? "Aktuálne menu zatiaľ nie je dostupné."
+                    : `Menu bolo načítané. Veľkosť obrázka: ${data.imageSize} bajtov.`;
+
+            console.log(
+                "Výsledok kontroly menu:",
+                data
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Načítanie menu zlyhalo:",
+                error
+            );
+
+            weeklyMenuImportResult.textContent =
+                error instanceof Error
+                    ? error.message
+                    : "Menu sa nepodarilo načítať.";
+
+        } finally {
+
+            downloadWeeklyMenuButton.disabled = false;
+            downloadWeeklyMenuButton.textContent =
+                "🔄 Načítať nové menu";
+
+        }
 
     }
 );
