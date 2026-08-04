@@ -1620,3 +1620,21 @@ select:focus-visible {
     margin: 20px 0;
 
 }
+@media (max-width: 768px) {
+
+    .admin-grid {
+
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+
+    }
+
+    .admin-card {
+
+        width: 100%;
+        min-width: 0;
+
+    }
+
+}
