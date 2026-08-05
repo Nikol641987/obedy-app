@@ -6995,15 +6995,25 @@ async function loadWeeklyMenuFromDatabase() {
 
         if (resultElement) {
 
-            resultElement.textContent =
-                data?.length
-                    ? "Uložené menu bolo načítané."
-                    : "Pre tento týždeň ešte nie je uložené menu.";
+    if (data?.length) {
 
-            resultElement.className =
-                "message";
-        }
+        resultElement.textContent = "";
 
+        showMessageModal(
+            "Uložené menu bolo načítané."
+        );
+
+    } else {
+
+        resultElement.textContent =
+            "Pre tento týždeň ešte nie je uložené menu.";
+
+        resultElement.className =
+            "message";
+
+    }
+
+}
     } catch (error) {
 
         console.error(
