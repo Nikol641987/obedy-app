@@ -1914,7 +1914,6 @@ async function loadProfile() {
         return;
     }
 
-
     const employeeId =
         sessionStorage.getItem(
             "loggedEmployee"
@@ -1923,41 +1922,69 @@ async function loadProfile() {
             "loggedEmployee"
         );
 
-
     if (!employeeId) {
 
-        profileFullName.textContent = "-";
-        profileEmail.textContent = "-";
+        profileFullName.textContent =
+            "-";
+
+        profileEmail.textContent =
+            "-";
 
         return;
     }
 
-
     try {
-        const [surname, name] =
-    employeeId.split("_");
 
-        const { data, error } =
-            await supabaseClient
+        let query =
+            supabaseClient
                 .from("employees")
                 .select(
                     "name, surname, email"
-                )
-                .eq(
-    "surname",
-    surname
-)
-.eq(
-    "name",
-    name
-)
-                .single();
+                );
 
+        if (
+            employeeId.includes("_")
+        ) {
+
+            const [
+                surname,
+                ...nameParts
+            ] =
+                employeeId.split("_");
+
+            const name =
+                nameParts.join("_");
+
+            query =
+                query
+                    .eq(
+                        "surname",
+                        surname
+                    )
+                    .eq(
+                        "name",
+                        name
+                    );
+
+        } else {
+
+            query =
+                query.eq(
+                    "employee_number",
+                    employeeId
+                );
+
+        }
+
+        const {
+            data,
+            error
+        } =
+            await query.single();
 
         if (error) {
             throw error;
         }
-
 
         const fullName =
             [
@@ -1967,13 +1994,12 @@ async function loadProfile() {
                 .filter(Boolean)
                 .join(" ");
 
-
         profileFullName.textContent =
             fullName || "-";
 
         profileEmail.textContent =
-            data?.email || "E-mail nie je zadaný";
-
+            data?.email
+            || "E-mail nie je zadaný";
 
     } catch (error) {
 
@@ -1985,7 +2011,8 @@ async function loadProfile() {
         profileFullName.textContent =
             "Profil sa nepodarilo načítať";
 
-        profileEmail.textContent = "-";
+        profileEmail.textContent =
+            "-";
 
     }
 
