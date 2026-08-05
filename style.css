@@ -1785,5 +1785,46 @@ select:focus-visible {
     text-align: center;
 
 }
+/* ADMIN OBRAZOVKY – SPRÁVNE OKRAJE NA TELEFÓNE */
 
+@media (max-width: 620px) {
+
+    #adminScreen,
+    #adminEmployeesScreen,
+    #adminWeeklyMenuScreen {
+        width: calc(100% - 24px);
+        max-width: 540px;
+
+        margin-left: auto;
+        margin-right: auto;
+
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #adminScreen .content-card,
+    #adminEmployeesScreen .content-card,
+    #adminWeeklyMenuScreen .content-card {
+        width: 100%;
+        max-width: 100%;
+
+        margin-left: 0;
+        margin-right: 0;
+
+        padding: 22px 16px;
+
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    #adminWeeklyMenuScreen .weekly-menu-week-picker,
+    #adminWeeklyMenuScreen .weekly-menu-day,
+    #adminWeeklyMenuScreen #downloadWeeklyMenuButton,
+    #adminWeeklyMenuScreen #saveWeeklyMenuButton {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+}
 
