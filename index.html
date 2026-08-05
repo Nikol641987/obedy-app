@@ -996,25 +996,101 @@
                     .register("./sw.js")
                     .then(registration => {
 
-                        console.log(
-                            "Service Worker je zaregistrovaný:",
-                            registration.scope
-                        );
+                        <script>
+if ("serviceWorker" in navigator) {
 
-                    })
-                    .catch(error => {
+    window.addEventListener("load", async () => {
 
-                        console.error(
-                            "Registrácia Service Workera zlyhala:",
-                            error
-                        );
+        try {
 
-                    });
+            const registration =
+                await navigator.serviceWorker.register("./sw.js");
+
+            console.log(
+                "Service Worker je zaregistrovaný:",
+                registration.scope
+            );
+
+            function updateApp(worker) {
+
+                if (
+                    !confirm(
+                        "Je dostupná nová verzia aplikácie.\n\nChceš ju teraz načítať?"
+                    )
+                ) {
+                    return;
+                }
+
+                worker.postMessage({
+                    type: "SKIP_WAITING"
+                });
 
             }
-        );
 
-    }
+            if (registration.waiting) {
+
+                updateApp(
+                    registration.waiting
+                );
+
+            }
+
+            registration.addEventListener(
+                "updatefound",
+                () => {
+
+                    const worker =
+                        registration.installing;
+
+                    if (!worker) {
+                        return;
+                    }
+
+                    worker.addEventListener(
+                        "statechange",
+                        () => {
+
+                            if (
+                                worker.state === "installed"
+                                && navigator.serviceWorker.controller
+                            ) {
+
+                                updateApp(worker);
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+            let refreshing = false;
+
+            navigator.serviceWorker.addEventListener(
+                "controllerchange",
+                () => {
+
+                    if (refreshing) {
+                        return;
+                    }
+
+                    refreshing = true;
+
+                    window.location.reload();
+
+                }
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    });
+
+}
 </script>
 </body>
 </html>
