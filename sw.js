@@ -1,5 +1,5 @@
 const CACHE_NAME =
-    "obedy-tmv-v1";
+    "obedy-tmv-v2";
 
 const FILES_TO_CACHE = [
     "./",
@@ -18,14 +18,14 @@ self.addEventListener(
         event.waitUntil(
             caches
                 .open(CACHE_NAME)
-                .then(cache =>
-                    cache.addAll(
-                        FILES_TO_CACHE
-                    )
-                )
-        );
+                .then(cache => {
 
-        self.skipWaiting();
+                    return cache.addAll(
+                        FILES_TO_CACHE
+                    );
+
+                })
+        );
 
     }
 );
@@ -37,8 +37,9 @@ self.addEventListener(
         event.waitUntil(
             caches
                 .keys()
-                .then(cacheNames =>
-                    Promise.all(
+                .then(cacheNames => {
+
+                    return Promise.all(
                         cacheNames
                             .filter(
                                 cacheName =>
@@ -51,11 +52,29 @@ self.addEventListener(
                                         cacheName
                                     )
                             )
-                    )
+                    );
+
+                })
+                .then(() =>
+                    self.clients.claim()
                 )
         );
 
-        self.clients.claim();
+    }
+);
+
+self.addEventListener(
+    "message",
+    event => {
+
+        if (
+            event.data?.type ===
+            "SKIP_WAITING"
+        ) {
+
+            self.skipWaiting();
+
+        }
 
     }
 );
@@ -72,8 +91,20 @@ self.addEventListener(
         }
 
         event.respondWith(
-            fetch(event.request)
+            fetch(
+                event.request
+            )
                 .then(response => {
+
+                    if (
+                        !response
+                        || response.status !== 200
+                        || response.type === "opaque"
+                    ) {
+
+                        return response;
+
+                    }
 
                     const responseClone =
                         response.clone();
@@ -92,11 +123,13 @@ self.addEventListener(
                     return response;
 
                 })
-                .catch(() =>
-                    caches.match(
+                .catch(() => {
+
+                    return caches.match(
                         event.request
-                    )
-                )
+                    );
+
+                })
         );
 
     }
