@@ -111,8 +111,14 @@ function updatePermissions() {
 
     const openDashboardButton =
         document.getElementById("openDashboardButton");
+    
     const openAdminButton =
     document.getElementById("openAdminButton");
+    
+    const openMonthlyReportButton =
+    document.getElementById(
+        "openMonthlyReportButton"
+    );
 
     // Výdaj obedov vidí každý
     if (openIssueButton) {
@@ -128,6 +134,14 @@ function updatePermissions() {
 if (openAdminButton) {
     openAdminButton.hidden =
         role !== "admin";
+    
+}
+    // Mesačný výkaz vidí iba admin
+if (openMonthlyReportButton) {
+
+    openMonthlyReportButton.hidden =
+        role !== "admin";
+
 }
 }
 // =====================================
