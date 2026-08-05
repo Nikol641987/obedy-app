@@ -984,17 +984,6 @@
 
 </div>
 <script>
-    if ("serviceWorker" in navigator) {
-
-        window.addEventListener(
-            "load",
-            () => {
-
-                navigator.serviceWorker
-                    .register("./sw.js")
-                    .then(registration => {
-
-                        <script>
 if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", async () => {
@@ -1002,7 +991,9 @@ if ("serviceWorker" in navigator) {
         try {
 
             const registration =
-                await navigator.serviceWorker.register("./sw.js");
+                await navigator.serviceWorker.register(
+                    "./sw.js"
+                );
 
             console.log(
                 "Service Worker je zaregistrovaný:",
@@ -1011,11 +1002,12 @@ if ("serviceWorker" in navigator) {
 
             function updateApp(worker) {
 
-                if (
-                    !confirm(
+                const confirmed =
+                    confirm(
                         "Je dostupná nová verzia aplikácie.\n\nChceš ju teraz načítať?"
-                    )
-                ) {
+                    );
+
+                if (!confirmed) {
                     return;
                 }
 
@@ -1053,7 +1045,9 @@ if ("serviceWorker" in navigator) {
                                 && navigator.serviceWorker.controller
                             ) {
 
-                                updateApp(worker);
+                                updateApp(
+                                    worker
+                                );
 
                             }
 
@@ -1082,7 +1076,10 @@ if ("serviceWorker" in navigator) {
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Registrácia Service Workera zlyhala:",
+                error
+            );
 
         }
 
@@ -1090,5 +1087,6 @@ if ("serviceWorker" in navigator) {
 
 }
 </script>
+
 </body>
 </html>
