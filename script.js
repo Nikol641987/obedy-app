@@ -357,6 +357,16 @@ openDashboardButton?.addEventListener(
 
         await loadWeeklyMenuFromDatabase();
 
+        document
+            .querySelectorAll(
+                "#adminWeeklyMenuScreen .weekly-menu-day"
+            )
+            .forEach(day => {
+
+                day.open = false;
+
+            });
+
     }
 );
 downloadWeeklyMenuButton?.addEventListener(
