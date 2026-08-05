@@ -3310,7 +3310,7 @@ setTimeout(() => {
 
     showScreen("homeScreen");
 
-}, 4000);
+}, 3000);
 
 
             } catch (error) {
@@ -3900,7 +3900,7 @@ function setupManualIssue() {
 
         issueResultModal.hidden = true;
 
-    }, 4000);
+    }, 3000);
 
     return;
 
@@ -3987,7 +3987,7 @@ setTimeout(() => {
 
     issueResultModal.hidden = true;
 
-}, 4000);
+}, 3000);
 
 
 
@@ -4836,7 +4836,7 @@ function setupChipIssue() {
 
         issueResultModal.hidden = true;
 
-    }, 4000);
+    }, 3000);
 
     processingChip = false;
 
@@ -4918,7 +4918,7 @@ setTimeout(() => {
 
     issueResultModal.hidden = true;
 
-}, 4000);
+}, 3000);
 
         } catch (error) {
 
