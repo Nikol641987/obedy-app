@@ -1925,3 +1925,67 @@ select:focus-visible {
     }
 
 }
+#messageModal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(4px);
+}
+
+#messageModal[hidden]{
+    display:none !important;
+}
+
+#messageModal .modal-content{
+
+    width:min(90vw,420px);
+
+    background:#fff;
+
+    border-radius:22px;
+
+    padding:30px 24px;
+
+    text-align:center;
+
+    box-shadow:0 24px 60px rgba(0,0,0,.28);
+
+}
+
+#messageModal h3{
+
+    margin:0 0 16px;
+
+    color:#16803c;
+
+    font-size:32px;
+
+}
+
+#messageModal p{
+
+    margin:0 0 24px;
+
+    font-size:18px;
+
+}
+
+#messageModal .modal-actions{
+
+    margin-top:0;
+
+}
+
+#messageModal button{
+
+    width:100%;
+
+}
