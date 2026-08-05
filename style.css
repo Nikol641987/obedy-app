@@ -2005,12 +2005,11 @@ select:focus-visible {
         overflow: hidden;
         box-sizing: border-box;
     }
-
-    #dashboardScreen .content-card h2 {
-        margin-bottom: 24px;
-        font-size: 36px;
-        line-height: 1.1;
-    }
+#dashboardScreen .content-card h2 {
+    margin-bottom: 20px;
+    font-size: 28px;
+    line-height: 1.2;
+}
 
     #dashboardScreen .issue-stats {
         display: grid;
@@ -2021,11 +2020,13 @@ select:focus-visible {
     }
 
     #dashboardScreen .stat-card {
-        min-width: 0;
-        padding: 16px 10px;
-        text-align: center;
-        box-sizing: border-box;
-    }
+    min-width: 0;
+    min-height: 110px;
+    padding: 14px 10px;
+
+    text-align: center;
+    box-sizing: border-box;
+}
 
     #dashboardScreen .stat-number {
         font-size: 34px;
