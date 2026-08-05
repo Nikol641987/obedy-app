@@ -960,9 +960,36 @@
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@7/dist/tesseract.min.js"></script>
 <script src="script.js"></script>
 <div
+    <div
     id="messageModal"
-    class="modal"
-<p id="messageModalText"></p>
+    class="email-modal"
+    hidden
+>
+
+    <div class="modal-content small-modal">
+
+        <h3 id="messageModalTitle">
+            Hotovo
+        </h3>
+
+        <p id="messageModalText"></p>
+
+        <div class="modal-actions">
+
+            <button
+                id="closeMessageModalButton"
+                class="main-button"
+                type="button"
+            >
+                OK
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+    
 <script>
 if ("serviceWorker" in navigator) {
 
