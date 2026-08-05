@@ -153,6 +153,26 @@ backButtons.forEach(button => {
     );
 
 });
+
+    const adminBackButtons =
+    document.querySelectorAll(
+        "[data-back-admin]"
+    );
+
+adminBackButtons.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            showScreen(
+                "adminScreen"
+            );
+
+        }
+    );
+
+});
     const openOrderButton =
         document.getElementById("openOrderButton");
 
