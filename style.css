@@ -65,12 +65,11 @@ select:focus-visible {
 
 .app-header .logo {
     display: block;
-    width: min(260px, 68vw);
-    max-height: 145px;
+    width: min(220px, 60vw);
+    max-height: 110px;
     object-fit: contain;
-    margin: 0 auto 12px;
+    margin: 0 auto 4px;
 }
-
 .app-header h1 {
     margin: 0;
     color: var(--text);
@@ -434,9 +433,9 @@ select:focus-visible {
         padding-top: 20px;
     }
 
-    .app-header {
-        margin-bottom: 22px;
-    }
+   .app-header {
+    margin-bottom: 12px;
+}
 
     .home-grid {
         grid-template-columns: 1fr;
@@ -1462,8 +1461,8 @@ select:focus-visible {
 
 .weekly-menu-edit-form textarea {
     width: 100%;
-    min-height: 70px;
-    padding: 12px 14px;
+    min-height: 56px;
+    padding: 10px 12px;
 
     border: 1px solid var(--border);
     border-radius: 14px;
@@ -1471,8 +1470,12 @@ select:focus-visible {
     background: #ffffff;
     color: var(--text);
 
-    font: inherit;
+    font-size: 15px;
+    line-height: 1.35;
+    font-family: inherit;
+
     resize: vertical;
+    box-sizing: border-box;
 }
 
 .weekly-menu-edit-form textarea:focus {
@@ -1499,13 +1502,13 @@ select:focus-visible {
     list-style: none;
     cursor: pointer;
 
-    padding: 18px 22px;
+    padding: 14px 18px;
 
     background: #f5f8fc;
 
     color: var(--tmv-blue-dark);
 
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
 
     user-select: none;
