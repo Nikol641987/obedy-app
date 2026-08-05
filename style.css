@@ -1828,3 +1828,97 @@ select:focus-visible {
 
 }
 
+/* TÝŽDENNÉ MENU – MOBILNÉ ROZLOŽENIE */
+
+@media (max-width: 620px) {
+
+    #adminWeeklyMenuScreen {
+        width: calc(100vw - 24px) !important;
+        max-width: 540px !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding: 0 0 40px !important;
+
+        box-sizing: border-box !important;
+    }
+
+    #adminWeeklyMenuScreen > .back-button {
+        width: 100% !important;
+        margin: 0 0 14px !important;
+        padding-left: 4px !important;
+        text-align: left !important;
+    }
+
+    #adminWeeklyMenuScreen .content-card {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 26px 20px !important;
+
+        border-radius: 24px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    #adminWeeklyMenuScreen .content-card h2 {
+        margin: 0 0 28px !important;
+
+        font-size: 36px !important;
+        line-height: 1.1 !important;
+    }
+
+    #adminWeeklyMenuScreen .weekly-menu-week-picker {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        gap: 14px !important;
+
+        width: 100% !important;
+        margin: 0 0 20px !important;
+    }
+
+    #adminWeeklyMenuScreen .weekly-menu-week-picker > div {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    #adminWeeklyMenuScreen .weekly-menu-week-picker label {
+        display: block !important;
+        margin: 0 0 8px !important;
+
+        font-size: 17px !important;
+        font-weight: 700 !important;
+    }
+
+    #adminWeeklyMenuScreen .weekly-menu-week-picker input {
+        display: block !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        height: 54px !important;
+
+        margin: 0 !important;
+        padding: 0 8px !important;
+
+        border-radius: 14px !important;
+
+        font-size: 16px !important;
+        text-align: center !important;
+
+        box-sizing: border-box !important;
+    }
+
+    #adminWeeklyMenuScreen #downloadWeeklyMenuButton,
+    #adminWeeklyMenuScreen #saveWeeklyMenuButton {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+
+}
