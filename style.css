@@ -1747,62 +1747,15 @@ select:focus-visible {
     }
 
 }
-/* SELECT NA MOBILE */
-
-@media (max-width: 620px) {
-
-    select {
-
-        min-height: 56px;
-        height: 56px;
-        padding: 0 16px;
-        font-size: 18px;
-        line-height: 56px;
-        box-sizing: border-box;
-
-    }
-
-}
-/* ROLA ZAMESTNANCA – OPRAVA PRE IPHONE */
-
-#employeeModal #employeeRoleInput {
-    display: block;
-
-    width: 100%;
-    height: 56px;
-    min-height: 56px;
-
-    margin: 0 0 12px;
-    padding: 0 44px 0 16px;
-
-    border: 1px solid #cbd5e1;
-    border-radius: 14px;
-
-    color: #202631;
-    background-color: #ffffff;
-
-    font-size: 18px;
-    line-height: normal;
-
-    box-sizing: border-box;
-
-    -webkit-appearance: menulist;
-    appearance: auto;
-}
-
-#employeeModal #employeeRoleInput option {
-    color: #202631;
-    background-color: #ffffff;
-}
 #employeeModal select#employeeRoleInput {
     display: block !important;
-
     width: 100% !important;
-    height: 58px !important;
-    min-height: 58px !important;
 
-    padding: 0 48px 0 16px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+
     margin: 0 0 16px !important;
+    padding: 0 48px 0 16px !important;
 
     border: 1px solid #cbd5e1 !important;
     border-radius: 14px !important;
@@ -1811,21 +1764,32 @@ select:focus-visible {
     color: #202631 !important;
 
     font-size: 18px !important;
-    line-height: 58px !important;
+    line-height: normal !important;
 
     box-sizing: border-box !important;
 
-    -webkit-appearance: menulist !important;
-    appearance: menulist !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, #64748b 50%),
+        linear-gradient(135deg, #64748b 50%, transparent 50%) !important;
+
+    background-position:
+        calc(100% - 20px) 27px,
+        calc(100% - 14px) 27px !important;
+
+    background-size:
+        6px 6px,
+        6px 6px !important;
+
+    background-repeat: no-repeat !important;
 }
 
-@media (max-width: 620px) {
-
-    #employeeModal select#employeeRoleInput {
-        height: 62px !important;
-        min-height: 62px !important;
-        font-size: 19px !important;
-        line-height: 62px !important;
-    }
-
+#employeeModal select#employeeRoleInput option {
+    color: #202631;
+    background-color: #ffffff;
 }
+
+
+
