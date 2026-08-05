@@ -1638,3 +1638,51 @@ select:focus-visible {
     }
 
 }
+/* ADMINISTRÁCIA – MOBIL */
+
+@media (max-width: 620px) {
+
+    #adminScreen {
+        width: min(100% - 24px, 540px);
+    }
+
+    #adminScreen .content-card {
+        padding: 24px 18px;
+        border-radius: 24px;
+    }
+
+    #adminScreen .content-card h2 {
+        margin-bottom: 24px;
+        font-size: 38px;
+        line-height: 1.1;
+    }
+
+    #adminScreen .admin-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    #adminScreen .home-card {
+        width: 100%;
+        min-height: 150px;
+        padding: 20px;
+        border-radius: 22px;
+    }
+
+    #adminScreen .home-icon {
+        width: 52px;
+        height: 52px;
+        margin-bottom: 14px;
+        font-size: 26px;
+    }
+
+    #adminScreen .home-title {
+        margin-bottom: 6px;
+        font-size: 22px;
+    }
+
+    #adminScreen .home-description {
+        font-size: 15px;
+        line-height: 1.4;
+    }
+}
