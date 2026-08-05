@@ -1994,6 +1994,8 @@ function clearLoginMessage() {
 }
 
 
+let messageModalTimeout = null;
+
 function showMessageModal(
     title,
     text
@@ -2014,12 +2016,32 @@ function showMessageModal(
             "messageModalText"
         );
 
+    const closeButton =
+        document.getElementById(
+            "closeMessageModalButton"
+        );
+
     if (
         !modal
         || !titleElement
         || !textElement
+        || !closeButton
     ) {
         return;
+    }
+
+    function closeModal() {
+
+        modal.hidden = true;
+
+        if (messageModalTimeout) {
+
+            clearTimeout(
+                messageModalTimeout
+            );
+
+            messageModalTimeout = null;
+        }
     }
 
     titleElement.textContent =
@@ -2030,44 +2052,20 @@ function showMessageModal(
 
     modal.hidden = false;
 
-}
+    closeButton.onclick =
+        closeModal;
 
-document
-    .getElementById(
-        "closeMessageModalButton"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
-
-            document.getElementById(
-                "messageModal"
-            ).hidden = true;
-
-        }
+    clearTimeout(
+        messageModalTimeout
     );
 
-function showLoginError(
-    message
-) {
-
-    const loginMessage =
-        document.getElementById(
-            "loginMessage"
+    messageModalTimeout =
+        setTimeout(
+            closeModal,
+            3000
         );
 
-    if (!loginMessage) {
-        return;
-    }
-
-    loginMessage.textContent =
-        message;
-
-    loginMessage.className =
-        "message error-message";
-
 }
-
 // =====================================
 // 7. VÝBER DŇA OBJEDNÁVKY
 // =====================================
