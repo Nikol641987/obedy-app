@@ -7018,10 +7018,8 @@ async function loadWeeklyMenuFromDatabase() {
     if (data?.length) {
 
         resultElement.textContent = "";
-
-        showMessageModal(
-            "Uložené menu bolo načítané."
-        );
+        resultElement.className =
+            "message";
 
     } else {
 
