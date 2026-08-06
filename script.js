@@ -3605,13 +3605,14 @@ if (
                                         : "";
 
 
-                                const issuedText =
-                                    item.issued
+                                const issuedHtml =
+    item.issued
 
-                                        ? " · vydané"
+        ? `<span class="my-order-issued">
+               Vydané
+           </span>`
 
-                                        : "";
-
+        : "";
 
                                 return `
                                     <div class="my-order-item">
