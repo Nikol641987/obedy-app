@@ -3615,20 +3615,29 @@ if (
         : "";
 
                                 return `
-                                    <div class="my-order-item">
+    <div class="my-order-item">
 
-                                        <strong>
-                                            ${escapeHtml(item.menu_name)}
-                                        </strong>
+        <strong>
+            ${escapeHtml(item.menu_name)}
+        </strong>
 
-                                        <div>
-                                            ${escapeHtml(methods.join(" + "))}
-                                            ${escapeHtml(soupText)}
-                                            ${escapeHtml(issuedText)}
-                                        </div>
+        <div class="my-order-details">
 
-                                    </div>
-                                `;
+            <span>
+                ${escapeHtml(methods.join(" + "))}
+                ${escapeHtml(soupText)}
+            </span>
+
+            ${
+                item.issued
+                    ? '<span class="my-order-issued">Vydané</span>'
+                    : ""
+            }
+
+        </div>
+
+    </div>
+`;
 
                             })
                             .join("");
