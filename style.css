@@ -2068,3 +2068,23 @@ select:focus-visible {
     }
 
 }
+.my-order-details {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.my-order-issued {
+    display: inline-block;
+    padding: 4px 9px;
+
+    border-radius: 999px;
+
+    background: #fde8e7;
+    color: #b42318;
+
+    font-size: 14px;
+    font-weight: 800;
+}
