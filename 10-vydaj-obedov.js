@@ -635,15 +635,16 @@ const totalCount =
         const { data, error } =
             await supabaseClient
                 .from("meal_orders")
-                .select(`
-                    id,
-                    employee_id,
-                    employee_name,
-                    menu_name,
-                    dining,
-                    takeaway,
-                    issued
-                `)
+              .select(`
+    id,
+    employee_id,
+    employee_name,
+    menu_id,
+    menu_name,
+    dining,
+    takeaway,
+    issued
+`)
                 .eq("order_date", today);
 
 
