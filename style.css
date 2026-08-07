@@ -2130,3 +2130,52 @@ select:focus-visible {
         padding-top: 8px;
     }
 }
+/* =====================================
+   STAV VÝDAJA – DNEŠNÁ OBJEDNÁVKA
+===================================== */
+
+.today-menu-summary {
+    margin: 0 0 28px;
+    padding: 20px;
+
+    background: #f8fbff;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
+
+.today-menu-summary-title {
+    margin-bottom: 8px;
+
+    color: var(--tmv-blue-dark);
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.today-menu-total {
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.today-menu-list {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0;
+}
+
+.today-menu-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 6px 0;
+    font-size: 16px;
+}
+
+.today-menu-serving {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+
+    margin-top: 14px;
+    font-size: 15px;
+}
