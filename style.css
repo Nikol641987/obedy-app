@@ -2105,3 +2105,28 @@ select:focus-visible {
     cursor: pointer;
     padding: 8px 12px;
 }
+/* STAV VÝDAJA – kompaktnejšie objednávky na mobile */
+
+@media (max-width: 620px) {
+
+    #dashboardScreen .issue-item {
+        padding: 14px 16px;
+    }
+
+    #dashboardScreen .issue-name {
+        margin-bottom: 5px;
+    }
+
+    #dashboardScreen .issue-meal-row {
+        padding: 6px 0;
+    }
+
+    #dashboardScreen .issue-type {
+        margin-bottom: 2px;
+    }
+
+    #dashboardScreen .issue-status {
+        margin-top: 8px;
+        padding-top: 8px;
+    }
+}
