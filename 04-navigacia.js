@@ -1114,6 +1114,10 @@ cancelResetPinButton?.addEventListener(
             clearLoginMessage();
             showScreen("homeScreen");
             updatePermissions();
+            showMessageModal(
+    "Odhlásenie",
+    "Boli ste úspešne odhlásený."
+);
 
         }
     );
