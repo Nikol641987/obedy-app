@@ -3202,7 +3202,11 @@ function setupOrderButton() {
                         option =>
                             option.value === employeeId
                     );
-
+const maxMenuNumber =
+    Number(
+        selectedEmployee?.dataset?.maxMenuNumber
+        || 5
+    );
 
             const employeeName =
                 selectedEmployee
@@ -3227,6 +3231,29 @@ function setupOrderButton() {
     getOrderDate();
 
             const groupedMenus = {};
+
+            const hasForbiddenMenu =
+    [...selectedChoices].some(
+        choice =>
+            Number(
+                choice.dataset.menuId
+            ) > maxMenuNumber
+    );
+
+if (hasForbiddenMenu) {
+
+    if (orderMessage) {
+
+        orderMessage.textContent =
+            "Toto menu nemáte povolené objednať.";
+
+        orderMessage.className =
+            "message error-message";
+
+    }
+
+    return;
+}
 
 
             selectedChoices.forEach(
