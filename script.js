@@ -1381,6 +1381,10 @@ option.value =
         : "false";
             option.dataset.role =
     employee.role || "";
+            option.dataset.maxMenuNumber =
+    employee.max_menu_number
+        ? String(employee.max_menu_number)
+        : "5";
 
 
             select.appendChild(option);
