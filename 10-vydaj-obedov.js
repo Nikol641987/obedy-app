@@ -822,11 +822,29 @@ if (todayMenuSummary) {
                 }
             )
             .join("");
+const todayFormatted =
+    new Date(today + "T12:00:00")
+        .toLocaleDateString(
+            "sk-SK",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "numeric",
+                year: "numeric"
+            }
+        );
 
+const todayFormattedCapitalized =
+    todayFormatted.charAt(0).toUpperCase()
+    + todayFormatted.slice(1);
     todayMenuSummary.innerHTML = `
         <div class="today-menu-summary-title">
             Dnešná objednávka
         </div>
+
+        <div class="today-menu-date">
+    ${todayFormattedCapitalized}
+</div>
 
         <div class="today-menu-total">
             Spolu:
