@@ -1,25 +1,44 @@
-// =====================================
-// OBEDY TMV
-// =====================================
-
-// =====================================
-// 1. Štart aplikácie
+// 2. PREPÍNANIE OBRAZOVIEK
 // =====================================
 
-let selectedOrderDate = null;
+function showScreen(screenId) {
 
-document.addEventListener("DOMContentLoaded", async () => {
+    document
+        .querySelectorAll(".app-screen")
+        .forEach(screen => {
+            screen.hidden = true;
+        });
 
-    await loadEmployees();
-    
-    updatePermissions();
+    const selectedScreen =
+        document.getElementById(screenId);
 
-    setupNavigation();
-    setupLogin();
-    setupOrderButton();
-    setupManualIssue();
-    setupChipLogin();
-    setupChipIssue();
-    setupMonthlyReport();
+    if (selectedScreen) {
+        selectedScreen.hidden = false;
+    }
 
-});
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+if (screenId === "loginScreen") {
+
+    const chipInput =
+        document.getElementById(
+            "chipLoginInput"
+        );
+
+    if (chipInput) {
+
+        chipInput.value = "";
+
+        setTimeout(() => {
+            chipInput.focus();
+        }, 150);
+
+    }
+
+}
+}
+
+
+// =====================================
