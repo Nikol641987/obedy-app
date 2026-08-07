@@ -2088,3 +2088,20 @@ select:focus-visible {
     font-size: 14px;
     font-weight: 800;
 }
+/* Odhlásenie na hlavnej obrazovke */
+
+.home-logout {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+
+.home-logout-button {
+    background: transparent;
+    border: none;
+    color: #2f65ad;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 8px 12px;
+}
