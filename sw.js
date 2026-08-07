@@ -1,11 +1,24 @@
 const CACHE_NAME =
-    "obedy-tmv-v14";
+    "obedy-tmv-v15";
 
 const FILES_TO_CACHE = [
     "./",
     "./index.html",
     "./style.css",
-    "./script.js",
+
+    "./01-start.js",
+    "./02-obrazovky.js",
+    "./03-prihlaseny-zamestnanec.js",
+    "./04-navigacia.js",
+    "./05-zamestnanci.js",
+    "./06-prihlasenie.js",
+    "./07-objednavka-a-vyber-dna.js",
+    "./08-moje-obedy.js",
+    "./09-pomocne-funkcie.js",
+    "./10-vydaj-obedov.js",
+    "./11-mesacny-vykaz.js",
+    "./12-administracia.js",
+
     "./supabase.js",
     "./manifest.json",
     "./assets/favicon.png"
