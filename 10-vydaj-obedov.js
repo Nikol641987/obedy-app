@@ -757,6 +757,107 @@ takeawayCount.textContent =
 totalCount.textContent =
     orders.length;
 
+        const todayMenuSummary =
+    document.getElementById(
+        "todayMenuSummary"
+    );
+
+if (todayMenuSummary) {
+
+    const menuCounts = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0
+    };
+
+    orders.forEach(order => {
+
+        const menuNumber =
+            Number(
+                order.menu_id
+            );
+
+        if (
+            menuCounts[
+                menuNumber
+            ] !== undefined
+        ) {
+
+            menuCounts[
+                menuNumber
+            ]++;
+
+        }
+
+    });
+
+    const menuRows =
+        [1, 2, 3, 4, 5, 6]
+            .filter(
+                menuNumber =>
+                    menuCounts[
+                        menuNumber
+                    ] > 0
+            )
+            .map(
+                menuNumber => {
+
+                    const label =
+                        menuNumber === 6
+                            ? "⭐ Menu 6"
+                            : `Menu ${menuNumber}`;
+
+                    return `
+                        <div class="today-menu-row">
+                            <span>${label}</span>
+                            <strong>
+                                ${menuCounts[menuNumber]} ks
+                            </strong>
+                        </div>
+                    `;
+
+                }
+            )
+            .join("");
+
+    todayMenuSummary.innerHTML = `
+        <div class="today-menu-summary-title">
+            Dnešná objednávka
+        </div>
+
+        <div class="today-menu-total">
+            Spolu:
+            <strong>
+                ${orders.length} ks
+            </strong>
+        </div>
+
+        <div class="today-menu-list">
+            ${menuRows}
+        </div>
+
+        <div class="today-menu-serving">
+            <span>
+                🍽️ V jedálni:
+                <strong>
+                    ${diningMeals} ks
+                </strong>
+            </span>
+
+            <span>
+                📦 Zabaliť:
+                <strong>
+                    ${takeawayMeals} ks
+                </strong>
+            </span>
+        </div>
+    `;
+
+}
+        
         if (employees.length === 0) {
 
             issueCards.innerHTML = `
