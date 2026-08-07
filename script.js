@@ -3014,7 +3014,36 @@ async function loadMenus() {
 
         container.innerHTML = "";
 
+        const employeeId =
+    getCurrentEmployeeId();
+
+const employeeSelect =
+    document.getElementById(
+        "employeeSelect"
+    );
+
+const employeeOption =
+    employeeSelect
+        ? [...employeeSelect.options].find(
+            option =>
+                option.value === employeeId
+        )
+        : null;
+
+const maxMenuNumber =
+    Number(
+        employeeOption?.dataset?.maxMenuNumber
+        || 5
+    );
+
         menus.forEach(menu => {
+
+            if (
+    Number(menu.id) >
+    maxMenuNumber
+) {
+    return;
+}
 
             const card =
                 document.createElement(
@@ -3028,7 +3057,7 @@ async function loadMenus() {
                 <div class="menu-card-header">
 
                     <span class="menu-number">
-                        Menu ${menu.id}
+                        ${Number(menu.id) === 6 ? "⭐ Menu 6" : `Menu ${menu.id}`}
                     </span>
 
                 </div>
