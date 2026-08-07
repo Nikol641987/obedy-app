@@ -3057,7 +3057,7 @@ const maxMenuNumber =
                 <div class="menu-card-header">
 
                     <span class="menu-number">
-                        ${Number(menu.id) === 6 ? "⭐ Menu 6" : `Menu ${menu.id}`}
+                       ${Number(menu.id) === 6 ? "⭐ Menu 6" : "Menu " + menu.id}
                     </span>
 
                 </div>
