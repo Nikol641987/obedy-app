@@ -521,6 +521,10 @@ addEmployeeButton?.addEventListener(
         editingEmployee =
             null;
 
+        if (employeeMaxMenuInput) {
+    employeeMaxMenuInput.value = "5";
+}
+
         document.getElementById(
             "employeeNameInput"
         ).value = "";
