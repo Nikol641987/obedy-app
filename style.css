@@ -2251,3 +2251,54 @@ select:focus-visible {
     word-break: break-word;
     white-space: normal;
 }
+/* =====================================
+   MOJE OBEDY – PREHĽAD JEDÁL
+===================================== */
+
+.my-order-item {
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+}
+
+.my-order-item:first-child {
+    border-top: 0;
+    padding-top: 6px;
+}
+
+.my-order-top-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin-bottom: 8px;
+}
+
+.my-order-method {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.my-order-meal-name {
+    font-size: 17px;
+    line-height: 1.45;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.my-order-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.my-order-status.issued {
+    background: #fde8e7;
+    color: #b42318;
+}
+
+.my-order-status.waiting {
+    background: #e8f7ed;
+    color: #16803c;
+}
