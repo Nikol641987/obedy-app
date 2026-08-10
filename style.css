@@ -2193,3 +2193,51 @@ select:focus-visible {
     word-break: normal;
     max-width: 100%;
 }
+/* Tlačidlo "Vydať osobne" v stave výdaja */
+
+.manual-issue-card-button {
+    width: 100%;
+
+    margin-top: 8px;
+    padding: 12px 16px;
+
+    border: none;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--tmv-blue),
+            var(--tmv-blue-dark)
+        );
+
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    box-shadow:
+        0 8px 18px
+        rgba(47, 102, 173, 0.22);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.16s ease,
+        filter 0.16s ease;
+}
+
+.manual-issue-card-button:hover {
+    filter: brightness(1.04);
+    transform: translateY(-1px);
+}
+
+.manual-issue-card-button:active {
+    transform: scale(0.98);
+}
+
+.manual-issue-card-button:disabled {
+    opacity: 0.65;
+    cursor: default;
+    transform: none;
+}
