@@ -169,43 +169,32 @@ if (
 }
 
 
-                                const soupText =
-                                    item.no_soup
-
-                                        ? " · bez polievky"
-
-                                        : "";
-
-
-                                const issuedHtml =
-    item.issued
-
-        ? `<span class="my-order-issued">
-               Vydané
-           </span>`
-
+             const soupText =
+    item.no_soup
+        ? " · bez polievky"
         : "";
 
-                                return `
+const statusHtml =
+    item.issued
+        ? '<span class="my-order-status issued">Vydané</span>'
+        : '<span class="my-order-status waiting">Čaká</span>';
+
+return `
     <div class="my-order-item">
 
-        <strong>
-            ${escapeHtml(item.menu_name)}
-        </strong>
+        <div class="my-order-top-row">
 
-        <div class="my-order-details">
-
-            <span>
+            <span class="my-order-method">
                 ${escapeHtml(methods.join(" + "))}
                 ${escapeHtml(soupText)}
             </span>
 
-            ${
-                item.issued
-                    ? '<span class="my-order-issued">Vydané</span>'
-                    : ""
-            }
+            ${statusHtml}
 
+        </div>
+
+        <div class="my-order-meal-name">
+            ${escapeHtml(item.menu_name)}
         </div>
 
     </div>
