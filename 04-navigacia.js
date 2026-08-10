@@ -96,6 +96,11 @@ const weeklyMenuTo =
     const saveEmployeeButton =
     document.getElementById("saveEmployeeButton");
 
+    const employeeMaxMenuInput =
+    document.getElementById(
+        "employeeMaxMenuInput"
+    );
+
     const deactivateEmployeeCheckbox =
     document.getElementById(
         "deactivateEmployeeCheckbox"
