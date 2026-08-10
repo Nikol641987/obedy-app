@@ -2186,3 +2186,10 @@ select:focus-visible {
     font-size: 15px;
     font-weight: 600;
 }
+/* Výdaj obedov – dlhý text musí zostať v karte */
+
+#dashboardScreen .issue-meal-name {
+    overflow-wrap: anywhere;
+    word-break: normal;
+    max-width: 100%;
+}
