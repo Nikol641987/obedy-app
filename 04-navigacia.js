@@ -599,7 +599,13 @@ saveEmployeeButton?.addEventListener(
             role:
                 document.getElementById(
                     "employeeRoleInput"
-                ).value
+                ).value,
+            maxMenuNumber:
+    Number(
+        document.getElementById(
+            "employeeMaxMenuInput"
+        ).value
+    )
 
         };
 
@@ -643,11 +649,14 @@ if (!editingEmployee) {
                 has_chip:
                     Boolean(employeeData.chip),
 
-                active:
+            active:
     true,
 
 role:
-    employeeData.role
+    employeeData.role,
+
+max_menu_number:
+    employeeData.maxMenuNumber
 
             });
 
@@ -694,12 +703,14 @@ await loadEmployees();
     has_chip:
         Boolean(employeeData.chip),
 
-    role:
-        employeeData.role,
+   role:
+    employeeData.role,
 
-    active:
-        !deactivateEmployeeCheckbox.checked
+active:
+    !deactivateEmployeeCheckbox.checked,
 
+max_menu_number:
+    employeeData.maxMenuNumber
 })
             .eq(
                 "id",
