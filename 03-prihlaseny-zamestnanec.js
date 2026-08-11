@@ -29,47 +29,125 @@ function getCurrentUserRole() {
 }
 function updatePermissions() {
 
-    const role = getCurrentUserRole();
+    const employeeId =
+        getCurrentEmployeeId();
 
-    console.log("Aktuálna rola:", role);
+    const role =
+        getCurrentUserRole();
 
-    const openIssueButton =
-        document.getElementById("openIssueButton");
+    const isLoggedIn =
+        Boolean(employeeId);
 
-    const openDashboardButton =
-        document.getElementById("openDashboardButton");
-    
-    const openAdminButton =
-    document.getElementById("openAdminButton");
-    
-    const openMonthlyReportButton =
-    document.getElementById(
-        "openMonthlyReportButton"
+    console.log(
+        "Aktuálna rola:",
+        role
     );
 
-    // Výdaj obedov vidí iba admin
-if (openIssueButton) {
-    openIssueButton.hidden =
-        role !== "admin";
-}
+    const openIssueButton =
+        document.getElementById(
+            "openIssueButton"
+        );
 
-    // Stav výdaja obedov vidí iba admin a issue
-    if (openDashboardButton) {
-        openDashboardButton.hidden =
-            !(role === "admin" || role === "issue");
+    const openDashboardButton =
+        document.getElementById(
+            "openDashboardButton"
+        );
+
+    const openMyOrdersButton =
+        document.getElementById(
+            "openMyOrdersButton"
+        );
+
+    const openProfileButton =
+        document.getElementById(
+            "openProfileButton"
+        );
+
+    const logoutButton =
+        document.getElementById(
+            "logoutButton"
+        );
+
+    const openAdminButton =
+        document.getElementById(
+            "openAdminButton"
+        );
+
+    const openMonthlyReportButton =
+        document.getElementById(
+            "openMonthlyReportButton"
+        );
+
+
+    // VÝDAJ OBEDOV
+    // Bez prihlásenia dostupný.
+    // Po prihlásení iba admin alebo issue.
+    if (openIssueButton) {
+
+        openIssueButton.hidden =
+            isLoggedIn
+            && !(
+                role === "admin"
+                || role === "issue"
+            );
     }
-// Administráciu vidí iba admin
-if (openAdminButton) {
-    openAdminButton.hidden =
-        role !== "admin";
-    
-}
-    // Mesačný výkaz vidí iba admin
-if (openMonthlyReportButton) {
 
-    openMonthlyReportButton.hidden =
-        role !== "admin";
 
-}
+    // MOJE OBEDY
+    // Iba po prihlásení.
+    if (openMyOrdersButton) {
+
+        openMyOrdersButton.hidden =
+            !isLoggedIn;
+    }
+
+
+    // MÔJ PROFIL
+    // Iba po prihlásení.
+    if (openProfileButton) {
+
+        openProfileButton.hidden =
+            !isLoggedIn;
+    }
+
+
+    // ODHLÁSIŤ SA
+    // Iba po prihlásení.
+    if (logoutButton) {
+
+        logoutButton.hidden =
+            !isLoggedIn;
+    }
+
+
+    // STAV VÝDAJA OBEDOV
+    // Iba admin a issue.
+    if (openDashboardButton) {
+
+        openDashboardButton.hidden =
+            !(
+                role === "admin"
+                || role === "issue"
+            );
+    }
+
+
+    // ADMINISTRÁCIA
+    // Iba admin.
+    if (openAdminButton) {
+
+        openAdminButton.hidden =
+            role !== "admin";
+    }
+
+
+    // MESAČNÝ VÝKAZ
+    // Iba admin.
+    if (openMonthlyReportButton) {
+
+        openMonthlyReportButton.hidden =
+            role !== "admin";
+    }
+
 }
 // =====================================
