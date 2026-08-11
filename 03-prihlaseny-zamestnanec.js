@@ -59,6 +59,10 @@ const isLoggedIn =
             "openProfileButton"
         );
 
+    const homeLoginButton =
+    document.getElementById(
+        "homeLoginButton"
+    );
     const logoutButton =
         document.getElementById(
             "logoutButton"
@@ -144,6 +148,10 @@ const isLoggedIn =
         openMonthlyReportButton.hidden =
             role !== "admin";
     }
-
+// PRIHLÁSIŤ SA
+if (homeLoginButton) {
+    homeLoginButton.hidden =
+        isLoggedIn;
+}
 }
 // =====================================
