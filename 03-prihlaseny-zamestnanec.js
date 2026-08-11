@@ -79,20 +79,15 @@ const isLoggedIn =
         );
 
 
-    // VÝDAJ OBEDOV
-    // Bez prihlásenia dostupný.
-    // Po prihlásení iba admin alebo issue.
-    if (openIssueButton) {
+   // VÝDAJ OBEDOV
+// Bez prihlásenia dostupný.
+// Po prihlásení iba admin.
+if (openIssueButton) {
 
-        openIssueButton.hidden =
-            isLoggedIn
-            && !(
-                role === "admin"
-                || role === "issue"
-            );
-    }
-
-
+    openIssueButton.hidden =
+        isLoggedIn
+        && role !== "admin";
+}
     // MOJE OBEDY
     // Iba po prihlásení.
     if (openMyOrdersButton) {
