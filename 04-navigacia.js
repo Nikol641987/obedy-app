@@ -1075,12 +1075,14 @@ cancelResetPinButton?.addEventListener(
 
     }
 );
-  homeLoginButton?.addEventListener(
+ homeLoginButton?.addEventListener(
     "click",
     () => {
 
-        requestedScreen =
-            "homeScreen";
+        sessionStorage.setItem(
+            "requestedScreen",
+            "homeScreen"
+        );
 
         showScreen(
             "loginScreen"
