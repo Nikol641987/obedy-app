@@ -660,4 +660,19 @@ function showMessageModal(
         );
 
 }
+function showLoginError(message) {
+
+    const loginMessage =
+        document.getElementById(
+            "loginMessage"
+        );
+
+    if (!loginMessage) return;
+
+    loginMessage.textContent = message;
+
+    loginMessage.className =
+        "message error";
+
+}
 // =====================================
