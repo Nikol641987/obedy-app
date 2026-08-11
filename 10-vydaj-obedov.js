@@ -476,12 +476,12 @@ updatePermissions();
         );
 
 
-        if (
+       if (
     requestedScreen ===
     "orderScreen"
 ) {
 
-    await openOrderScreen(
+    await openWeekSelectionScreen(
         employeeId
     );
 
