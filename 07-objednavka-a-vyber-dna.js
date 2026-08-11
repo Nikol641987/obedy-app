@@ -81,6 +81,41 @@ async function openWeekSelectionScreen(employeeId) {
 
     let weeklyOrders = [];
 
+    let weeklyMenus = [];
+
+    try {
+
+    const { data, error } =
+        await supabaseClient
+            .from("weekly_menu")
+            .select(
+                "menu_date, soup"
+            )
+            .gte(
+                "menu_date",
+                mondayForDatabase
+            )
+            .lte(
+                "menu_date",
+                fridayForDatabase
+            );
+
+    if (error) {
+        throw error;
+    }
+
+    weeklyMenus =
+        data || [];
+
+} catch (error) {
+
+    console.error(
+        "Chyba pri načítaní polievok:",
+        error
+    );
+
+}
+
     try {
 
         const { data, error } =
@@ -132,6 +167,16 @@ async function openWeekSelectionScreen(employeeId) {
     }
 
     const ordersByDate = {};
+    const soupsByDate = {};
+
+weeklyMenus.forEach(menu => {
+
+    soupsByDate[
+        menu.menu_date
+    ] =
+        menu.soup || "";
+
+});
 
     weeklyOrders.forEach(order => {
 
@@ -170,6 +215,12 @@ async function openWeekSelectionScreen(employeeId) {
             const dayOrders =
                 ordersByDate[dateForDatabase]
                 || [];
+
+            const daySoup =
+    soupsByDate[
+        dateForDatabase
+    ] || "";
+            
 const deadline =
     new Date(date);
 
@@ -220,7 +271,25 @@ const isClosed =
             card.appendChild(
                 dateElement
             );
+if (daySoup) {
 
+    const soupElement =
+        document.createElement(
+            "div"
+        );
+
+    soupElement.className =
+        "week-order-soup";
+
+    soupElement.textContent =
+        `🥣 ${daySoup}`;
+
+    card.appendChild(
+        soupElement
+    );
+
+}
+            
             if (dayOrders.length === 0) {
 
     const status =
