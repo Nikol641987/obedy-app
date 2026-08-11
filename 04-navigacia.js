@@ -112,6 +112,11 @@ const weeklyMenuTo =
     const openProfileButton =
         document.getElementById("openProfileButton");
 
+const homeLoginButton =
+    document.getElementById(
+        "homeLoginButton"
+    );
+    
     const logoutButton =
         document.getElementById("logoutButton");
 
