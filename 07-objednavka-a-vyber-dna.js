@@ -890,6 +890,35 @@ async function loadMenus() {
 
         container.innerHTML = "";
 
+        if (data.soup) {
+
+    const soupCard =
+        document.createElement(
+            "article"
+        );
+
+    soupCard.className =
+        "menu-card soup-card";
+
+    soupCard.innerHTML = `
+        <div class="menu-card-header">
+
+            <span class="menu-number">
+                🥣 Polievka
+            </span>
+
+        </div>
+
+        <h3>
+            ${escapeHtml(data.soup)}
+        </h3>
+    `;
+
+    container.appendChild(
+        soupCard
+    );
+}
+
         const employeeId =
     getCurrentEmployeeId();
 
