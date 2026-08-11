@@ -29,15 +29,11 @@ function getCurrentUserRole() {
 }
 function updatePermissions() {
 
-    const employeeId =
-        getCurrentEmployeeId();
+   const role =
+    getCurrentUserRole();
 
-    const role =
-        getCurrentUserRole();
-
-    const isLoggedIn =
-        Boolean(employeeId);
-
+const isLoggedIn =
+    Boolean(role);
     console.log(
         "Aktuálna rola:",
         role
