@@ -196,15 +196,18 @@ updatePinMode();
             } else {
 
                 // Pri ďalšom prihlásení zadá PIN iba raz
-                if (pin !== savedPin) {
+               if (pin !== savedPin) {
 
-                    showLoginError(
-                        "Nesprávny PIN."
-                    );
+    showMessageModal(
+        "Nesprávny PIN",
+        "Zadali ste nesprávny PIN. Skúste to znova."
+    );
 
-                    return;
+    pinInput.value = "";
 
-                }
+    return;
+
+}
 
             }
 
