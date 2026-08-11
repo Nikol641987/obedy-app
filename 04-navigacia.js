@@ -1075,6 +1075,19 @@ cancelResetPinButton?.addEventListener(
 
     }
 );
+  homeLoginButton?.addEventListener(
+    "click",
+    () => {
+
+        requestedScreen =
+            "homeScreen";
+
+        showScreen(
+            "loginScreen"
+        );
+
+    }
+);
     logoutButton?.addEventListener(
         "click",
         () => {
