@@ -47,10 +47,11 @@ function updatePermissions() {
         "openMonthlyReportButton"
     );
 
-    // Výdaj obedov vidí každý
-    if (openIssueButton) {
-        openIssueButton.hidden = false;
-    }
+    // Výdaj obedov vidí iba admin
+if (openIssueButton) {
+    openIssueButton.hidden =
+        role !== "admin";
+}
 
     // Stav výdaja obedov vidí iba admin a issue
     if (openDashboardButton) {
