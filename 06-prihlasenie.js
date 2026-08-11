@@ -259,10 +259,10 @@ if (
     "orderScreen"
 ) {
 
-    openOrderScreen(
-        employeeId
-    );
-
+   openWeekSelectionScreen(
+    employeeId
+);
+    
 } else if (
     requestedScreen ===
     "myOrdersScreen"
