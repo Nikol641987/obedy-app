@@ -333,6 +333,139 @@ openDashboardButton?.addEventListener(
 
     }
 );
+
+    saveOrderEmailSettingsButton?.addEventListener(
+    "click",
+    async () => {
+
+        const restaurantEmail =
+            restaurantEmailInput?.value
+                .trim();
+
+        const sendTime =
+            orderEmailTimeInput?.value;
+
+        const enabled =
+            Boolean(
+                automaticOrderEmailEnabled?.checked
+            );
+
+
+        if (!restaurantEmail) {
+
+            alert(
+                "Zadajte e-mail reštaurácie."
+            );
+
+            return;
+        }
+
+
+        if (!sendTime) {
+
+            alert(
+                "Zadajte čas automatického odoslania."
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const { data: existing, error: loadError } =
+                await supabaseClient
+                    .from(
+                        "order_email_settings"
+                    )
+                    .select("id")
+                    .order(
+                        "id",
+                        {
+                            ascending: true
+                        }
+                    )
+                    .limit(1)
+                    .maybeSingle();
+
+            if (loadError) {
+                throw loadError;
+            }
+
+
+            let saveError;
+
+
+            if (existing?.id) {
+
+                const { error } =
+                    await supabaseClient
+                        .from(
+                            "order_email_settings"
+                        )
+                        .update({
+                            restaurant_email:
+                                restaurantEmail,
+
+                            send_time:
+                                sendTime,
+
+                            enabled:
+                                enabled
+                        })
+                        .eq(
+                            "id",
+                            existing.id
+                        );
+
+                saveError = error;
+
+            } else {
+
+                const { error } =
+                    await supabaseClient
+                        .from(
+                            "order_email_settings"
+                        )
+                        .insert({
+                            restaurant_email:
+                                restaurantEmail,
+
+                            send_time:
+                                sendTime,
+
+                            enabled:
+                                enabled
+                        });
+
+                saveError = error;
+            }
+
+
+            if (saveError) {
+                throw saveError;
+            }
+
+
+            alert(
+                "Nastavenie bolo uložené."
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Chyba pri ukladaní nastavenia e-mailu:",
+                error
+            );
+
+            alert(
+                "Nastavenie sa nepodarilo uložiť."
+            );
+        }
+
+    }
+);
 downloadWeeklyMenuButton?.addEventListener(
     "click",
     async () => {
