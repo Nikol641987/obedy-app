@@ -595,12 +595,120 @@
             Automatický import menu
         </span>
     </button>
+           
+<button
+    id="adminEmailOrdersButton"
+    class="home-card"
+>
+    <span class="home-icon">📧</span>
 
+    <span class="home-title">
+        Odosielanie objednávok
+    </span>
+
+    <span class="home-description">
+        Automatické e-maily a história
+    </span>
+</button>
+           
 </div>
     </div>
 
 </section>
 
+    <!-- ODOSIELANIE OBJEDNÁVOK -->
+
+<section
+    id="adminEmailOrdersScreen"
+    class="app-screen"
+    hidden
+>
+
+    <button
+        class="back-button"
+        data-back-admin
+    >
+        ← Späť
+    </button>
+
+    <div class="content-card">
+
+        <h2>
+            Odosielanie objednávok
+        </h2>
+
+        <div class="form-group">
+
+            <label for="restaurantEmailInput">
+                E-mail reštaurácie
+            </label>
+
+            <input
+                id="restaurantEmailInput"
+                type="email"
+                class="form-control"
+                placeholder="napr. objednavky@restauracia.sk"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="orderEmailTimeInput">
+                Čas automatického odoslania
+            </label>
+
+            <input
+                id="orderEmailTimeInput"
+                type="time"
+                class="form-control"
+            >
+
+        </div>
+
+        <label class="remember-row">
+
+            <input
+                id="automaticOrderEmailEnabled"
+                type="checkbox"
+            >
+
+            <span>
+                Automatické odosielanie zapnuté
+            </span>
+
+        </label>
+
+        <button
+            id="saveOrderEmailSettingsButton"
+            class="main-button"
+            type="button"
+        >
+            💾 Uložiť nastavenie
+        </button>
+
+        <button
+            id="sendTestOrderEmailButton"
+            class="secondary-button"
+            type="button"
+        >
+            📧 Odoslať testovací e-mail
+        </button>
+
+
+        <h3 style="margin-top: 36px;">
+            História odoslaných objednávok
+        </h3>
+
+        <div
+            id="orderEmailHistory"
+        >
+            Zatiaľ nebola odoslaná žiadna objednávka.
+        </div>
+
+    </div>
+
+</section>
 
 <!-- SPRÁVA ZAMESTNANCOV -->
 <section
