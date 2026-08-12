@@ -70,6 +70,16 @@ const adminEmployeesButton =
 const adminWeeklyMenuScreen =
     document.getElementById("adminWeeklyMenuScreen");
 
+    const adminEmailOrdersButton =
+document.getElementById(
+    "adminEmailOrdersButton"
+);
+
+const adminEmailOrdersScreen =
+document.getElementById(
+    "adminEmailOrdersScreen"
+);
+
 const downloadWeeklyMenuButton =
     document.getElementById("downloadWeeklyMenuButton");
     const saveWeeklyMenuButton =
