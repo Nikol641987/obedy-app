@@ -79,6 +79,35 @@ const adminEmailOrdersScreen =
 document.getElementById(
     "adminEmailOrdersScreen"
 );
+    const restaurantEmailInput =
+    document.getElementById(
+        "restaurantEmailInput"
+    );
+
+const orderEmailTimeInput =
+    document.getElementById(
+        "orderEmailTimeInput"
+    );
+
+const automaticOrderEmailEnabled =
+    document.getElementById(
+        "automaticOrderEmailEnabled"
+    );
+
+const saveOrderEmailSettingsButton =
+    document.getElementById(
+        "saveOrderEmailSettingsButton"
+    );
+
+const sendTestOrderEmailButton =
+    document.getElementById(
+        "sendTestOrderEmailButton"
+    );
+
+const orderEmailHistory =
+    document.getElementById(
+        "orderEmailHistory"
+    );
 
 const downloadWeeklyMenuButton =
     document.getElementById("downloadWeeklyMenuButton");
@@ -239,6 +268,68 @@ openDashboardButton?.addEventListener(
                 day.open = false;
 
             });
+
+    }
+);
+
+    adminEmailOrdersButton?.addEventListener(
+    "click",
+    async () => {
+
+        showScreen(
+            "adminEmailOrdersScreen"
+        );
+
+        try {
+
+            const { data, error } =
+                await supabaseClient
+                    .from(
+                        "order_email_settings"
+                    )
+                    .select(
+                        "restaurant_email, send_time, enabled"
+                    )
+                    .order(
+                        "id",
+                        {
+                            ascending: true
+                        }
+                    )
+                    .limit(1)
+                    .maybeSingle();
+
+            if (error) {
+                throw error;
+            }
+
+            if (restaurantEmailInput) {
+                restaurantEmailInput.value =
+                    data?.restaurant_email || "";
+            }
+
+            if (orderEmailTimeInput) {
+                orderEmailTimeInput.value =
+                    data?.send_time
+                        ? String(data.send_time).slice(0, 5)
+                        : "";
+            }
+
+            if (automaticOrderEmailEnabled) {
+                automaticOrderEmailEnabled.checked =
+                    Boolean(
+                        data?.enabled
+                    );
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Chyba pri načítaní nastavení e-mailu:",
+                error
+            );
+
+        }
 
     }
 );
