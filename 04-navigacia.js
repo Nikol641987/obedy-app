@@ -330,10 +330,150 @@ openDashboardButton?.addEventListener(
             );
 
         }
-
+    await loadOrderEmailHistory();
     }
 );
+async function loadOrderEmailHistory() {
 
+    if (!orderEmailHistory) {
+        return;
+    }
+
+    orderEmailHistory.innerHTML =
+        "Načítavam históriu...";
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from(
+                    "order_email_history"
+                )
+                .select(`
+                    id,
+                    created_at,
+                    order_date,
+                    restaurant_email,
+                    total_orders,
+                    dining_orders,
+                    takeaway_orders,
+                    order_summary,
+                    status,
+                    error_message
+                `)
+                .order(
+                    "order_date",
+                    {
+                        ascending: false
+                    }
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data || data.length === 0) {
+
+            orderEmailHistory.innerHTML =
+                "Zatiaľ nebola odoslaná žiadna objednávka.";
+
+            return;
+        }
+
+        orderEmailHistory.innerHTML =
+            data
+                .map(item => {
+
+                    const formattedDate =
+                        new Date(
+                            item.order_date + "T12:00:00"
+                        )
+                        .toLocaleDateString(
+                            "sk-SK"
+                        );
+
+                    const formattedTime =
+                        item.created_at
+                            ? new Date(
+                                item.created_at
+                            )
+                            .toLocaleTimeString(
+                                "sk-SK",
+                                {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    timeZone:
+                                        "Europe/Bratislava"
+                                }
+                            )
+                            : "";
+
+                    const statusText =
+                        item.status === "sent"
+                            ? "✅ Odoslané"
+                            : "❌ Chyba";
+
+                    return `
+                        <div class="order-email-history-item">
+
+                            <div class="order-email-history-top">
+                                <strong>
+                                    ${formattedDate}
+                                </strong>
+
+                                <span>
+                                    ${statusText}
+                                </span>
+                            </div>
+
+                            <div>
+                                Čas:
+                                <strong>${formattedTime}</strong>
+                            </div>
+
+                            <div>
+                                Spolu:
+                                <strong>${item.total_orders || 0} ks</strong>
+                            </div>
+
+                            <div>
+                                🍽️ V jedálni:
+                                <strong>${item.dining_orders || 0} ks</strong>
+                            </div>
+
+                            <div>
+                                📦 Zabaliť:
+                                <strong>${item.takeaway_orders || 0} ks</strong>
+                            </div>
+
+                            <div>
+                                E-mail:
+                                ${item.restaurant_email || ""}
+                            </div>
+
+                        </div>
+                    `;
+
+                })
+                .join("");
+
+    } catch (error) {
+
+        console.error(
+            "Chyba pri načítaní histórie e-mailov:",
+            error
+        );
+
+        orderEmailHistory.innerHTML =
+            "Históriu sa nepodarilo načítať.";
+    }
+}
     saveOrderEmailSettingsButton?.addEventListener(
     "click",
     async () => {
