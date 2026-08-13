@@ -1095,7 +1095,8 @@ select:focus-visible {
 
 #adminScreen,
 #adminEmployeesScreen,
-#adminWeeklyMenuScreen {
+#adminWeeklyMenuScreen,
+#adminEmailOrdersScreen {
     width: min(100% - 28px, 760px);
     margin: 0 auto;
     padding-bottom: 48px;
