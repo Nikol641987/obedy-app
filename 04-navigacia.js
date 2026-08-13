@@ -420,45 +420,62 @@ async function loadOrderEmailHistory() {
                             : "❌ Chyba";
 
                     return `
-                        <div class="order-email-history-item">
+                       return `
+    <div class="order-email-history-item">
 
-                            <div class="order-email-history-top">
-                                <strong>
-                                    ${formattedDate}
-                                </strong>
+        <div class="history-col history-date">
+            <div class="history-icon">📅</div>
 
-                                <span>
-                                    ${statusText}
-                                </span>
-                            </div>
+            <div>
+                <strong>
+                    ${formattedDate}
+                </strong>
 
-                            <div>
-                                Čas:
-                                <strong>${formattedTime}</strong>
-                            </div>
+                <div class="history-status">
+                    ${statusText}
+                </div>
+            </div>
+        </div>
 
-                            <div>
-                                Spolu:
-                                <strong>${item.total_orders || 0} ks</strong>
-                            </div>
 
-                            <div>
-                                🍽️ V jedálni:
-                                <strong>${item.dining_orders || 0} ks</strong>
-                            </div>
+        <div class="history-col">
+            <div>
+                🕒 Čas:
+                <strong>${formattedTime}</strong>
+            </div>
 
-                            <div>
-                                📦 Zabaliť:
-                                <strong>${item.takeaway_orders || 0} ks</strong>
-                            </div>
+            <div>
+                👥 Spolu:
+                <strong>${item.total_orders || 0} ks</strong>
+            </div>
+        </div>
 
-                            <div>
-                                E-mail:
-                                ${item.restaurant_email || ""}
-                            </div>
 
-                        </div>
-                    `;
+        <div class="history-col">
+            <div>
+                🍽️ V jedálni:
+                <strong>${item.dining_orders || 0} ks</strong>
+            </div>
+
+            <div>
+                📦 Zabaliť:
+                <strong>${item.takeaway_orders || 0} ks</strong>
+            </div>
+        </div>
+
+
+        <div class="history-col history-email">
+            <div>
+                ✉️ E-mail:
+            </div>
+
+            <div>
+                ${item.restaurant_email || ""}
+            </div>
+        </div>
+
+    </div>
+`;
 
                 })
                 .join("");
