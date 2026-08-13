@@ -2642,3 +2642,76 @@ select:focus-visible {
         grid-template-columns: 1fr !important;
     }
 }
+/* =====================================
+   HISTÓRIA OBJEDNÁVOK – DESKTOP OPRAVA
+===================================== */
+
+@media (min-width: 901px) {
+
+    #orderEmailHistory .order-email-history-item {
+        display: grid !important;
+        grid-template-columns:
+            1.15fr
+            0.95fr
+            1fr
+            1.4fr !important;
+
+        align-items: center !important;
+        gap: 0 !important;
+
+        width: 100% !important;
+        box-sizing: border-box !important;
+
+        padding: 18px 20px !important;
+        margin: 0 0 14px 0 !important;
+
+        background: #f8fbff !important;
+        border: 1px solid #d9e4f2 !important;
+        border-radius: 16px !important;
+
+        box-shadow:
+            0 4px 14px rgba(30, 70, 110, 0.06) !important;
+    }
+
+    #orderEmailHistory .history-col {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+
+        gap: 8px !important;
+
+        min-width: 0 !important;
+
+        padding: 0 18px !important;
+
+        border-left: 1px solid #d9e4f2 !important;
+
+        font-size: 15px !important;
+        line-height: 1.4 !important;
+    }
+
+    #orderEmailHistory .history-col:first-child {
+        border-left: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    #orderEmailHistory .history-col:last-child {
+        padding-right: 0 !important;
+    }
+
+    #orderEmailHistory .history-date {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 10px !important;
+    }
+
+    #orderEmailHistory .history-icon {
+        font-size: 22px !important;
+        flex-shrink: 0 !important;
+    }
+
+    #orderEmailHistory .history-email {
+        overflow-wrap: anywhere !important;
+    }
+}
