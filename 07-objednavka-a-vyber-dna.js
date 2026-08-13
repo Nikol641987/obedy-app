@@ -47,8 +47,8 @@ async function openWeekSelectionScreen(employeeId) {
     );
 
     monday.setHours(
-        12,
-        0,
+        08,
+        30,
         0,
         0
     );
@@ -225,7 +225,7 @@ const deadline =
     new Date(date);
 
 deadline.setHours(
-    16,
+    08,
     30,
     0,
     0
