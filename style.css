@@ -2342,3 +2342,33 @@ select:focus-visible {
         box-sizing: border-box;
     }
 }
+/* =====================================
+   HISTÓRIA ODOSLANÝCH OBJEDNÁVOK
+===================================== */
+
+#orderEmailHistory {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.order-email-history-item {
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: #f8fbff;
+}
+
+.order-email-history-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+    color: var(--tmv-blue-dark);
+    font-size: 17px;
+}
+
+.order-email-history-item > div:not(.order-email-history-top) {
+    margin-top: 5px;
+    font-size: 15px;
+}
