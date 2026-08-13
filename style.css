@@ -2447,3 +2447,35 @@ select:focus-visible {
     }
 
 }
+/* =====================================
+   ADMIN KARTY – OPRAVA ROZLOŽENIA
+===================================== */
+
+#adminScreen .admin-grid {
+    display: grid !important;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr)) !important;
+
+    gap: 16px !important;
+
+    width: 100% !important;
+}
+
+#adminScreen .home-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+#adminScreen .home-icon {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 620px) {
+
+    #adminScreen .admin-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+}
