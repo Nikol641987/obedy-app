@@ -466,6 +466,82 @@ openDashboardButton?.addEventListener(
 
     }
 );
+
+    sendTestOrderEmailButton?.addEventListener(
+    "click",
+    async () => {
+
+        const email =
+            restaurantEmailInput?.value.trim();
+
+        if (!email) {
+
+            alert(
+                "Najprv zadajte e-mail reštaurácie."
+            );
+
+            return;
+        }
+
+        sendTestOrderEmailButton.disabled =
+            true;
+
+        sendTestOrderEmailButton.textContent =
+            "📧 Odosielam...";
+
+        try {
+
+            const { data, error } =
+                await supabaseClient.functions.invoke(
+                    "send-order-email",
+                    {
+                        body: {
+                            email:
+                                email,
+
+                            test:
+                                true
+                        }
+                    }
+                );
+
+            if (error) {
+                throw error;
+            }
+
+            if (data?.error) {
+                throw new Error(
+                    data.error
+                );
+            }
+
+            alert(
+                "Testovací e-mail bol úspešne odoslaný."
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Chyba pri odosielaní testovacieho e-mailu:",
+                error
+            );
+
+            alert(
+                "Testovací e-mail sa nepodarilo odoslať."
+            );
+
+        } finally {
+
+            sendTestOrderEmailButton.disabled =
+                false;
+
+            sendTestOrderEmailButton.textContent =
+                "📧 Odoslať testovací e-mail";
+        }
+
+    }
+);
+    
 downloadWeeklyMenuButton?.addEventListener(
     "click",
     async () => {
