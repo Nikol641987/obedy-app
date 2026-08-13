@@ -415,12 +415,11 @@ async function loadOrderEmailHistory() {
                             : "";
 
                     const statusText =
-                        item.status === "sent"
-                            ? "✅ Odoslané"
-                            : "❌ Chyba";
+    item.status === "sent"
+        ? "✅ Odoslané"
+        : "❌ Chyba";
 
-                    return `
-                       return `
+return `
     <div class="order-email-history-item">
 
         <div class="history-col history-date">
