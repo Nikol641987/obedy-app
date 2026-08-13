@@ -2715,3 +2715,109 @@ select:focus-visible {
         overflow-wrap: anywhere !important;
     }
 }
+/* =========================================
+   HISTÓRIA ODOSLANÝCH OBJEDNÁVOK – FINÁL
+========================================= */
+
+#orderEmailHistory {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+}
+
+#orderEmailHistory .order-email-history-item {
+    display: grid !important;
+    grid-template-columns: 1.1fr 1fr 1fr 1.5fr !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    box-sizing: border-box !important;
+
+    padding: 18px 22px !important;
+    margin: 0 !important;
+
+    background: #f7faff !important;
+    border: 1px solid #d9e4f2 !important;
+    border-radius: 18px !important;
+}
+
+#orderEmailHistory .history-col {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 7px !important;
+
+    min-width: 0 !important;
+    padding: 0 20px !important;
+
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+}
+
+#orderEmailHistory .history-col + .history-col {
+    border-left: 1px solid #d9e4f2 !important;
+}
+
+#orderEmailHistory .history-date {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding-left: 0 !important;
+}
+
+#orderEmailHistory .history-icon {
+    display: block !important;
+    flex: 0 0 auto !important;
+    font-size: 25px !important;
+}
+
+#orderEmailHistory .history-status {
+    margin-top: 5px !important;
+}
+
+#orderEmailHistory .history-email {
+    padding-right: 0 !important;
+    overflow-wrap: anywhere !important;
+}
+
+/* TABLET A MOBIL */
+@media (max-width: 900px) {
+
+    #orderEmailHistory .order-email-history-item {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 18px 0 !important;
+    }
+
+    #orderEmailHistory .history-col {
+        border-left: none !important;
+        padding: 0 16px !important;
+    }
+
+    #orderEmailHistory .history-col:nth-child(even) {
+        border-left: 1px solid #d9e4f2 !important;
+    }
+
+    #orderEmailHistory .history-date {
+        padding-left: 0 !important;
+    }
+}
+
+/* MALÝ MOBIL */
+@media (max-width: 560px) {
+
+    #orderEmailHistory .order-email-history-item {
+        grid-template-columns: 1fr !important;
+    }
+
+    #orderEmailHistory .history-col,
+    #orderEmailHistory .history-date,
+    #orderEmailHistory .history-email {
+        border-left: none !important;
+        padding: 10px 0 !important;
+    }
+
+    #orderEmailHistory .history-col + .history-col {
+        border-top: 1px solid #d9e4f2 !important;
+    }
+}
