@@ -1104,7 +1104,7 @@ select:focus-visible {
 
 #adminScreen > .back-button,
 #adminEmployeesScreen > .back-button,
-#adminWeeklyMenuScreen > .back-button {
+#adminWeeklyMenuScreen > .back-button,
 #adminEmailOrdersScreen > .back-button {
    
     display: block;
@@ -2342,111 +2342,7 @@ select:focus-visible {
         box-sizing: border-box;
     }
 }
-/* =====================================
-   HISTÓRIA ODOSLANÝCH OBJEDNÁVOK
-===================================== */
 
-#orderEmailHistory {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-top: 22px;
-}
-
-.order-email-history-item {
-    display: grid;
-    grid-template-columns:
-        minmax(150px, 1fr)
-        minmax(150px, 1fr)
-        minmax(170px, 1fr)
-        minmax(210px, 1.3fr);
-
-    gap: 0;
-
-    width: 100%;
-    padding: 20px 22px;
-
-    background: #f8fbff;
-    border: 1px solid #d8e4f2;
-    border-radius: 18px;
-
-    box-shadow:
-        0 8px 20px
-        rgba(39, 71, 110, 0.06);
-
-    box-sizing: border-box;
-}
-
-.history-col {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    gap: 10px;
-
-    min-width: 0;
-    padding: 0 18px;
-
-    border-left: 1px solid #dce4ee;
-
-    font-size: 16px;
-    line-height: 1.4;
-}
-
-.history-col:first-child {
-    border-left: 0;
-    padding-left: 0;
-}
-
-.history-col:last-child {
-    padding-right: 0;
-}
-
-.history-date {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 12px;
-}
-
-.history-date strong {
-    color: var(--tmv-blue-dark);
-    font-size: 18px;
-}
-
-.history-icon {
-    font-size: 24px;
-}
-
-.history-status {
-    margin-top: 8px;
-}
-
-.history-email {
-    overflow-wrap: anywhere;
-}
-
-@media (max-width: 760px) {
-
-    .order-email-history-item {
-        grid-template-columns: 1fr 1fr;
-        gap: 18px;
-    }
-
-    .history-col {
-        border-left: 0;
-        padding: 0;
-    }
-
-}
-
-@media (max-width: 520px) {
-
-    .order-email-history-item {
-        grid-template-columns: 1fr;
-    }
-
-}
 /* =====================================
    ADMIN KARTY – OPRAVA ROZLOŽENIA
 ===================================== */
@@ -2715,109 +2611,123 @@ select:focus-visible {
         overflow-wrap: anywhere !important;
     }
 }
-/* =========================================
-   HISTÓRIA ODOSLANÝCH OBJEDNÁVOK – FINÁL
-========================================= */
+/* =====================================
+   HISTÓRIA ODOSLANÝCH OBJEDNÁVOK
+===================================== */
 
 #orderEmailHistory {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 14px !important;
-    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    margin-top: 20px;
 }
 
 #orderEmailHistory .order-email-history-item {
-    display: grid !important;
-    grid-template-columns: 1.1fr 1fr 1fr 1.5fr !important;
-    align-items: center !important;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr 1.5fr;
+    align-items: center;
 
-    width: 100% !important;
-    box-sizing: border-box !important;
+    width: 100%;
+    margin: 0;
+    padding: 18px 22px;
 
-    padding: 18px 22px !important;
-    margin: 0 !important;
+    box-sizing: border-box;
 
-    background: #f7faff !important;
-    border: 1px solid #d9e4f2 !important;
-    border-radius: 18px !important;
+    background: #f7faff;
+    border: 1px solid #d9e4f2;
+    border-radius: 18px;
+
+    box-shadow: 0 4px 14px rgba(30, 70, 110, 0.06);
 }
 
 #orderEmailHistory .history-col {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    gap: 7px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
 
-    min-width: 0 !important;
-    padding: 0 20px !important;
+    min-width: 0;
+    padding: 0 20px;
 
-    font-size: 16px !important;
-    line-height: 1.4 !important;
+    font-size: 15px;
+    line-height: 1.4;
 }
 
 #orderEmailHistory .history-col + .history-col {
-    border-left: 1px solid #d9e4f2 !important;
+    border-left: 1px solid #d9e4f2;
 }
 
 #orderEmailHistory .history-date {
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    padding-left: 0 !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+
+    padding-left: 0;
+}
+
+#orderEmailHistory .history-date strong {
+    color: var(--tmv-blue-dark);
+    font-size: 17px;
 }
 
 #orderEmailHistory .history-icon {
-    display: block !important;
-    flex: 0 0 auto !important;
-    font-size: 25px !important;
+    flex: 0 0 auto;
+    font-size: 23px;
 }
 
 #orderEmailHistory .history-status {
-    margin-top: 5px !important;
+    margin-top: 5px;
+    white-space: nowrap;
 }
 
 #orderEmailHistory .history-email {
-    padding-right: 0 !important;
-    overflow-wrap: anywhere !important;
+    padding-right: 0;
+    overflow-wrap: anywhere;
 }
 
-/* TABLET A MOBIL */
+
+/* TABLET */
+
 @media (max-width: 900px) {
 
     #orderEmailHistory .order-email-history-item {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 18px 0 !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 0;
     }
 
     #orderEmailHistory .history-col {
-        border-left: none !important;
-        padding: 0 16px !important;
+        padding: 0 16px;
+        border-left: none;
     }
 
     #orderEmailHistory .history-col:nth-child(even) {
-        border-left: 1px solid #d9e4f2 !important;
+        border-left: 1px solid #d9e4f2;
     }
 
     #orderEmailHistory .history-date {
-        padding-left: 0 !important;
+        padding-left: 0;
     }
 }
 
-/* MALÝ MOBIL */
+
+/* MOBIL */
+
 @media (max-width: 560px) {
 
     #orderEmailHistory .order-email-history-item {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr;
     }
 
     #orderEmailHistory .history-col,
     #orderEmailHistory .history-date,
     #orderEmailHistory .history-email {
-        border-left: none !important;
-        padding: 10px 0 !important;
+        padding: 10px 0;
+        border-left: none;
     }
 
     #orderEmailHistory .history-col + .history-col {
-        border-top: 1px solid #d9e4f2 !important;
+        border-top: 1px solid #d9e4f2;
     }
 }
