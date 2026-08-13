@@ -2479,3 +2479,125 @@ select:focus-visible {
     }
 
 }
+/* =====================================
+   HISTÓRIA OBJEDNÁVOK – RIADKY
+===================================== */
+
+#orderEmailHistory {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    margin-top: 20px !important;
+}
+
+#orderEmailHistory .order-email-history-item {
+    display: grid !important;
+
+    grid-template-columns:
+        1.2fr
+        0.9fr
+        1fr
+        1.5fr !important;
+
+    align-items: center !important;
+
+    width: 100% !important;
+    box-sizing: border-box !important;
+
+    padding: 18px 20px !important;
+    margin: 0 !important;
+
+    background: #f8fbff !important;
+    border: 1px solid #d9e4f2 !important;
+    border-radius: 16px !important;
+
+    box-shadow:
+        0 4px 14px
+        rgba(30, 70, 110, 0.06) !important;
+}
+
+#orderEmailHistory .history-col {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+
+    gap: 7px !important;
+
+    min-width: 0 !important;
+
+    padding: 0 18px !important;
+
+    border-left:
+        1px solid #d9e4f2 !important;
+
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+}
+
+#orderEmailHistory .history-col:first-child {
+    border-left: none !important;
+    padding-left: 0 !important;
+}
+
+#orderEmailHistory .history-col:last-child {
+    padding-right: 0 !important;
+}
+
+#orderEmailHistory .history-date {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    gap: 10px !important;
+}
+
+#orderEmailHistory .history-date strong {
+    color: #24558f !important;
+    font-size: 17px !important;
+}
+
+#orderEmailHistory .history-icon {
+    font-size: 22px !important;
+    flex-shrink: 0 !important;
+}
+
+#orderEmailHistory .history-status {
+    margin-top: 5px !important;
+    white-space: nowrap !important;
+}
+
+#orderEmailHistory .history-email {
+    overflow-wrap: anywhere !important;
+}
+
+
+/* TABLET */
+
+@media (max-width: 800px) {
+
+    #orderEmailHistory .order-email-history-item {
+        grid-template-columns:
+            1fr 1fr !important;
+
+        row-gap: 16px !important;
+    }
+
+    #orderEmailHistory .history-col {
+        border-left: none !important;
+        padding: 0 !important;
+    }
+}
+
+
+/* MOBIL */
+
+@media (max-width: 520px) {
+
+    #orderEmailHistory .order-email-history-item {
+        grid-template-columns:
+            1fr !important;
+
+        gap: 12px !important;
+    }
+}
