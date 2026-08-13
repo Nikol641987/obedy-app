@@ -2601,3 +2601,44 @@ select:focus-visible {
         gap: 12px !important;
     }
 }
+/* =====================================
+   ADMINISTRÁCIA – KARTY VEDĽA SEBA
+===================================== */
+
+.admin-menu,
+.admin-grid,
+.admin-cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 22px !important;
+    width: 100% !important;
+    align-items: stretch !important;
+}
+
+/* jednotlivé karty */
+.admin-menu > *,
+.admin-grid > *,
+.admin-cards > * {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* tablet – 2 vedľa seba */
+@media (max-width: 900px) {
+    .admin-menu,
+    .admin-grid,
+    .admin-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+/* mobil – pod sebou */
+@media (max-width: 600px) {
+    .admin-menu,
+    .admin-grid,
+    .admin-cards {
+        grid-template-columns: 1fr !important;
+    }
+}
