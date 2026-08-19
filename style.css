@@ -1485,7 +1485,13 @@ select:focus-visible {
     outline: 3px solid rgba(47, 102, 173, 0.16);
     border-color: var(--tmv-blue);
 }
-
+@media (max-width: 600px) {
+    #weeklyMenuAccordion textarea {
+        min-height: 130px;
+        font-size: 17px;
+        line-height: 1.4;
+    }
+}
 #saveWeeklyMenuButton {
     margin-top: 26px;
 }
