@@ -1487,7 +1487,7 @@ select:focus-visible {
 }
 @media (max-width: 600px) {
     #weeklyMenuAccordion textarea {
-        min-height: 130px;
+        min-height: 110px;
         font-size: 17px;
         line-height: 1.4;
     }
