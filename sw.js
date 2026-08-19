@@ -1,5 +1,5 @@
 const CACHE_NAME =
-    "obedy-tmv-v37";
+    "obedy-tmv-v38";
 
 const FILES_TO_CACHE = [
     "./",
