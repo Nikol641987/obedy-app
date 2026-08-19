@@ -302,9 +302,9 @@ function renderWeeklyMenuForm() {
 </label>
 
                     <textarea
-                        id="${key}Soup"
-                        rows="2"
-                    ></textarea>
+    id="${key}Soup"
+    rows="4"
+></textarea>
         `;
 
         for (let i = 1; i <= 6; i++) {
@@ -315,9 +315,9 @@ function renderWeeklyMenuForm() {
 </label>
 
                 <textarea
-                    id="${key}Menu${i}"
-                    rows="2"
-                ></textarea>
+    id="${key}Menu${i}"
+    rows="4"
+></textarea>
             `;
         }
 
