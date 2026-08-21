@@ -926,9 +926,7 @@ const todayFormattedCapitalized =
         </div>
 
         <div class="issue-menu">
-            ${escapeHtml(
-                order.menu_name || "Obed"
-            )}
+            Menu ${order.menu_id}
         </div>
 
     </div>
