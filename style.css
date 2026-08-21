@@ -2751,12 +2751,28 @@ select:focus-visible {
   font-weight: bold;
 }
 
-/* Riadok s jedlom v jednom riadku */
+/* Riadok jedla na rovnakom riadku s červeným tučným menu */
 .issue-meal-row {
-  display: flex;
-  align-items: center;
-  font-size: 0.85rem !important;   /* Menšie písmo typu výdaja */
-  margin-bottom: 4px !important;
+    padding: 6px 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Pekne odtlačí menu doprava alebo vedľa textu */
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.issue-meal-row:first-of-type {
+    border-top: 0;
+}
+
+/* Červené a hrubé zvýraznenie pre Menu */
+.issue-meal-row .issue-menu-highlight,
+.issue-meal-row span:last-child {
+    color: #d32f2f !important;
+    font-weight: 900 !important;
+    font-size: 1.05rem;
+    margin-left: auto;
 }
 
 /* Zmenšenie indikátora stavu (Čaká / Vydané) */
