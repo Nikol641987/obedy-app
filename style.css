@@ -2788,3 +2788,16 @@ select:focus-visible {
   font-size: 0.8rem !important;
   width: 100%;
 }
+/* =====================================
+   ZVÝRAZNENIE MENU VO VÝDAJI OBEDOV
+===================================== */
+.issue-cards .issue-meal-row span:first-child {
+    color: #202631 !important;
+    font-weight: 700;
+}
+
+.issue-cards .issue-meal-row span:last-child,
+.issue-cards .issue-menu-highlight {
+    color: #e53935 !important;
+    font-weight: 900 !important;
+}
