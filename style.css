@@ -2814,3 +2814,7 @@ select:focus-visible {
     color: #e53935 !important;
     font-weight: 900 !important;
 }
+.menu-red {
+    color: #e53935 !important;
+    font-weight: 800 !important;
+}
