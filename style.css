@@ -2737,3 +2737,38 @@ select:focus-visible {
         border-top: 1px solid #d9e4f2;
     }
 }
+/* Zmenšenie samotnej kartičky */
+.issue-item {
+  padding: 8px 12px !important;    /* Menšie vnútorné odsadenie */
+  min-width: 180px !important;     /* Menšia minimálna šírka */
+  margin: 4px !important;          /* Menšie medzery medzi okienkami */
+}
+
+/* Menší nadpis s menom zamestnanca */
+.issue-name {
+  font-size: 1.0rem !important;    /* Menšie písmo mena */
+  margin-bottom: 4px !important;
+  font-weight: bold;
+}
+
+/* Riadok s jedlom v jednom riadku */
+.issue-meal-row {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem !important;   /* Menšie písmo typu výdaja */
+  margin-bottom: 4px !important;
+}
+
+/* Zmenšenie indikátora stavu (Čaká / Vydané) */
+.issue-status {
+  font-size: 0.8rem !important;
+  margin-top: 4px !important;
+  margin-bottom: 6px !important;
+}
+
+/* Zmenšenie tlačidla "Vydať osobne" */
+.manual-issue-card-button {
+  padding: 4px 8px !important;
+  font-size: 0.8rem !important;
+  width: 100%;
+}
