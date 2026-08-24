@@ -4,11 +4,12 @@ const fs = require("fs");
 const MENU_URL =
     "https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu";
 
-async function downloadImage() {
+function downloadImage(url) {
+
     return new Promise((resolve, reject) => {
 
         https.get(
-            MENU_URL,
+            url,
             {
                 headers: {
                     "User-Agent":
@@ -17,24 +18,62 @@ async function downloadImage() {
             },
             response => {
 
+                // SuperObed nás môže presmerovať
+                if (
+                    response.statusCode >= 300 &&
+                    response.statusCode < 400 &&
+                    response.headers.location
+                ) {
+
+                    const redirectUrl =
+                        new URL(
+                            response.headers.location,
+                            url
+                        ).href;
+
+                    console.log(
+                        "↪️ Presmerovanie na:",
+                        redirectUrl
+                    );
+
+                    downloadImage(
+                        redirectUrl
+                    )
+                        .then(resolve)
+                        .catch(reject);
+
+                    return;
+                }
+
                 if (response.statusCode !== 200) {
+
                     reject(
                         new Error(
                             `SuperObed vrátil stav ${response.statusCode}.`
                         )
                     );
+
                     return;
                 }
 
                 const contentType =
                     response.headers["content-type"] || "";
 
-                if (!contentType.startsWith("image/")) {
+                console.log(
+                    "Content-Type:",
+                    contentType
+                );
+
+                if (
+                    !contentType.startsWith("image/")
+                ) {
+
                     reject(
                         new Error(
                             `SuperObed neposlal obrázok. Typ: ${contentType}`
                         )
                     );
+
                     return;
                 }
 
@@ -42,7 +81,9 @@ async function downloadImage() {
 
                 response.on(
                     "data",
-                    chunk => chunks.push(chunk)
+                    chunk => {
+                        chunks.push(chunk);
+                    }
                 );
 
                 response.on(
@@ -50,7 +91,9 @@ async function downloadImage() {
                     () => {
 
                         const buffer =
-                            Buffer.concat(chunks);
+                            Buffer.concat(
+                                chunks
+                            );
 
                         resolve({
                             buffer,
@@ -67,6 +110,7 @@ async function downloadImage() {
         );
 
     });
+
 }
 
 
@@ -77,7 +121,9 @@ async function main() {
     );
 
     const result =
-        await downloadImage();
+        await downloadImage(
+            MENU_URL
+        );
 
     console.log(
         `✅ Obrázok stiahnutý: ${result.buffer.length} bytes`
