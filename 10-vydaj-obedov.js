@@ -822,7 +822,7 @@ const label =
 return `
     <div class="today-menu-row">
         <span>
-           <span style="color:red;">${label}</span> – ${escapeHtml(menuText)}
+            ${label} – ${escapeHtml(menuText)}
         </span>
         <strong>
             ${menuCounts[menuNumber]} ks
