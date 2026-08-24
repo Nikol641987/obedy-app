@@ -4480,6 +4480,7 @@ const totalCount =
                     id,
                     employee_id,
                     employee_name,
+                    menu_choice,
                     menu_name,
                     dining,
                     takeaway,
