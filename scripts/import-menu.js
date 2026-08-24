@@ -453,10 +453,10 @@ async function saveMenuToSupabase(
 
 
     const response =
-        await fetch(
-            `${SUPABASE_URL}/rest/v1/weekly_menu`,
-            {
-                method: "POST",
+    await fetch(
+        `${SUPABASE_URL}/rest/v1/weekly_menu?on_conflict=week_from,day_of_week`,
+        {
+            method: "POST",
 
                 headers: {
 
