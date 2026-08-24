@@ -233,38 +233,62 @@ function parseWeeklyMenuText(text) {
                 dayMatch[1].trim();
 
 
-            // =====================================
-            // POLIEVKA
-            // =====================================
+// =====================================
+// POLIEVKA
+// =====================================
 
-            const soupMatch =
-                dayText.match(
-                    /^([\s\S]*?)(?=\s*1\.\s*\d+g?\s*\/)/i
-                );
+const soupMatch =
+    dayText.match(
+        /^([\s\S]*?)(?=\s*1\.\s*\d+g?\s*\/)/i
+    );
 
-            let soup =
-                soupMatch
-                    ? soupMatch[1]
-                    : "";
+let soup =
+    soupMatch
+        ? soupMatch[1]
+        : "";
 
-            soup = soup
-                .replace(/\s+/g, " ")
-                .trim();
+soup = soup
+    .replace(/\s+/g, " ")
+    .trim();
+
+// Oprava objemu polievky
+soup = soup.replace(
+    /^0[,.:]?331\b/i,
+    "0,33l"
+);
+
+// Odstránenie OCR alergénov pred chlebom
+soup = soup.replace(
+    /\s+\d+(?:[.,:]\d+)*\s*(?=\d+\s*ks\s*chlieb)/gi,
+    " "
+);
+
+// Odstránenie OCR bordelu okolo chleba
+soup = soup.replace(
+    /\s*[,.:+]+\s*(?=\d+\s*ks\s*chlieb)/gi,
+    " "
+);
+
+// Odstránenie alergénov na konci polievky
+soup = soup.replace(
+    /\s+\d+(?:\s*[,.:]\s*\d+)*\s*$/gi,
+    ""
+);
+
+soup = soup
+    .replace(/\s+/g, " ")
+    .trim();
 
 
-            // OCR často vloží alergény medzi polievku
-            // a chlieb – odstránime iba tento bordel.
-            soup = soup
-                .replace(
-                    /(\d+\s*ks\s*chlieb)\s*$/i,
-                    "$1"
-                )
-                .replace(
-                    /\s*[,.:]+\s*(?=\d+\s*ks\s*chlieb)/i,
-                    " "
-                )
-                .trim();
-
+const parsedDay = {
+    soup,
+    menu1: "",
+    menu2: "",
+    menu3: "",
+    menu4: "",
+    menu5: "",
+    menu6: ""
+};
 
             const parsedDay = {
                 soup,
