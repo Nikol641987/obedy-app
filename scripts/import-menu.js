@@ -1,8 +1,10 @@
 const https = require("https");
 const fs = require("fs");
+const { execFileSync } = require("child_process");
 
 const MENU_URL =
     "https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu";
+
 
 function downloadImage(url) {
 
@@ -18,7 +20,7 @@ function downloadImage(url) {
             },
             response => {
 
-                // SuperObed nás môže presmerovať
+                // Presmerovanie
                 if (
                     response.statusCode >= 300 &&
                     response.statusCode < 400 &&
@@ -120,22 +122,86 @@ async function main() {
         "🔄 Kontrolujem aktuálne menu na SuperObed..."
     );
 
+
     const result =
         await downloadImage(
             MENU_URL
         );
 
+
     console.log(
         `✅ Obrázok stiahnutý: ${result.buffer.length} bytes`
     );
 
+
+    const imagePath =
+        "/tmp/menu.jpg";
+
+
     fs.writeFileSync(
-        "/tmp/menu.jpg",
+        imagePath,
         result.buffer
     );
 
+
     console.log(
         "📸 Obrázok uložený."
+    );
+
+
+    console.log(
+        "🔎 Spúšťam Tesseract OCR..."
+    );
+
+
+    const recognizedText =
+        execFileSync(
+            "tesseract",
+            [
+                imagePath,
+                "stdout",
+                "-l",
+                "slk"
+            ],
+            {
+                encoding: "utf8",
+                maxBuffer: 10 * 1024 * 1024
+            }
+        );
+
+
+    console.log(
+        "========================================"
+    );
+
+    console.log(
+        "ROZPOZNANÝ TEXT MENU"
+    );
+
+    console.log(
+        "========================================"
+    );
+
+    console.log(
+        recognizedText
+    );
+
+    console.log(
+        "========================================"
+    );
+
+
+    if (!recognizedText.trim()) {
+
+        throw new Error(
+            "Tesseract nerozpoznal žiadny text."
+        );
+
+    }
+
+
+    console.log(
+        "✅ OCR úspešne dokončené."
     );
 
 }
