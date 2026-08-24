@@ -1,27 +1,26 @@
-name: Test automatickeho menu
+name: Automaticke nacitanie menu
 
 on:
   workflow_dispatch:
 
 jobs:
-  test-menu:
+  import-menu:
     runs-on: ubuntu-latest
 
     steps:
       - name: Stiahnutie repozitara
         uses: actions/checkout@v4
 
-      - name: Instalacia Node.js
+      - name: Nastavenie Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Instalacia Tesseract OCR
         run: |
           sudo apt-get update
           sudo apt-get install -y tesseract-ocr tesseract-ocr-slk
 
-      - name: Test Tesseract
+      - name: Spustenie importu menu
         run: |
-          tesseract --version
-          tesseract --list-langs
+          node scripts/import-menu.js
