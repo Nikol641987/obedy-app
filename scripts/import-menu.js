@@ -136,31 +136,46 @@ function downloadImage(url) {
 function cleanMenuItem(text) {
 
     return String(text || "")
+
+        // Cena na konci
+        .replace(
+            /\s*(?:6[,.]90|9[,.]20)\s*€?\s*$/i,
+            ""
+        )
+
+        // Cena nalepená na alergénoch
+        // napr. 137 6,90 / 13,7 6,906
+        .replace(
+            /\s+\d{1,2}(?:[,.]\d{1,2})?\s*(?:6[,.]90|9[,.]20)[0-9%]*\s*€?\s*$/i,
+            ""
+        )
+
+        // Alergény na konci
+        // napr. 137 / 13,7 / 1,3,7
+        .replace(
+            /\s+\d{1,2}(?:[,.]\d{1,2})?\s*$/i,
+            ""
+        )
+
+        // Zvyšky OCR cien
+        // napr. 6,906 / 9,204 / 6,90%
+        .replace(
+            /\s+(?:6[,.]90|9[,.]20)[0-9%]*\s*$/i,
+            ""
+        )
+
+        // Zbytočné znaky na úplnom konci
+        .replace(
+            /\s*[-–—:;,.\s]+$/u,
+            ""
+        )
+
+        // Viac medzier -> jedna
         .replace(/\s+/g, " ")
-        .trim()
 
-        // odstráni cenu + OCR zvyšky na konci
-        .replace(
-            /\s*(?:\d+\s*[,.:]?\s*)*(?:6[,.]90|9[,.]20)\s*[€%]?\s*$/i,
-            ""
-        )
-
-        // odstráni alergény na konci
-        .replace(
-            /\s+\d+(?:\s*[,.:]\s*\d+)*\s*$/i,
-            ""
-        )
-
-        // odstráni prípadné ďalšie OCR znaky na úplnom konci
-        .replace(
-            /[\s,:;.-]+$/,
-            ""
-        )
-
-        .replace(/\s+/g, " ")
         .trim();
-}
 
+}
 
 // =====================================
 // PARSOVANIE CELÉHO TÝŽDŇA
