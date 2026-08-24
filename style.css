@@ -2818,3 +2818,14 @@ select:focus-visible {
     color: #e53935 !important;
     font-weight: 800 !important;
 }
+.issue-menu-name,
+.today-menu-name {
+    color: red;
+    font-weight: 700;
+}
+
+.issue-menu-text,
+.today-menu-text {
+    display: block;
+    margin-top: 3px;
+}
