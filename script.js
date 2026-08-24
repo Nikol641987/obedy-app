@@ -3259,45 +3259,8 @@ if (hasForbiddenMenu) {
     return;
 }
 // Kontrola výberu syra pri menu "alebo"
-const menuCards =
-    document.querySelectorAll(".menu-card");
 
-for (const menuCard of menuCards) {
-
-    const selectedMeal =
-        menuCard.querySelector(
-            ".meal-choice:checked"
-        );
-
-    if (!selectedMeal) {
-        continue;
-    }
-
-    const hasMenuChoice =
-        menuCard.querySelector(
-            ".menu-choice"
-        );
-
-    if (
-        hasMenuChoice
-        && !menuCard.querySelector(
-            ".menu-choice:checked"
-        )
-    ) {
-
-        if (orderMessage) {
-
-            orderMessage.textContent =
-                "🧀 Vyberte si, prosím, typ syra.";
-
-            orderMessage.className =
-                "message error-message";
-
-        }
-
-        return;
-    }
-}
+            
 
             selectedChoices.forEach(
                 choice => {
@@ -3344,10 +3307,8 @@ for (const menuCard of menuCards) {
                             menu_id:
                                 String(menuId),
 
-                            menu_name:
-    option
-        ? `${menuName} – ${option}`
-        : menuName,
+     menu_name:
+    menuName,
 
                             dining:
                                 false,
