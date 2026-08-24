@@ -1109,40 +1109,6 @@ const maxMenuNumber =
     </div>
 `;
 
-                <div class="menu-options">
-
-                    <label class="menu-option">
-
-                        <input
-                            type="checkbox"
-                            class="meal-choice"
-                            data-menu-id="${menu.id}"
-                            data-option="dining"
-                        >
-
-                        <span>
-                            V jedálni
-                        </span>
-
-                    </label>
-
-                    <label class="menu-option">
-
-                        <input
-                            type="checkbox"
-                            class="meal-choice"
-                            data-menu-id="${menu.id}"
-                            data-option="takeaway"
-                        >
-
-                        <span>
-                            Zabaliť
-                        </span>
-
-                    </label>
-
-                </div>
-            `;
 
             container.appendChild(
                 card
