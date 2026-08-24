@@ -817,7 +817,7 @@ const menuText =
 const label =
     menuNumber === 6
         ? "⭐ Menu 6"
-        : `Menu ${menuNumber}`;
+        `<span style="color:red;">Menu ${menuNumber}</span>`
 
 return `
     <div class="today-menu-row">
