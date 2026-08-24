@@ -1242,6 +1242,7 @@ const maxMenuNumber =
             const groupedMenus = {};
 
             const hasForbiddenMenu =
+                
     [...selectedChoices].some(
         choice =>
             Number(
@@ -1264,7 +1265,46 @@ if (hasForbiddenMenu) {
     return;
 }
 
+// Kontrola výberu syra pri menu "alebo"
+const menuCards =
+    document.querySelectorAll(".menu-card");
 
+for (const menuCard of menuCards) {
+
+    const selectedMeal =
+        menuCard.querySelector(
+            ".meal-choice:checked"
+        );
+
+    if (!selectedMeal) {
+        continue;
+    }
+
+    const hasMenuChoice =
+        menuCard.querySelector(
+            ".menu-choice"
+        );
+
+    if (
+        hasMenuChoice
+        && !menuCard.querySelector(
+            ".menu-choice:checked"
+        )
+    ) {
+
+        if (orderMessage) {
+
+            orderMessage.textContent =
+                "🧀 Vyberte si, prosím, typ syra.";
+
+            orderMessage.className =
+                "message error-message";
+
+        }
+
+        return;
+    }
+}
             selectedChoices.forEach(
                 choice => {
 
@@ -1286,8 +1326,7 @@ if (hasForbiddenMenu) {
                             ?.trim()
 
                         || `Menu ${menuId}`;
-
-const menuChoice =
+                    const menuChoice =
     menuCard
         ?.querySelector(
             `.menu-choice[data-menu-id="${menuId}"]:checked`
@@ -1295,22 +1334,7 @@ const menuChoice =
         ?.value
         || null;
 
-                    const hasMenuChoice =
-    menuCard?.querySelector(
-        `.menu-choice[data-menu-id="${menuId}"]`
-    );
 
-if (hasMenuChoice && !menuChoice) {
-
-    if (orderMessage) {
-        orderMessage.textContent =
-            "Vyberte si, prosím, ktorý syr chcete.";
-        orderMessage.className =
-            "message error-message";
-    }
-
-    return;
-}
                     
                     if (
                         !groupedMenus[
