@@ -805,10 +805,19 @@ if (todayMenuSummary) {
             .map(
                 menuNumber => {
 
-                    const label =
-                        menuNumber === 6
-                            ? "⭐ Menu 6"
-                            : `Menu ${menuNumber}`;
+                    const menuOrder =
+    orders.find(
+        order =>
+            Number(order.menu_id) === menuNumber
+    );
+
+const menuText =
+    menuOrder?.menu_name || "";
+
+const label =
+    menuNumber === 6
+        ? "⭐ Menu 6"
+        : `Menu ${menuNumber}`;
 
                     return `
                         <div class="today-menu-row">
@@ -925,9 +934,14 @@ const todayFormattedCapitalized =
             }
         </div>
 
-        <div class="issue-menu">
-            Menu ${order.menu_id}
-        </div>
+       <div class="issue-menu">
+    <strong class="issue-menu-name">
+        Menu ${order.menu_id}
+    </strong>
+    <div class="issue-menu-text">
+        ${escapeHtml(order.menu_name || "")}
+    </div>
+</div>
 
     </div>
 `;
