@@ -2398,6 +2398,10 @@ const isClosed =
                     const menuName =
                         order.menu_name
                         || `Menu ${order.menu_id}`;
+                    const menuChoice =
+    order.menu_choice
+    ? ` – ${order.menu_choice}`
+    : "";
 
                     let servingType = "";
 
@@ -4642,11 +4646,16 @@ totalCount.textContent =
             }
         </div>
 
-        <div class="issue-menu">
-            ${escapeHtml(
-                order.menu_name || "Obed"
-            )}
-        </div>
+       <div class="issue-menu">
+    ${escapeHtml(
+        order.menu_name || "Obed"
+    )}
+    ${
+        order.menu_choice
+            ? ` – ${escapeHtml(order.menu_choice)}`
+            : ""
+    }
+</div>
 
     </div>
 `;
