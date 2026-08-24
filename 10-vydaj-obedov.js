@@ -14,7 +14,7 @@ function setupManualIssue() {
         document.getElementById(
             "issueEmployeeSelect"
         );
-
+    
     const issueManualButton =
         document.getElementById(
             "issueManualButton"
@@ -937,7 +937,7 @@ const todayFormattedCapitalized =
         </div>
 
        <div class="issue-menu">
-    Menu ${order.menu_id}
+    <span style="color:red;">Menu ${order.menu_id}</span>
 </div>
 
     </div>
