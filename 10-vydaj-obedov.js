@@ -819,14 +819,16 @@ const label =
         ? "⭐ Menu 6"
         : `Menu ${menuNumber}`;
 
-                    return `
-                        <div class="today-menu-row">
-                            <span>${label}</span>
-                            <strong>
-                                ${menuCounts[menuNumber]} ks
-                            </strong>
-                        </div>
-                    `;
+return `
+    <div class="today-menu-row">
+        <span>
+            ${label} – ${escapeHtml(menuText)}
+        </span>
+        <strong>
+            ${menuCounts[menuNumber]} ks
+        </strong>
+    </div>
+`;
 
                 }
             )
