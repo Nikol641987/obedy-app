@@ -5,6 +5,22 @@ const { execFileSync } = require("child_process");
 const MENU_URL =
     "https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu";
 
+const SUPABASE_URL =
+    "https://krzouuhouzzlvsygmalb.supabase.co";
+
+const SUPABASE_KEY =
+    process.env.SUPABASE_KEY;
+
+if (!SUPABASE_KEY) {
+    throw new Error(
+        "Chýba SUPABASE_KEY v GitHub Actions secrets."
+    );
+}
+
+
+// =====================================
+// STIAHNUTIE OBRÁZKA
+// =====================================
 
 function downloadImage(url) {
 
@@ -20,7 +36,6 @@ function downloadImage(url) {
             },
             response => {
 
-                // Presmerovanie
                 if (
                     response.statusCode >= 300 &&
                     response.statusCode < 400 &&
@@ -93,9 +108,7 @@ function downloadImage(url) {
                     () => {
 
                         const buffer =
-                            Buffer.concat(
-                                chunks
-                            );
+                            Buffer.concat(chunks);
 
                         resolve({
                             buffer,
@@ -115,6 +128,380 @@ function downloadImage(url) {
 
 }
 
+
+// =====================================
+// VYČISTENIE MENU
+// =====================================
+
+function cleanMenuItem(text) {
+
+    return String(text || "")
+        // cena
+        .replace(
+            /\s*[\d.,:]*\s*(6,90|9,20)\s*€?\s*$/i,
+            ""
+        )
+
+        // alergény na konci
+        .replace(
+            /\s+[.,:+]?\d(?:[.,:]\d)*\s*$/g,
+            ""
+        )
+
+        .replace(/\s+/g, " ")
+        .trim();
+
+}
+
+
+// =====================================
+// PARSOVANIE CELÉHO TÝŽDŇA
+// =====================================
+
+function parseWeeklyMenuText(text) {
+
+    const normalizedText =
+        String(text || "")
+            .replace(/\r/g, "")
+            .replace(/[ \t]+/g, " ")
+            .replace(/\n{2,}/g, "\n")
+            .trim();
+
+    const dayDefinitions = [
+        {
+            key: "pondelok",
+            pattern: "Pondelok"
+        },
+        {
+            key: "utorok",
+            pattern: "Utorok"
+        },
+        {
+            key: "streda",
+            pattern: "Streda"
+        },
+        {
+            key: "stvrtok",
+            pattern: "(?:Š|S)tv(?:rt|r)ok"
+        },
+        {
+            key: "piatok",
+            pattern: "Piatok"
+        }
+    ];
+
+    const result = {};
+
+    dayDefinitions.forEach(
+        (day, index) => {
+
+            const nextDay =
+                dayDefinitions[index + 1];
+
+            const endPattern =
+                nextDay
+                    ? `(?=${nextDay.pattern}\\s*:)`
+                    : `(?=Appetit Obedové menu|Polievka samostatne|Alergény:|$)`;
+
+            const dayRegex =
+                new RegExp(
+                    `${day.pattern}\\s*:\\s*([\\s\\S]*?)${endPattern}`,
+                    "i"
+                );
+
+            const dayMatch =
+                normalizedText.match(
+                    dayRegex
+                );
+
+            if (!dayMatch) {
+
+                result[day.key] = {
+                    soup: "",
+                    menu1: "",
+                    menu2: "",
+                    menu3: "",
+                    menu4: "",
+                    menu5: "",
+                    menu6: ""
+                };
+
+                return;
+            }
+
+            const dayText =
+                dayMatch[1].trim();
+
+
+            // =====================================
+            // POLIEVKA
+            // =====================================
+
+            const soupMatch =
+                dayText.match(
+                    /^([\s\S]*?)(?=\s*1\.\s*\d+g?\s*\/)/i
+                );
+
+            let soup =
+                soupMatch
+                    ? soupMatch[1]
+                    : "";
+
+            soup = soup
+                .replace(/\s+/g, " ")
+                .trim();
+
+
+            // OCR často vloží alergény medzi polievku
+            // a chlieb – odstránime iba tento bordel.
+            soup = soup
+                .replace(
+                    /(\d+\s*ks\s*chlieb)\s*$/i,
+                    "$1"
+                )
+                .replace(
+                    /\s*[,.:]+\s*(?=\d+\s*ks\s*chlieb)/i,
+                    " "
+                )
+                .trim();
+
+
+            const parsedDay = {
+                soup,
+                menu1: "",
+                menu2: "",
+                menu3: "",
+                menu4: "",
+                menu5: "",
+                menu6: ""
+            };
+
+
+            // =====================================
+            // MENU 1–6
+            // =====================================
+
+            for (
+                let menuNumber = 1;
+                menuNumber <= 6;
+                menuNumber++
+            ) {
+
+                const nextNumber =
+                    menuNumber + 1;
+
+                const menuRegex =
+                    new RegExp(
+                        `${menuNumber}\\.\\s*\\d+g?\\s*\\/([\\s\\S]*?)`
+                        +
+                        (
+                            menuNumber < 6
+                                ? `(?=\\s*${nextNumber}\\.\\s*\\d+g?\\s*\\/)`
+                                : "$"
+                        ),
+                        "i"
+                    );
+
+                const menuMatch =
+                    dayText.match(
+                        menuRegex
+                    );
+
+                if (menuMatch) {
+
+                    parsedDay[
+                        `menu${menuNumber}`
+                    ] =
+                        cleanMenuItem(
+                            menuMatch[1]
+                        );
+
+                }
+
+            }
+
+
+            result[day.key] =
+                parsedDay;
+
+        }
+    );
+
+    return result;
+}
+
+
+// =====================================
+// DÁTUM
+// =====================================
+
+function getMonday(date) {
+
+    const result =
+        new Date(date);
+
+    const day =
+        result.getDay();
+
+    const diff =
+        day === 0
+            ? -6
+            : 1 - day;
+
+    result.setDate(
+        result.getDate() + diff
+    );
+
+    result.setHours(
+        12,
+        0,
+        0,
+        0
+    );
+
+    return result;
+}
+
+
+function formatDate(date) {
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+
+// =====================================
+// SUPABASE – ULOŽENIE MENU
+// =====================================
+
+async function saveMenuToSupabase(
+    parsedMenu,
+    monday
+) {
+
+    const dayKeys = [
+        "pondelok",
+        "utorok",
+        "streda",
+        "stvrtok",
+        "piatok"
+    ];
+
+    const rows = [];
+
+    dayKeys.forEach(
+        (dayKey, index) => {
+
+            const menu =
+                parsedMenu[dayKey];
+
+            const menuDate =
+                new Date(monday);
+
+            menuDate.setDate(
+                monday.getDate() + index
+            );
+
+            rows.push({
+
+                week_from:
+                    formatDate(monday),
+
+                menu_date:
+                    formatDate(menuDate),
+
+                day_of_week:
+                    index + 1,
+
+                soup:
+                    menu?.soup || null,
+
+                menu1:
+                    menu?.menu1 || null,
+
+                menu2:
+                    menu?.menu2 || null,
+
+                menu3:
+                    menu?.menu3 || null,
+
+                menu4:
+                    menu?.menu4 || null,
+
+                menu5:
+                    menu?.menu5 || null,
+
+                menu6:
+                    menu?.menu6 || null
+
+            });
+
+        }
+    );
+
+
+    const response =
+        await fetch(
+            `${SUPABASE_URL}/rest/v1/weekly_menu`,
+            {
+                method: "POST",
+
+                headers: {
+
+                    "apikey":
+                        SUPABASE_KEY,
+
+                    "Authorization":
+                        `Bearer ${SUPABASE_KEY}`,
+
+                    "Content-Type":
+                        "application/json",
+
+                    "Prefer":
+                        "resolution=merge-duplicates"
+
+                },
+
+                body:
+                    JSON.stringify(rows)
+
+            }
+        );
+
+
+    if (!response.ok) {
+
+        const errorText =
+            await response.text();
+
+        throw new Error(
+            `Supabase uloženie zlyhalo: ${response.status} ${errorText}`
+        );
+
+    }
+
+    console.log(
+        "✅ Menu bolo uložené do Supabase."
+    );
+
+}
+
+
+// =====================================
+// HLAVNÁ FUNKCIA
+// =====================================
 
 async function main() {
 
@@ -170,6 +557,15 @@ async function main() {
         );
 
 
+    if (!recognizedText.trim()) {
+
+        throw new Error(
+            "Tesseract nerozpoznal žiadny text."
+        );
+
+    }
+
+
     console.log(
         "========================================"
     );
@@ -191,17 +587,58 @@ async function main() {
     );
 
 
-    if (!recognizedText.trim()) {
+    console.log(
+        "🔎 Spracúvam menu..."
+    );
 
-        throw new Error(
-            "Tesseract nerozpoznal žiadny text."
+
+    const parsedMenu =
+        parseWeeklyMenuText(
+            recognizedText
         );
-
-    }
 
 
     console.log(
-        "✅ OCR úspešne dokončené."
+        "========================================"
+    );
+
+    console.log(
+        "SPRACOVANÉ MENU"
+    );
+
+    console.log(
+        "========================================"
+    );
+
+    console.log(
+        JSON.stringify(
+            parsedMenu,
+            null,
+            2
+        )
+    );
+
+
+    const monday =
+        getMonday(
+            new Date()
+        );
+
+
+    console.log(
+        "📅 Týždeň od:",
+        formatDate(monday)
+    );
+
+
+    await saveMenuToSupabase(
+        parsedMenu,
+        monday
+    );
+
+
+    console.log(
+        "🎉 Import menu úspešne dokončený."
     );
 
 }
