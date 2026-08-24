@@ -935,12 +935,7 @@ const todayFormattedCapitalized =
         </div>
 
        <div class="issue-menu">
-    <strong class="issue-menu-name">
-        Menu ${order.menu_id}
-    </strong>
-    <div class="issue-menu-text">
-        ${escapeHtml(order.menu_name || "")}
-    </div>
+    Menu ${order.menu_id}
 </div>
 
     </div>
