@@ -6838,78 +6838,82 @@ function parseWeeklyMenuText(text) {
                 return;
             }
 
-            const dayText =
-                dayMatch[1].trim();
+           const dayText =
+    dayMatch[1].trim();
 
-            // Polievka je všetko pred Menu 1
-            const soupMatch =
-                dayText.match(
-                    /^([\s\S]*?)(?=\s*1\.\s*\d+g?\s*\/)/i
-                );
+// Polievka je všetko pred Menu 1
+const soupMatch =
+    dayText.match(
+        /^([\s\S]*?)(?=\s*1\.\s*\d+g?\s*\/)/i
+    );
 
-            let soup =
-                soupMatch
-                    ? soupMatch[1]
-                    : "";
+let soup =
+    soupMatch
+        ? soupMatch[1]
+        : "";
 
-            soup = soup
-                .replace(
-                    /^\s*0[,.]33[l1]\s*/i,
-                    ""
-                )
-                .replace(
-                    /\s*(?:1[.,:]*3?[.,:]*)?\s*2ks chlieb\s*$/i,
-                    ""
-                )
-                .replace(/\s+/g, " ")
-                .trim();
+soup = soup
+    .replace(/\s+/g, " ")
+    .trim();
 
-            const parsedDay = {
-                soup,
-                menu1: "",
-                menu2: "",
-                menu3: "",
-                menu4: "",
-                menu5: "",
-                menu6: ""
-            };
+// Odstráni OCR bodky/čiarky/alergény medzi polievkou
+// a informáciou o chlebe
+soup = soup
+    .replace(
+        /(\d+\s*ks\s*chlieb)\s*$/i,
+        "$1"
+    )
+    .replace(
+        /\s*[,.:]+\s*(?=\d+\s*ks\s*chlieb)/i,
+        " "
+    )
+    .trim();
 
-            for (
-                let menuNumber = 1;
-                menuNumber <= 6;
-                menuNumber++
-            ) {
+const parsedDay = {
+    soup,
+    menu1: "",
+    menu2: "",
+    menu3: "",
+    menu4: "",
+    menu5: "",
+    menu6: ""
+};
 
-                const nextNumber =
-                    menuNumber + 1;
+for (
+    let menuNumber = 1;
+    menuNumber <= 6;
+    menuNumber++
+) {
 
-                const menuRegex =
-                    new RegExp(
-                        `${menuNumber}\\.\\s*\\d+g?\\s*\\/([\\s\\S]*?)`
-                        + (
-                            menuNumber < 6
-                                ? `(?=\\s*${nextNumber}\\.\\s*\\d+g?\\s*\\/)`
-                                : "$"
-                        ),
-                        "i"
-                    );
+    const nextNumber =
+        menuNumber + 1;
 
-                const menuMatch =
-                    dayText.match(
-                        menuRegex
-                    );
+    const menuRegex =
+        new RegExp(
+            `${menuNumber}\\.\\s*\\d+g?\\s*\\/([\\s\\S]*?)`
+            + (
+                menuNumber < 6
+                    ? `(?=\\s*${nextNumber}\\.\\s*\\d+g?\\s*\\/)`
+                    : "$"
+            ),
+            "i"
+        );
 
-                if (menuMatch) {
+    const menuMatch =
+        dayText.match(
+            menuRegex
+        );
 
-                    parsedDay[
-                        `menu${menuNumber}`
-                    ] = cleanMenuItem(
-                        menuMatch[1]
-                    );
-                }
+    if (menuMatch) {
 
-            }
+        parsedDay[
+            `menu${menuNumber}`
+        ] = cleanMenuItem(
+            menuMatch[1]
+        );
+    }
 
+}
             result[day.key] =
                 parsedDay;
 
