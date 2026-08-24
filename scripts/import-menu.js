@@ -136,21 +136,29 @@ function downloadImage(url) {
 function cleanMenuItem(text) {
 
     return String(text || "")
-        // cena
+        .replace(/\s+/g, " ")
+        .trim()
+
+        // odstráni cenu + OCR zvyšky na konci
         .replace(
-            /\s*[\d.,:]*\s*(6,90|9,20)\s*€?\s*$/i,
+            /\s*(?:\d+\s*[,.:]?\s*)*(?:6[,.]90|9[,.]20)\s*[€%]?\s*$/i,
             ""
         )
 
-        // alergény na konci
+        // odstráni alergény na konci
         .replace(
-            /\s+[.,:+]?\d(?:[.,:]\d)*\s*$/g,
+            /\s+\d+(?:\s*[,.:]\s*\d+)*\s*$/i,
+            ""
+        )
+
+        // odstráni prípadné ďalšie OCR znaky na úplnom konci
+        .replace(
+            /[\s,:;.-]+$/,
             ""
         )
 
         .replace(/\s+/g, " ")
         .trim();
-
 }
 
 
