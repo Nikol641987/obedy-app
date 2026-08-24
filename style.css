@@ -2829,3 +2829,6 @@ select:focus-visible {
     display: block;
     margin-top: 3px;
 }
+.issue-menu {
+    color: red !important;
+}
