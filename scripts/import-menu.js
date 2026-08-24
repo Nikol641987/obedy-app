@@ -290,16 +290,6 @@ const parsedDay = {
     menu6: ""
 };
 
-            const parsedDay = {
-                soup,
-                menu1: "",
-                menu2: "",
-                menu3: "",
-                menu4: "",
-                menu5: "",
-                menu6: ""
-            };
-
 
             // =====================================
             // MENU 1–6
