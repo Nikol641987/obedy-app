@@ -47,7 +47,7 @@ async function openWeekSelectionScreen(employeeId) {
     );
 
     monday.setHours(
-        08,
+        07,
         30,
         0,
         0
@@ -225,7 +225,7 @@ const deadline =
     new Date(date);
 
 deadline.setHours(
-    08,
+    07,
     30,
     0,
     0
@@ -596,7 +596,7 @@ async function checkTodayOrder(
     new Date();
 
 const deadline =
-    new Date(`${today}T08:30:00`);
+    new Date(`${today}T07:30:00`);
 
 const canEdit =
     now < deadline;
@@ -612,7 +612,7 @@ const canEdit =
                 orderIntroText.textContent =
                     canEdit
 
-                        ? "🍽️ Na tento deň ešte nemáš objednaný obed. Objednať si ho môžeš do 8:30."
+                        ? "🍽️ Na tento deň ešte nemáš objednaný obed. Objednať si ho môžeš do 7:30."
 
 : "🔒 Na tento deň nemáš objednaný obed. Objednávky sú už uzavreté.";
 
@@ -673,7 +673,7 @@ const canEdit =
             orderIntroText.textContent =
                 canEdit
 
-                    ? "✅ Obed je úspešne objednaný. Do 8:30 môžeš objednávku ešte upraviť."
+                    ? "✅ Obed je úspešne objednaný. Do 7:30 môžeš objednávku ešte upraviť."
 
 : "🔒 Objednávka je uzavretá. Tento obed už nie je možné upraviť.";
 
