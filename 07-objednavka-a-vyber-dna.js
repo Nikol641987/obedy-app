@@ -1036,9 +1036,85 @@ const maxMenuNumber =
 
                 </div>
 
-                <h3>
-                    ${escapeHtml(menu.name)}
-                </h3>
+                card.innerHTML = `
+    <div class="menu-card-header">
+
+        <span class="menu-number">
+            ${Number(menu.id) === 6 ? "⭐ Menu 6" : "Menu " + menu.id}
+        </span>
+
+    </div>
+
+    <h3>
+        ${escapeHtml(menu.name)}
+    </h3>
+
+    ${
+        menu.name.toLowerCase().includes(" alebo ")
+            ? `
+                <div class="menu-choice-box">
+                    <strong>Vyberte si:</strong>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="menu-choice-${menu.id}"
+                            value="Vyprážaný syr"
+                            class="menu-choice"
+                            data-menu-id="${menu.id}"
+                        >
+                        Vyprážaný syr
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="menu-choice-${menu.id}"
+                            value="Grilovaný Camembert (brusnice)"
+                            class="menu-choice"
+                            data-menu-id="${menu.id}"
+                        >
+                        Grilovaný Camembert (brusnice)
+                    </label>
+                </div>
+            `
+            : ""
+    }
+
+    <div class="menu-options">
+
+        <label class="menu-option">
+
+            <input
+                type="checkbox"
+                class="meal-choice"
+                data-menu-id="${menu.id}"
+                data-option="dining"
+            >
+
+            <span>
+                V jedálni
+            </span>
+
+        </label>
+
+        <label class="menu-option">
+
+            <input
+                type="checkbox"
+                class="meal-choice"
+                data-menu-id="${menu.id}"
+                data-option="takeaway"
+            >
+
+            <span>
+                Zabaliť
+            </span>
+
+        </label>
+
+    </div>
+`;
 
                 <div class="menu-options">
 
@@ -1252,7 +1328,31 @@ if (hasForbiddenMenu) {
 
                         || `Menu ${menuId}`;
 
+const menuChoice =
+    menuCard
+        ?.querySelector(
+            `.menu-choice[data-menu-id="${menuId}"]:checked`
+        )
+        ?.value
+        || null;
 
+                    const hasMenuChoice =
+    menuCard?.querySelector(
+        `.menu-choice[data-menu-id="${menuId}"]`
+    );
+
+if (hasMenuChoice && !menuChoice) {
+
+    if (orderMessage) {
+        orderMessage.textContent =
+            "Vyberte si, prosím, ktorý syr chcete.";
+        orderMessage.className =
+            "message error-message";
+    }
+
+    return;
+}
+                    
                     if (
                         !groupedMenus[
                             menuId
@@ -1277,6 +1377,8 @@ if (hasForbiddenMenu) {
 
                             menu_name:
                                 menuName,
+                            menu_choice:
+    menuChoice,
 
                             dining:
                                 false,
