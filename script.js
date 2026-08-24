@@ -3345,7 +3345,9 @@ for (const menuCard of menuCards) {
                                 String(menuId),
 
                             menu_name:
-                                menuName,
+    option
+        ? `${menuName} – ${option}`
+        : menuName,
 
                             dining:
                                 false,
