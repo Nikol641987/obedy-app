@@ -1333,6 +1333,15 @@ const cheeseName =
                             ?.trim()
 
                         || `Menu ${menuId}`;
+
+                    const cheeseChoice =
+    menuCard?.querySelector(
+        ".menu-choice:checked"
+    );
+
+const cheeseName =
+    cheeseChoice?.value || "";
+                    
                     const menuChoice =
     menuCard
         ?.querySelector(
