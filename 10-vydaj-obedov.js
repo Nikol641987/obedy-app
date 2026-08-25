@@ -263,7 +263,7 @@ function setupManualIssue() {
                                 );
                             }
 
-                            return `${item.menu_name} – ${methods.join(" + ")}`;
+                            return `${(item.menu_name || "").replace(/\s*\([^)]*\)/g, "").trim()} – ${methods.join(" + ")}`;
 
                         })
                         .join(" | ");
