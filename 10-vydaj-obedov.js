@@ -814,7 +814,9 @@ if (todayMenuSummary) {
     );
 
 const menuText =
-    menuOrder?.menu_name || "";
+    (menuOrder?.menu_name || "")
+        .replace(/\s*\([^)]*\)/g, "")
+        .trim();
 
 const label =
     menuNumber === 6
