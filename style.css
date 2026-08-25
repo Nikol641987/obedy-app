@@ -2832,3 +2832,29 @@ select:focus-visible {
 .issue-menu {
     color: red !important;
 }
+.issue-menu-choice {
+    display: block;
+    width: 100%;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+    font-size: 14px;
+    margin-top: 4px;
+}
+.issue-meal-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.issue-type {
+    flex-shrink: 0;
+}
+
+.issue-menu {
+    flex: 1;
+    min-width: 0;
+    word-break: normal;
+    overflow-wrap: break-word;
+}
