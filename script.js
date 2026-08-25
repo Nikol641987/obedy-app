@@ -2211,8 +2211,9 @@ async function openWeekSelectionScreen(employeeId) {
             await supabaseClient
                 .from("meal_orders")
                 .select(
-                    "order_date, menu_id, menu_name, dining, takeaway, no_soup, issued"
-                )
+    "order_date, menu_id, menu_name, menu_choice, dining, takeaway, no_soup, issued"
+)
+        
                 .eq(
                     "employee_id",
                     employeeId
@@ -2395,9 +2396,11 @@ const isClosed =
                     meal.className =
                         "week-order-meal";
 
-                    const menuName =
-                        order.menu_name
-                        || `Menu ${order.menu_id}`;
+                 const menuName =
+    order.menu_choice
+    || order.menu_name
+    || `Menu ${order.menu_id}`;
+                    
                     const menuChoice =
     order.menu_choice
     ? ` – ${order.menu_choice}`
