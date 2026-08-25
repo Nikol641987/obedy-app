@@ -938,19 +938,21 @@ const todayFormattedCapitalized =
             }
         </div>
 
-       <div class="issue-menu">
-    <span style="color:red;">
-        Menu ${order.menu_id}
-    </span>
+        <div class="issue-menu">
+            <span style="color:red;">
+                Menu ${order.menu_id}
+            </span>
 
-    ${
-        order.menu_choice
-            ? `<div class="issue-menu-choice">
-                🧀 ${escapeHtml(order.menu_choice)}
-              </div>`
-            : ""
-    }
-</div>
+            ${
+                order.menu_choice
+                    ? `<div class="issue-menu-choice">
+                        🧀 ${escapeHtml(order.menu_choice)}
+                      </div>`
+                    : ""
+            }
+        </div>
+
+    </div>
 `;
 
                             })
