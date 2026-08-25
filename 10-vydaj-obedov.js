@@ -104,15 +104,16 @@ function setupManualIssue() {
                 const { data, error } =
                     await supabaseClient
                         .from("meal_orders")
-                        .select(
-                            `
-                            id,
-                            menu_name,
-                            dining,
-                            takeaway,
-                            issued
-                            `
-                        )
+                       .select(
+    `
+    id,
+    menu_name,
+    menu_choice,
+    dining,
+    takeaway,
+    issued
+    `
+)
                         .eq(
                             "employee_id",
                             employeeId
@@ -641,6 +642,7 @@ const totalCount =
     employee_name,
     menu_id,
     menu_name,
+    menu_choice,
     dining,
     takeaway,
     issued
@@ -937,10 +939,18 @@ const todayFormattedCapitalized =
         </div>
 
        <div class="issue-menu">
-    <span style="color:red;">Menu ${order.menu_id}</span>
-</div>
+    <span style="color:red;">
+        Menu ${order.menu_id}
+    </span>
 
-    </div>
+    ${
+        order.menu_choice
+            ? `<div class="issue-menu-choice">
+                🧀 ${escapeHtml(order.menu_choice)}
+              </div>`
+            : ""
+    }
+</div>
 `;
 
                             })
@@ -1169,15 +1179,16 @@ function setupChipIssue() {
             const { data, error } =
                 await supabaseClient
                     .from("meal_orders")
-                    .select(
-                        `
-                        id,
-                        menu_name,
-                        dining,
-                        takeaway,
-                        issued
-                        `
-                    )
+                   .select(
+    `
+    id,
+    menu_name,
+    menu_choice,
+    dining,
+    takeaway,
+    issued
+    `
+)
                     .eq(
                         "employee_id",
                         employeeId
