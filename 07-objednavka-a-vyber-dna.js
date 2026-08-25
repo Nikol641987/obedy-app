@@ -1318,7 +1318,14 @@ for (const menuCard of menuCards) {
                         choice.closest(
                             ".menu-card"
                         );
+const cheeseChoice =
+    menuCard?.querySelector(
+        ".menu-choice:checked"
+    );
 
+const cheeseName =
+    cheeseChoice?.value || "";
+                    
                     const menuName =
                         menuCard
                             ?.querySelector("h3")
