@@ -1331,9 +1331,14 @@ function setupChipIssue() {
 
                         return `
                             <div>
-                                <strong>
-                                    ${escapeHtml(item.menu_name)}
-                                </strong>
+                               <strong>
+    ${escapeHtml(
+        (item.menu_name || "")
+            .replace(/\s*\([^)]*\)/g, "")
+            .trim()
+    )}
+</strong>
+
                                 – ${escapeHtml(methods.join(" + "))}
                             </div>
                         `;
