@@ -941,18 +941,15 @@ const todayFormattedCapitalized =
         </div>
 
         <div class="issue-menu">
-            <span style="color:red;">
-                Menu ${order.menu_id}
-            </span>
-
-            ${
-                order.menu_choice
-                    ? `<div class="issue-menu-choice">
-                        🧀 ${escapeHtml(order.menu_choice)}
-                      </div>`
-                    : ""
-            }
-        </div>
+    <span style="color:red;">
+        Menu ${order.menu_id}
+    </span>
+    – ${escapeHtml(
+        (order.menu_name || "")
+            .replace(/\s*\([^)]*\)/g, "")
+            .trim()
+    )}
+</div>
 
     </div>
 `;
