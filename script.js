@@ -4022,7 +4022,12 @@ function setupManualIssue() {
                     methods.push("Zabaliť");
                 }
 
-                return `${item.menu_name} – ${methods.join(" + ")}`;
+                const cleanMenuName =
+    (item.menu_name || "")
+        .replace(/\s*\([^)]*\)/g, "")
+        .trim();
+
+return `Menu ${item.menu_id} – ${cleanMenuName}`;
 
             })
             .join("<br>");
@@ -4108,7 +4113,7 @@ function setupManualIssue() {
                                 );
                             }
 
-                            return `${item.menu_name} – ${methods.join(" + ")}`;
+                            return `${item.menu_name.replace(/\s*\([^)]*\)/g, "")} – ${methods.join(" + ")}`;
 
                         })
                         .join(" | ");
