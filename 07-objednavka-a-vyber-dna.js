@@ -1205,13 +1205,20 @@ function setupOrderButton() {
                     "employeeSelect"
                 );
 
-            const selectedEmployee =
-                [...employeeSelect.options]
-                    .find(
-                        option =>
-                            option.value === employeeId
-                    );
+   const selectedEmployee =
+    employeeSelect
+        ? [...employeeSelect.options]
+            .find(
+                option =>
+                    option.value === employeeId
+            )
+        : null;
+
 const maxMenuNumber =
+    Number(
+        selectedEmployee?.dataset?.maxMenuNumber
+        || 5
+    );
     Number(
         selectedEmployee?.dataset?.maxMenuNumber
         || 5
