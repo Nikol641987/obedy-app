@@ -2061,7 +2061,7 @@ select:focus-visible {
     }
 
     #dashboardScreen .issue-name {
-        font-size: 23px;
+        font-size: 25px;
         overflow-wrap: anywhere;
     }
 
@@ -2744,11 +2744,15 @@ select:focus-visible {
   margin: 4px !important;          /* Menšie medzery medzi okienkami */
 }
 
-/* Menší nadpis s menom zamestnanca */
+/* Zväčšené a prispôsobivé meno zamestnanca pre PC, tablet aj mobil */
 .issue-name {
-  font-size: 1.0rem !important;    /* Menšie písmo mena */
-  margin-bottom: 4px !important;
-  font-weight: bold;
+    font-size: clamp(20px, 4vw, 26px) !important;
+    font-weight: 800 !important;
+    margin-bottom: 10px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 /* Riadok jedla na rovnakom riadku s červeným tučným menu */
