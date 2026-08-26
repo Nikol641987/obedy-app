@@ -455,8 +455,8 @@ async function loadMenus() {
                                     Vyprážaný syr
                                 </label>
                                 <label>
-                                    <input type="radio" name="menu-choice-${menu.id}" value="Grilovaný Camembert (brusnice)" class="menu-choice" data-menu-id="${menu.id}">
-                                    Grilovaný Camembert (brusnice)
+                                    <input type="radio" name="menu-choice-${menu.id}" value="Camembert" class="menu-choice" data-menu-id="${menu.id}">
+                                    Camembert
                                 </label>
                             </div>
                         `
