@@ -2835,28 +2835,3 @@ select:focus-visible {
 .issue-menu {
     color: red !important;
 }
-/* --- Úprava mena zamestnanca (primeraná veľkosť, žiadne "kone") --- */
-.issue-name {
-    font-size: 16px !important;
-    font-weight: 750 !important;
-    margin-bottom: 8px !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-}
-
-/* --- Prispôsobenie riadkov s jedlom, aby sa text nelámal divne --- */
-.issue-meal-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 10px 0;
-}
-
-.issue-menu {
-    flex: 1;
-    text-align: right;
-    word-break: break-word;
-}
