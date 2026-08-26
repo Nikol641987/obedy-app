@@ -3107,11 +3107,11 @@ ${
                     <input
                         type="radio"
                         name="menu-choice-${menu.id}"
-                        value="Grilovaný Camembert (brusnice)"
+                        value="Camembert"
                         class="menu-choice"
                         data-menu-id="${menu.id}"
                     >
-                    Grilovaný Camembert (brusnice)
+                    Camembert
                 </label>
             </div>
         `
