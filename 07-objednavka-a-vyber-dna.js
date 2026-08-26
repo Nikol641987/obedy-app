@@ -568,12 +568,15 @@ function setupOrderButton() {
         const employeeName = selectedEmployee ? selectedEmployee.textContent.trim() : employeeId;
         const noSoup = document.getElementById("noSoup")?.checked || false;
         const orderDate = getOrderDate();
+        
+        // Získanie hodnoty poznámky zo správneho elementu
+        const globalNoteInput = document.getElementById("globalOrderNote");
+        const globalNoteValue = globalNoteInput ? globalNoteInput.value.trim() : "";
 
         const soupCardElement = document.querySelector(".soup-card");
         const soupRadio = soupCardElement ? soupCardElement.querySelector('input[name="soup-choice"]:checked') : null;
         const selectedSoupChoice = soupRadio ? soupRadio.value : null;
 
-        // OPRAVENÁ PODMIENKA: Kontroluje polievku IBA vtedy, ak NIE JE zaškrtnuté "Bez polievky"
         if (soupCardElement && soupCardElement.querySelector('input[name="soup-choice"]') && !soupRadio && !noSoup) {
             if (orderMessage) {
                 orderMessage.textContent = "🥣 Vyberte si, prosím, polievku alebo zaškrtnite 'Bez polievky'.";
@@ -581,7 +584,6 @@ function setupOrderButton() {
             }
             return;
         }
-    
 
         const hasForbiddenMenu = [...selectedChoices].some(
             choice => Number(choice.dataset.menuId) > maxMenuNumber
@@ -630,7 +632,7 @@ function setupOrderButton() {
                     menu_name: menuName,
                     menu_choice: menuChoice,
                     soup_choice: selectedSoupChoice,
-                    note: globalNoteValue,
+                    note: globalNoteValue, // Opravené na správnu premennú
                     dining: false,
                     takeaway: false,
                     no_soup: noSoup,
@@ -699,41 +701,3 @@ function setupOrderButton() {
         }
     });
 }
-const status = document.createElement("div");
-            status.className = isClosed ? "status closed" : "status ordered";
-            status.textContent = isClosed ? "🔒 Objednávka uzavretá" : "🟢 Objednané";
-
-            card.appendChild(orderDetails);
-            card.appendChild(status);
-
-            // PRIDANIE TLAČIDLA NA ZRUŠENIE OBJEDNÁVKY (ak ešte nie je uzavreté)
-            if (!isClosed) {
-                const cancelButton = document.createElement("button");
-                cancelButton.className = "main-button cancel-order-btn";
-                cancelButton.style.cssText = "margin-top: 10px; background-color: #ef4444; font-size: 0.85rem; padding: 6px;";
-                cancelButton.textContent = "❌ Zrušiť objednávku";
-                
-                cancelButton.addEventListener("click", async (e) => {
-                    e.stopPropagation(); // Zabráni otvoreniu detailu dňa
-                    
-                    if (!confirm(`Naozaj chcete zrušiť objednávku na dňa ${formatShortDate(date)}?`)) return;
-
-                    try {
-                        const { error } = await supabaseClient
-                            .from("meal_orders")
-                            .delete()
-                            .eq("employee_id", employeeId)
-                            .eq("order_date", dateForDatabase);
-
-                        if (error) throw error;
-
-                        alert("Objednávka bola úspešne zrušená.");
-                        openWeekSelectionScreen(employeeId); // Obnoví zoznam týždňa
-                    } catch (err) {
-                        console.error("Chyba pri rušení objednávky:", err);
-                        alert("Nepodarilo sa zrušiť objednávku.");
-                    }
-                });
-
-                card.appendChild(cancelButton);
-            }
