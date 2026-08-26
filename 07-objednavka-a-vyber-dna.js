@@ -384,14 +384,11 @@ async function loadMenus() {
             const soupCard = document.createElement("article");
             soupCard.className = "menu-card soup-card";
 
-            // Zistenie, či je daný deň štvrtok (podľa dátumu v DB alebo reálneho dňa)
-            // Zistíme deň týždňa z orderDate (formát YYYY-MM-DD)
             const dateObj = new Date(`${orderDate}T12:00:00`);
-            const isThursday = dateObj.getDay() === 4; // 4 znamená štvrtok
+            const isThursday = dateObj.getDay() === 4;
 
             let soupOptionsHtml = "";
 
-            // Výber polievky len ak je štvrtok
             if (isThursday) {
                 const thursdaySoupOptions = [
                     "Držková polievka",
@@ -401,9 +398,9 @@ async function loadMenus() {
                 soupOptionsHtml = `
                     <div class="menu-choice-box" style="margin-top: 10px;">
                         <strong>Vyberte si polievku:</strong>
-                        ${thursdaySoupOptions.map((opt, idx) => `
+                        ${thursdaySoupOptions.map((opt) => `
                             <label style="display: block; margin-top: 6px; cursor: pointer;">
-                                <input type="radio" name="soup-choice" value="${escapeHtml(opt)}" class="soup-choice-radio" ${idx === 0 ? "checked" : ""}>
+                                <input type="radio" name="soup-choice" value="${escapeHtml(opt)}" class="soup-choice-radio">
                                 ${escapeHtml(opt)}
                             </label>
                         `).join("")}
@@ -411,12 +408,20 @@ async function loadMenus() {
                 `;
             }
 
+            // TU JE PRIDANÉ ZAŠKRTÁVATKO "Bez polievky" HNEĎ POD POLIEVKU
             soupCard.innerHTML = `
                 <div class="menu-card-header">
                     <span class="menu-number">🥣 Polievka</span>
                 </div>
                 <h3>${escapeHtml(data.soup)}</h3>
                 ${soupOptionsHtml}
+                
+                <div style="margin-top: 12px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+                    <label class="soup-option" style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                        <input type="checkbox" id="noSoup">
+                        <span>Bez polievky</span>
+                    </label>
+                </div>
             `;
             container.appendChild(soupCard);
         }
