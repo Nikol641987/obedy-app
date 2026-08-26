@@ -2835,24 +2835,3 @@ select:focus-visible {
 .issue-menu {
     color: red !important;
 }
-/* --- Úprava riadku s jedlom pre výdaj (aby sa texty nelámali) --- */
-.issue-meal-row {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: nowrap !important; /* Zabráni pretekaniu/lamaniu prvkov */
-}
-
-/* --- Časť s "V jedálni" alebo "Zabaliť" --- */
-.issue-meal-type, 
-.issue-meal-row .meal-type-wrapper,
-.issue-meal-row > div:first-child {
-    white-space: nowrap !important; /* Zabezpečí, že "V jedálni" bude v jednom riadku */
-    flex-shrink: 0 !important;
-}
-
-/* --- Názov jedla (Menu 4 / Camembert) --- */
-.issue-menu {
-    text-align: right !important;
-    flex-grow: 1 !important;
-}
