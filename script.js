@@ -2767,18 +2767,20 @@ const canEdit =
                 );
 
 console.log("NAČÍTANÝ SYR:", item.menu_id, item.menu_choice);
-            const cheeseChoice =
-    document.querySelector(
-        `.menu-choice[data-menu-id="${item.menu_id}"][value="${item.menu_choice}"]`
-    );
-
-if (cheeseChoice) {
-    cheeseChoice.checked = true;
-    console.log("SYR OZNAČENÝ:", item.menu_choice);
-} else {
-    console.log("SYR SA NENAŠIEL:", item.menu_id, item.menu_choice);
-}
             
+           if (item.menu_choice) {
+
+    const cheeseChoices =
+        document.querySelectorAll(
+            `.menu-choice[data-menu-id="${item.menu_id}"]`
+        );
+
+    cheeseChoices.forEach(choice => {
+        choice.checked =
+            choice.value === item.menu_choice;
+    });
+
+}
             if (diningChoice) {
 
                 diningChoice.checked =
