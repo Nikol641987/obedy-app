@@ -380,12 +380,13 @@ async function loadMenus() {
 
         container.innerHTML = "";
 
+        // >>> TU SA ZAČÍNA ČASŤ S POLIEVKOU <<<
         if (data.soup) {
             const soupCard = document.createElement("article");
             soupCard.className = "menu-card soup-card";
 
             const dateObj = new Date(`${orderDate}T12:00:00`);
-            const isThursday = dateObj.getDay() === 4;
+            const isThursday = dateObj.getDay() === 4; 
 
             let soupOptionsHtml = "";
 
@@ -408,7 +409,7 @@ async function loadMenus() {
                 `;
             }
 
-            // TU JE PRIDANÉ ZAŠKRTÁVATKO "Bez polievky" HNEĎ POD POLIEVKU
+            // TENTO KÚSOK PRIDÁVA "BEZ POLIEVKY" PRIAMO POD POLIEVKU
             soupCard.innerHTML = `
                 <div class="menu-card-header">
                     <span class="menu-number">🥣 Polievka</span>
@@ -425,6 +426,7 @@ async function loadMenus() {
             `;
             container.appendChild(soupCard);
         }
+        // >>> TU POLIEVKA KONČÍ A ZAČÍNAJÚ HLAVNÉ JEDLÁ <<<
 
         const employeeId = getCurrentEmployeeId();
         const employeeSelect = document.getElementById("employeeSelect");
@@ -464,7 +466,7 @@ async function loadMenus() {
                                     Camembert
                                 </label>
                             </div>
-                        `
+                          `
                         : ""
                 }
                 <div class="menu-options" style="margin-top: 10px;">
