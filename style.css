@@ -2746,15 +2746,14 @@ select:focus-visible {
 
 /* Zväčšené a prispôsobivé meno zamestnanca pre PC, tablet aj mobil */
 .issue-name {
-    font-size: clamp(20px, 4vw, 26px) !important;
-    font-weight: 800 !important;
-    margin-bottom: 10px !important;
+    font-size: clamp(15px, 2.5vw, 18px) !important;
+    font-weight: 750 !important;
+    margin-bottom: 8px !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
 }
-
 /* Riadok jedla na rovnakom riadku s červeným tučným menu */
 .issue-meal-row {
     padding: 6px 0;
