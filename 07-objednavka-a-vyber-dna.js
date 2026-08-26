@@ -190,10 +190,16 @@ async function checkTodayOrder(employeeId) {
     const confirmOrderButton = document.getElementById("confirmOrderButton");
     const noSoup = document.getElementById("noSoup");
     const orderIntroText = document.getElementById("orderIntroText");
+    const globalNoteInput = document.getElementById("globalOrderNote");
 
     if (noSoup) {
         noSoup.checked = false;
         noSoup.disabled = false;
+    }
+
+    if (globalNoteInput) {
+        globalNoteInput.value = "";
+        globalNoteInput.disabled = false;
     }
 
     if (confirmOrderButton) {
@@ -210,7 +216,7 @@ async function checkTodayOrder(employeeId) {
     try {
         const { data, error } = await supabaseClient
             .from("meal_orders")
-            .select("menu_id, menu_name, menu_choice, soup_choice, dining, takeaway, no_soup, issued")
+            .select("menu_id, menu_name, menu_choice, soup_choice, note, dining, takeaway, no_soup, issued")
             .eq("employee_id", employeeId)
             .eq("order_date", today);
 
@@ -233,6 +239,7 @@ async function checkTodayOrder(employeeId) {
 
             if (!canEdit) {
                 document.querySelectorAll(".meal-choice").forEach(choice => choice.disabled = true);
+                if (globalNoteInput) globalNoteInput.disabled = true;
                 if (noSoup) noSoup.disabled = true;
                 if (confirmOrderButton) {
                     confirmOrderButton.disabled = true;
@@ -256,7 +263,6 @@ async function checkTodayOrder(employeeId) {
             const takeawayChoice = document.querySelector(`.meal-choice[data-menu-id="${item.menu_id}"][data-option="takeaway"]`);
             const menuChoice = document.querySelector(`.menu-choice[data-menu-id="${item.menu_id}"][value="${item.menu_choice}"]`);
             
-            // Označenie uloženej polievky
             if (item.soup_choice) {
                 const soupRadio = document.querySelector(`.soup-choice-radio[value="${item.soup_choice}"]`);
                 if (soupRadio) soupRadio.checked = true;
@@ -265,6 +271,11 @@ async function checkTodayOrder(employeeId) {
             if (menuChoice) menuChoice.checked = true;
             if (diningChoice) diningChoice.checked = Boolean(item.dining);
             if (takeawayChoice) takeawayChoice.checked = Boolean(item.takeaway);
+            
+            // Nastavenie poznámky (stačí nastaviť do spoločného pola)
+            if (globalNoteInput && item.note) {
+                globalNoteInput.value = item.note;
+            }
         });
 
         if (noSoup) {
@@ -284,6 +295,7 @@ async function checkTodayOrder(employeeId) {
 
         if (!canEdit) {
             document.querySelectorAll(".meal-choice").forEach(choice => choice.disabled = true);
+            if (globalNoteInput) globalNoteInput.disabled = true;
             if (noSoup) noSoup.disabled = true;
         }
 
@@ -441,7 +453,7 @@ async function loadMenus() {
                         `
                         : ""
                 }
-                <div class="menu-options">
+                <div class="menu-options" style="margin-top: 10px;">
                     <label class="menu-option">
                         <input type="checkbox" class="meal-choice" data-menu-id="${menu.id}" data-option="dining">
                         <span>V jedálni</span>
@@ -454,6 +466,16 @@ async function loadMenus() {
             `;
             container.appendChild(card);
         });
+
+        // Vytvorenie spoločného poľa pre poznámku pod všetkými menu (pred tlačidlom)
+        const globalNoteContainer = document.createElement("div");
+        globalNoteContainer.className = "global-note-container";
+        globalNoteContainer.style.cssText = "margin: 20px 0; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;";
+        globalNoteContainer.innerHTML = `
+            <label for="globalOrderNote" style="display: block; font-weight: 600; margin-bottom: 6px; color: #334155;">💬 Poznámka k objednávke (napr. makové buchty, bez cibule...):</label>
+            <input type="text" id="globalOrderNote" placeholder="Sem napíšte poznámku..." style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; box-sizing: border-box;">
+        `;
+        container.appendChild(globalNoteContainer);
 
     } catch (error) {
         console.error("Chyba pri načítaní menu:", error);
@@ -500,10 +522,13 @@ function setupOrderButton() {
         const noSoup = document.getElementById("noSoup")?.checked || false;
         const orderDate = getOrderDate();
 
-        // Kontrola výberu polievky (ak je na výber viac možností)
         const soupCardElement = document.querySelector(".soup-card");
         const soupRadio = soupCardElement ? soupCardElement.querySelector('input[name="soup-choice"]:checked') : null;
         const selectedSoupChoice = soupRadio ? soupRadio.value : null;
+
+        // Získanie textu zo spoločného poľa poznámky
+        const globalNoteInput = document.getElementById("globalOrderNote");
+        const globalNoteValue = globalNoteInput ? globalNoteInput.value.trim() : null;
 
         if (soupCardElement && soupCardElement.querySelector('input[name="soup-choice"]') && !soupRadio) {
             if (orderMessage) {
@@ -560,6 +585,7 @@ function setupOrderButton() {
                     menu_name: menuName,
                     menu_choice: menuChoice,
                     soup_choice: selectedSoupChoice,
+                    note: globalNoteValue,
                     dining: false,
                     takeaway: false,
                     no_soup: noSoup,
