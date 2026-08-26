@@ -357,7 +357,7 @@ async function loadMenus() {
         const orderDate = getOrderDate();
         const { data, error } = await supabaseClient
             .from("weekly_menu")
-            .select("soup, menu1, menu2, menu3, menu4, menu5, menu6")
+            .select("soup, menu1, menu2, menu3, menu4, menu5, menu6, menu_date")
             .eq("menu_date", orderDate)
             .maybeSingle();
 
@@ -384,18 +384,27 @@ async function loadMenus() {
             const soupCard = document.createElement("article");
             soupCard.className = "menu-card soup-card";
 
-            const hasSoupChoice = data.soup.includes(",");
+            // Zistenie, či je daný deň štvrtok (podľa dátumu v DB alebo reálneho dňa)
+            // Zistíme deň týždňa z orderDate (formát YYYY-MM-DD)
+            const dateObj = new Date(`${orderDate}T12:00:00`);
+            const isThursday = dateObj.getDay() === 4; // 4 znamená štvrtok
+
             let soupOptionsHtml = "";
 
-            if (hasSoupChoice) {
-                const soupParts = data.soup.split(",").map(s => s.trim()).filter(Boolean);
+            // Výber polievky len ak je štvrtok
+            if (isThursday) {
+                const thursdaySoupOptions = [
+                    "Držková polievka",
+                    "Vývar so zeleninou a rezancami"
+                ];
+
                 soupOptionsHtml = `
                     <div class="menu-choice-box" style="margin-top: 10px;">
                         <strong>Vyberte si polievku:</strong>
-                        ${soupParts.map((part, idx) => `
+                        ${thursdaySoupOptions.map((opt, idx) => `
                             <label style="display: block; margin-top: 6px; cursor: pointer;">
-                                <input type="radio" name="soup-choice" value="${escapeHtml(part)}" class="soup-choice-radio" ${idx === 0 ? "checked" : ""}>
-                                ${escapeHtml(part)}
+                                <input type="radio" name="soup-choice" value="${escapeHtml(opt)}" class="soup-choice-radio" ${idx === 0 ? "checked" : ""}>
+                                ${escapeHtml(opt)}
                             </label>
                         `).join("")}
                     </div>
@@ -467,7 +476,7 @@ async function loadMenus() {
             container.appendChild(card);
         });
 
-        // Vytvorenie spoločného poľa pre poznámku pod všetkými menu (pred tlačidlom)
+        // Spoločné pole pre poznámku pod všetkými menu
         const globalNoteContainer = document.createElement("div");
         globalNoteContainer.className = "global-note-container";
         globalNoteContainer.style.cssText = "margin: 20px 0; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;";
@@ -482,7 +491,6 @@ async function loadMenus() {
         container.innerHTML = "<p>Menu sa nepodarilo načítať.</p>";
     }
 }
-
 // =====================================
 // 13. ULOŽENIE OBJEDNÁVKY
 // =====================================
