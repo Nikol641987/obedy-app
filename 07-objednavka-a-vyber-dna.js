@@ -362,14 +362,36 @@ async function loadMenus() {
 
         container.innerHTML = "";
 
-        if (data.soup) {
+       if (data.soup) {
             const soupCard = document.createElement("article");
             soupCard.className = "menu-card soup-card";
+
+            // Zistíme, či sú v texte polievky viaceré možnosti (napr. oddelené čiarkou)
+            const hasSoupChoice = data.soup.includes(",");
+            let soupOptionsHtml = "";
+
+            if (hasSoupChoice) {
+                // Rozdelíme polievky podľa čiarky na samostatné možnosti
+                const soupParts = data.soup.split(",").map(s => s.trim()).filter(Boolean);
+                soupOptionsHtml = `
+                    <div class="menu-choice-box" style="margin-top: 10px;">
+                        <strong>Vyberte si polievku:</strong>
+                        ${soupParts.map((part, idx) => `
+                            <label style="display: block; margin-top: 6px; cursor: pointer;">
+                                <input type="radio" name="soup-choice" value="${escapeHtml(part)}" class="soup-choice-radio" ${idx === 0 ? "checked" : ""}>
+                                ${escapeHtml(part)}
+                            </label>
+                        `).join("")}
+                    </div>
+                `;
+            }
+
             soupCard.innerHTML = `
                 <div class="menu-card-header">
                     <span class="menu-number">🥣 Polievka</span>
                 </div>
                 <h3>${escapeHtml(data.soup)}</h3>
+                ${soupOptionsHtml}
             `;
             container.appendChild(soupCard);
         }
