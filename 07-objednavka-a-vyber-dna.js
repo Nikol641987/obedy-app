@@ -509,7 +509,8 @@ function setupOrderButton() {
             const menuCard = choice.closest(".menu-card");
 
             const menuName = menuCard?.querySelector("h3")?.textContent?.trim() || `Menu ${menuId}`;
-            const menuChoice = menuCard?.querySelector(`.menu-choice[data-menu-id="${menuId}"]:checked`)?.value || null;
+           const checkedRadio = menuCard ? menuCard.querySelector(`input[name="menu-choice-${menuId}"]:checked`) : null;
+const menuChoice = checkedRadio ? checkedRadio.value : null;
 
             if (!groupedMenus[menuId]) {
                 groupedMenus[menuId] = {
