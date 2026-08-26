@@ -1,243 +1,114 @@
 // 14. MOJE OBEDY
 // =====================================
 
-function openMyOrdersScreen(
-    employeeId
-) {
+async function loadMyOrders(employeeId) {
+    const container = document.getElementById("myOrdersContainer");
 
-    showScreen(
-        "myOrdersScreen"
-    );
-
-    loadMyOrders(
-        employeeId
-    );
-
-}
-
-
-async function loadMyOrders(
-    employeeId
-) {
-
-    const container =
-        document.getElementById(
-            "myOrdersContainer"
-        );
-
-
-    if (
-        !container
-        || !employeeId
-    ) {
-
+    if (!container || !employeeId) {
         return;
-
     }
 
-
-    container.innerHTML =
-        "<p>Načítavam objednávky...</p>";
-
+    container.innerHTML = "<p>Načítavam objednávky...</p>";
 
     try {
-
-        const {
-            data,
-            error
-        } =
-
-            await supabaseClient
-                .from("meal_orders")
-                .select(
-                    `
-                    id,
-                    order_date,
-                    menu_id,
-                    menu_name,
-                    dining,
-                    takeaway,
-                    no_soup,
-                    issued
-                    `
-                )
-                .eq(
-                    "employee_id",
-                    employeeId
-                )
-                .order(
-                    "order_date",
-                    {
-                        ascending: false
-                    }
-                );
-
+        const { data, error } = await supabaseClient
+            .from("meal_orders")
+            .select(`
+                id,
+                order_date,
+                menu_id,
+                menu_name,
+                menu_choice,
+                dining,
+                takeaway,
+                no_soup,
+                issued
+            `)
+            .eq("employee_id", employeeId)
+            .order("order_date", { ascending: false });
 
         if (error) {
             throw error;
         }
 
-
-        if (
-            !data
-            || data.length === 0
-        ) {
-
-            container.innerHTML =
-                "<p>Zatiaľ nemáš žiadne objednávky.</p>";
-
+        if (!data || data.length === 0) {
+            container.innerHTML = "<p>Zatiaľ nemáš žiadne objednávky.</p>";
             return;
-
         }
-
 
         const groupedByDate = {};
 
-
         data.forEach(item => {
-
-            if (
-                !groupedByDate[
-                    item.order_date
-                ]
-            ) {
-
-                groupedByDate[
-                    item.order_date
-                ] = [];
-
+            if (!groupedByDate[item.order_date]) {
+                groupedByDate[item.order_date] = [];
             }
-
-
-            groupedByDate[
-                item.order_date
-            ].push(item);
-
+            groupedByDate[item.order_date].push(item);
         });
-
 
         container.innerHTML = "";
 
+        Object.entries(groupedByDate).forEach(([date, items]) => {
+            const card = document.createElement("article");
+            card.className = "menu-card";
 
-        Object
-            .entries(groupedByDate)
-            .forEach(
-                ([date, items]) => {
+            const formattedDate = formatOrderDate(date);
 
-                    const card =
-                        document.createElement(
-                            "article"
-                        );
+            const itemsHtml = items
+                .map(item => {
+                    const methods = [];
 
-                    card.className =
-                        "menu-card";
+                    if (item.dining) {
+                        methods.push("🍽️ V jedálni");
+                    }
 
+                    if (item.takeaway) {
+                        methods.push("📦 Zabaliť");
+                    }
 
-                    const formattedDate =
-                        formatOrderDate(
-                            date
-                        );
+                    const soupText = item.no_soup ? " · bez polievky" : "";
+                    const statusHtml = item.issued
+                        ? '<span class="my-order-status issued">Vydané</span>'
+                        : '<span class="my-order-status waiting">Čaká</span>';
 
+                    // Úprava názvu: ak existuje konkrétny výber syra a v názve je "alebo", nahradíme ho
+                    let displayMealName = item.menu_name || "";
+                    if (item.menu_choice && displayMealName.toLowerCase().includes(" alebo ")) {
+                        const parts = displayMealName.split(",");
+                        const restOfMeal = parts.slice(1).join(",");
+                        displayMealName = item.menu_choice + (restOfMeal ? `, ${restOfMeal.trim()}` : "");
+                    }
 
-                    const itemsHtml =
-                        items
-                            .map(item => {
-
-                                const methods =
-                                    [];
-
-
-                             if (
-    item.dining
-) {
-
-    methods.push(
-        "🍽️ V jedálni"
-    );
-
-}
-
-
-if (
-    item.takeaway
-) {
-
-    methods.push(
-        "📦 Zabaliť"
-    );
-
-}
-
-
-             const soupText =
-    item.no_soup
-        ? " · bez polievky"
-        : "";
-
-const statusHtml =
-    item.issued
-        ? '<span class="my-order-status issued">Vydané</span>'
-        : '<span class="my-order-status waiting">Čaká</span>';
-
-return `
-    <div class="my-order-item">
-
-        <div class="my-order-top-row">
-
-            <span class="my-order-method">
-                ${escapeHtml(methods.join(" + "))}
-                ${escapeHtml(soupText)}
-            </span>
-
-            ${statusHtml}
-
-        </div>
-
-        <div class="my-order-meal-name">
-            ${escapeHtml(item.menu_name)}
-        </div>
-
-    </div>
-`;
-
-                            })
-                            .join("");
-
-
-                    card.innerHTML = `
-                        <div class="menu-card-header">
-
-                            <span class="menu-number">
-                                ${escapeHtml(formattedDate)}
-                            </span>
-
+                    return `
+                        <div class="my-order-item">
+                            <div class="my-order-top-row">
+                                <span class="my-order-method">
+                                    ${escapeHtml(methods.join(" + "))}
+                                    ${escapeHtml(soupText)}
+                                </span>
+                                ${statusHtml}
+                            </div>
+                            <div class="my-order-meal-name">
+                                ${escapeHtml(displayMealName)}
+                            </div>
                         </div>
-
-                        ${itemsHtml}
                     `;
+                })
+                .join("");
 
+            card.innerHTML = `
+                <div class="menu-card-header">
+                    <span class="menu-number">
+                        ${escapeHtml(formattedDate)}
+                    </span>
+                </div>
+                ${itemsHtml}
+            `;
 
-                    container.appendChild(
-                        card
-                    );
-
-                }
-            );
-
+            container.appendChild(card);
+        });
 
     } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní objednávok:",
-            error
-        );
-
-        container.innerHTML =
-            "<p>Objednávky sa nepodarilo načítať.</p>";
-
+        console.error("Chyba pri načítaní objednávok:", error);
+        container.innerHTML = "<p>Objednávky sa nepodarilo načítať.</p>";
     }
-
 }
-
-
-// =====================================
