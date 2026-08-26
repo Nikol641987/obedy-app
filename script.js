@@ -2774,6 +2774,9 @@ console.log("NAČÍTANÝ SYR:", item.menu_id, item.menu_choice);
 
 if (cheeseChoice) {
     cheeseChoice.checked = true;
+    console.log("SYR OZNAČENÝ:", item.menu_choice);
+} else {
+    console.log("SYR SA NENAŠIEL:", item.menu_id, item.menu_choice);
 }
             
             if (diningChoice) {
