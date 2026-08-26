@@ -525,17 +525,8 @@ async function checkTodayOrder(
         );
 
 
-    document
-        .querySelectorAll(
-            ".meal-choice"
-        )
-        .forEach(choice => {
-
-            choice.checked = false;
-            choice.disabled = false;
-
-        });
-
+   
+    
 
     if (noSoup) {
 
@@ -704,7 +695,15 @@ const canEdit =
                     `.meal-choice[data-menu-id="${item.menu_id}"][data-option="takeaway"]`
                 );
 
+const menuChoice =
+    document.querySelector(
+        `.menu-choice[data-menu-id="${item.menu_id}"][value="${item.menu_choice}"]`
+    );
 
+if (menuChoice) {
+    menuChoice.checked = true;
+}
+            
             if (diningChoice) {
 
                 diningChoice.checked =
