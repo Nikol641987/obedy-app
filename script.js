@@ -2766,7 +2766,8 @@ const canEdit =
                     `.meal-choice[data-menu-id="${item.menu_id}"][data-option="takeaway"]`
                 );
 
-
+console.log("NAČÍTANÝ SYR:", item.menu_id, item.menu_choice);
+            
             if (diningChoice) {
 
                 diningChoice.checked =
