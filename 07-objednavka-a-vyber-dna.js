@@ -18,7 +18,7 @@ async function openWeekSelectionScreen(employeeId) {
     const daysFromMonday = currentDay === 0 ? -6 : 1 - currentDay;
 
     monday.setDate(now.getDate() + daysFromMonday + (isFridayAfterNoon ? 7 : 0));
-    monday.setHours(7, 30, 0, 0); // Opravené: 07 -> 7
+    monday.setHours(7, 30, 0, 0);
 
     const friday = new Date(monday);
     friday.setDate(monday.getDate() + 4);
@@ -90,7 +90,7 @@ async function openWeekSelectionScreen(employeeId) {
         const daySoup = soupsByDate[dateForDatabase] || "";
 
         const deadline = new Date(date);
-        deadline.setHours(7, 30, 0, 0); // Opravené: 07 -> 7
+        deadline.setHours(7, 30, 0, 0);
 
         const isClosed = new Date() > deadline;
 
@@ -210,7 +210,7 @@ async function checkTodayOrder(employeeId) {
     try {
         const { data, error } = await supabaseClient
             .from("meal_orders")
-            .select("menu_id, menu_name, menu_choice, dining, takeaway, no_soup, issued")
+            .select("menu_id, menu_name, menu_choice, soup_choice, dining, takeaway, no_soup, issued")
             .eq("employee_id", employeeId)
             .eq("order_date", today);
 
@@ -218,7 +218,7 @@ async function checkTodayOrder(employeeId) {
 
         const now = new Date();
         const [year, month, day] = today.split("-").map(Number);
-        const deadline = new Date(year, month - 1, day, 7, 30, 0); // Bezpečný dátum bez UTC posunu
+        const deadline = new Date(year, month - 1, day, 7, 30, 0);
         const canEdit = now < deadline;
 
         if (!data || data.length === 0) {
@@ -255,6 +255,12 @@ async function checkTodayOrder(employeeId) {
             const diningChoice = document.querySelector(`.meal-choice[data-menu-id="${item.menu_id}"][data-option="dining"]`);
             const takeawayChoice = document.querySelector(`.meal-choice[data-menu-id="${item.menu_id}"][data-option="takeaway"]`);
             const menuChoice = document.querySelector(`.menu-choice[data-menu-id="${item.menu_id}"][value="${item.menu_choice}"]`);
+            
+            // Označenie uloženej polievky
+            if (item.soup_choice) {
+                const soupRadio = document.querySelector(`.soup-choice-radio[value="${item.soup_choice}"]`);
+                if (soupRadio) soupRadio.checked = true;
+            }
 
             if (menuChoice) menuChoice.checked = true;
             if (diningChoice) diningChoice.checked = Boolean(item.dining);
@@ -362,16 +368,14 @@ async function loadMenus() {
 
         container.innerHTML = "";
 
-       if (data.soup) {
+        if (data.soup) {
             const soupCard = document.createElement("article");
             soupCard.className = "menu-card soup-card";
 
-            // Zistíme, či sú v texte polievky viaceré možnosti (napr. oddelené čiarkou)
             const hasSoupChoice = data.soup.includes(",");
             let soupOptionsHtml = "";
 
             if (hasSoupChoice) {
-                // Rozdelíme polievky podľa čiarky na samostatné možnosti
                 const soupParts = data.soup.split(",").map(s => s.trim()).filter(Boolean);
                 soupOptionsHtml = `
                     <div class="menu-choice-box" style="margin-top: 10px;">
@@ -456,6 +460,7 @@ async function loadMenus() {
         container.innerHTML = "<p>Menu sa nepodarilo načítať.</p>";
     }
 }
+
 // =====================================
 // 13. ULOŽENIE OBJEDNÁVKY
 // =====================================
@@ -490,11 +495,23 @@ function setupOrderButton() {
             ? [...employeeSelect.options].find(option => option.value === employeeId)
             : null;
 
-        // Opravené: Odstránená duplicita výrazu
         const maxMenuNumber = Number(selectedEmployee?.dataset?.maxMenuNumber || 5);
         const employeeName = selectedEmployee ? selectedEmployee.textContent.trim() : employeeId;
         const noSoup = document.getElementById("noSoup")?.checked || false;
         const orderDate = getOrderDate();
+
+        // Kontrola výberu polievky (ak je na výber viac možností)
+        const soupCardElement = document.querySelector(".soup-card");
+        const soupRadio = soupCardElement ? soupCardElement.querySelector('input[name="soup-choice"]:checked') : null;
+        const selectedSoupChoice = soupRadio ? soupRadio.value : null;
+
+        if (soupCardElement && soupCardElement.querySelector('input[name="soup-choice"]') && !soupRadio) {
+            if (orderMessage) {
+                orderMessage.textContent = "🥣 Vyberte si, prosím, polievku.";
+                orderMessage.className = "message error-message";
+            }
+            return;
+        }
 
         const hasForbiddenMenu = [...selectedChoices].some(
             choice => Number(choice.dataset.menuId) > maxMenuNumber
@@ -531,8 +548,8 @@ function setupOrderButton() {
             const menuCard = choice.closest(".menu-card");
 
             const menuName = menuCard?.querySelector("h3")?.textContent?.trim() || `Menu ${menuId}`;
-           const checkedRadio = menuCard ? menuCard.querySelector(`input[name="menu-choice-${menuId}"]:checked`) : null;
-const menuChoice = checkedRadio ? checkedRadio.value : null;
+            const checkedRadio = menuCard ? menuCard.querySelector(`input[name="menu-choice-${menuId}"]:checked`) : null;
+            const menuChoice = checkedRadio ? checkedRadio.value : null;
 
             if (!groupedMenus[menuId]) {
                 groupedMenus[menuId] = {
@@ -542,6 +559,7 @@ const menuChoice = checkedRadio ? checkedRadio.value : null;
                     menu_id: String(menuId),
                     menu_name: menuName,
                     menu_choice: menuChoice,
+                    soup_choice: selectedSoupChoice,
                     dining: false,
                     takeaway: false,
                     no_soup: noSoup,
