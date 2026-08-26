@@ -2767,6 +2767,14 @@ const canEdit =
                 );
 
 console.log("NAČÍTANÝ SYR:", item.menu_id, item.menu_choice);
+            const cheeseChoice =
+    document.querySelector(
+        `.menu-choice[data-menu-id="${item.menu_id}"][value="${item.menu_choice}"]`
+    );
+
+if (cheeseChoice) {
+    cheeseChoice.checked = true;
+}
             
             if (diningChoice) {
 
