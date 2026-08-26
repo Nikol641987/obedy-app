@@ -3084,7 +3084,37 @@ const maxMenuNumber =
                 <h3>
                     ${escapeHtml(menu.name)}
                 </h3>
+${
+    menu.name.toLowerCase().includes(" alebo ")
+        ? `
+            <div class="menu-choice-box">
+                <strong>Vyberte si:</strong>
 
+                <label>
+                    <input
+                        type="radio"
+                        name="menu-choice-${menu.id}"
+                        value="Vyprážaný syr"
+                        class="menu-choice"
+                        data-menu-id="${menu.id}"
+                    >
+                    Vyprážaný syr
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="menu-choice-${menu.id}"
+                        value="Grilovaný Camembert (brusnice)"
+                        class="menu-choice"
+                        data-menu-id="${menu.id}"
+                    >
+                    Grilovaný Camembert (brusnice)
+                </label>
+            </div>
+        `
+        : ""
+}
                 <div class="menu-options">
 
                     <label class="menu-option">
