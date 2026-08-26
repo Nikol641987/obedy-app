@@ -573,17 +573,15 @@ function setupOrderButton() {
         const soupRadio = soupCardElement ? soupCardElement.querySelector('input[name="soup-choice"]:checked') : null;
         const selectedSoupChoice = soupRadio ? soupRadio.value : null;
 
-        // Získanie textu zo spoločného poľa poznámky
-        const globalNoteInput = document.getElementById("globalOrderNote");
-        const globalNoteValue = globalNoteInput ? globalNoteInput.value.trim() : null;
-
-        if (soupCardElement && soupCardElement.querySelector('input[name="soup-choice"]') && !soupRadio) {
+        // OPRAVENÁ PODMIENKA: Kontroluje polievku IBA vtedy, ak NIE JE zaškrtnuté "Bez polievky"
+        if (soupCardElement && soupCardElement.querySelector('input[name="soup-choice"]') && !soupRadio && !noSoup) {
             if (orderMessage) {
-                orderMessage.textContent = "🥣 Vyberte si, prosím, polievku.";
+                orderMessage.textContent = "🥣 Vyberte si, prosím, polievku alebo zaškrtnite 'Bez polievky'.";
                 orderMessage.className = "message error-message";
             }
             return;
         }
+    
 
         const hasForbiddenMenu = [...selectedChoices].some(
             choice => Number(choice.dataset.menuId) > maxMenuNumber
