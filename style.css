@@ -680,15 +680,14 @@ select:focus-visible {
     opacity:.75;
 
 }
-
-.issue-name{
-
-    font-size:20px;
-
-    font-weight:800;
-
-    margin-bottom:10px;
-
+.issue-name {
+    font-size: 23px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 .issue-menu{
 
@@ -2832,3 +2831,11 @@ select:focus-visible {
 .issue-menu {
     color: red !important;
 }
+/* Automatické skrátenie dlhého názvu jedla na kartách výdaja */
+.issue-menu, .week-menu-name, .issue-success-meal, .issue-result-meals {
+    /* Ak by ste to potrebovali riešiť štýlovo */
+}
+
+/* Náhrada zobrazeného textu cez CSS (ak sa nachádza v špecifických elementoch) */
+/* Poznámka: Najistejšie je, ak toto prepíšete priamo tam, kde JS vypisuje jedlo, 
+   alebo použijete tento selektor, ak ho obklopuje samostatný tag. */
