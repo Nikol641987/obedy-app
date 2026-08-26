@@ -2637,7 +2637,7 @@ async function checkTodayOrder(
             await supabaseClient
                 .from("meal_orders")
                 .select(
-                    "menu_id, menu_name, dining, takeaway, no_soup, issued"
+                    "menu_id, menu_name, menu_choice, dining, takeaway, no_soup, issued"
                 )
                 .eq(
                     "employee_id",
