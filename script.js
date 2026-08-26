@@ -8,12 +8,11 @@
 // =====================================
 
 let selectedOrderDate = null;
+let editingEmployee = null;
+
 document.addEventListener("DOMContentLoaded", async () => {
-
     await loadEmployees();
-    
     updatePermissions();
-
     setupNavigation();
     setupLogin();
     setupOrderButton();
@@ -21,26 +20,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupChipLogin();
     setupChipIssue();
     setupMonthlyReport();
-
 });
-
-
 
 // =====================================
 // 2. PREPÍNANIE OBRAZOVIEK
 // =====================================
 
 function showScreen(screenId) {
+    document.querySelectorAll(".app-screen").forEach(screen => {
+        screen.hidden = true;
+    });
 
-    document
-        .querySelectorAll(".app-screen")
-        .forEach(screen => {
-            screen.hidden = true;
-        });
-
-    const selectedScreen =
-        document.getElementById(screenId);
-
+    const selectedScreen = document.getElementById(screenId);
     if (selectedScreen) {
         selectedScreen.hidden = false;
     }
@@ -49,45 +40,32 @@ function showScreen(screenId) {
         top: 0,
         behavior: "smooth"
     });
-if (screenId === "loginScreen") {
 
-    const chipInput =
-        document.getElementById(
-            "chipLoginInput"
-        );
-
-    if (chipInput) {
-
-        chipInput.value = "";
-
-        setTimeout(() => {
-            chipInput.focus();
-        }, 150);
-
+    if (screenId === "loginScreen") {
+        const chipInput = document.getElementById("chipLoginInput");
+        if (chipInput) {
+            chipInput.value = "";
+            setTimeout(() => {
+                chipInput.focus();
+            }, 150);
+        }
     }
-
 }
-}
-
 
 // =====================================
 // 3. AKTUÁLNE PRIHLÁSENÝ ZAMESTNANEC
 // =====================================
 
 function getCurrentEmployeeId() {
-
     return (
-        sessionStorage.getItem("loggedEmployee")
-        || localStorage.getItem("loggedEmployee")
-        || ""
+        sessionStorage.getItem("loggedEmployee") ||
+        localStorage.getItem("loggedEmployee") ||
+        ""
     );
-
 }
 
 function getCurrentUserRole() {
-
     const employeeId = getCurrentEmployeeId();
-
     const select = document.getElementById("employeeSelect");
 
     if (!select || !employeeId) {
@@ -95,7101 +73,754 @@ function getCurrentUserRole() {
     }
 
     const option = [...select.options].find(
-        option => option.value === employeeId
+        opt => opt.value === employeeId
     );
 
     return option?.dataset?.role || "";
 }
+
 function updatePermissions() {
-
     const role = getCurrentUserRole();
-
     console.log("Aktuálna rola:", role);
 
-    const openIssueButton =
-        document.getElementById("openIssueButton");
+    const openIssueButton = document.getElementById("openIssueButton");
+    const openDashboardButton = document.getElementById("openDashboardButton");
+    const openAdminButton = document.getElementById("openAdminButton");
+    const openMonthlyReportButton = document.getElementById("openMonthlyReportButton");
 
-    const openDashboardButton =
-        document.getElementById("openDashboardButton");
-    
-    const openAdminButton =
-    document.getElementById("openAdminButton");
-    
-    const openMonthlyReportButton =
-    document.getElementById(
-        "openMonthlyReportButton"
-    );
-
-    // Výdaj obedov vidí každý
     if (openIssueButton) {
         openIssueButton.hidden = false;
     }
-
-    // Stav výdaja obedov vidí iba admin a issue
     if (openDashboardButton) {
-        openDashboardButton.hidden =
-            !(role === "admin" || role === "issue");
+        openDashboardButton.hidden = !(role === "admin" || role === "issue");
     }
-// Administráciu vidí iba admin
-if (openAdminButton) {
-    openAdminButton.hidden =
-        role !== "admin";
-    
+    if (openAdminButton) {
+        openAdminButton.hidden = role !== "admin";
+    }
+    if (openMonthlyReportButton) {
+        openMonthlyReportButton.hidden = role !== "admin";
+    }
 }
-    // Mesačný výkaz vidí iba admin
-if (openMonthlyReportButton) {
 
-    openMonthlyReportButton.hidden =
-        role !== "admin";
-
-}
-}
 // =====================================
 // 4. NAVIGÁCIA
 // =====================================
 
 function setupNavigation() {
-
-    const backButtons =
-    document.querySelectorAll(
-        "[data-back-home]"
-    );
-
-backButtons.forEach(button => {
-
-    button.addEventListener(
-        "click",
-        () => {
-
+    const backButtons = document.querySelectorAll("[data-back-home]");
+    backButtons.forEach(button => {
+        button.addEventListener("click", () => {
             showScreen("homeScreen");
+        });
+    });
 
+    const adminBackButtons = document.querySelectorAll("[data-back-admin]");
+    adminBackButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            showScreen("adminScreen");
+        });
+    });
+
+    const openOrderButton = document.getElementById("openOrderButton");
+    const openWeeklyMenuButton = document.getElementById("openWeeklyMenuButton");
+    const openIssueButton = document.getElementById("openIssueButton");
+    const openDashboardButton = document.getElementById("openDashboardButton");
+    const openMyOrdersButton = document.getElementById("openMyOrdersButton");
+    const openMonthlyReportButton = document.getElementById("openMonthlyReportButton");
+    const openAdminButton = document.getElementById("openAdminButton");
+    const adminEmployeesButton = document.getElementById("adminEmployeesButton");
+    const adminWeeklyMenuButton = document.getElementById("adminWeeklyMenuButton");
+    const downloadWeeklyMenuButton = document.getElementById("downloadWeeklyMenuButton");
+    const saveWeeklyMenuButton = document.getElementById("saveWeeklyMenuButton");
+    const weeklyMenuImportResult = document.getElementById("weeklyMenuImportResult");
+    const weeklyMenuFrom = document.getElementById("weeklyMenuFrom");
+    const weeklyMenuTo = document.getElementById("weeklyMenuTo");
+    const addEmployeeButton = document.getElementById("addEmployeeButton");
+    const cancelEmployeeButton = document.getElementById("cancelEmployeeButton");
+    const saveEmployeeButton = document.getElementById("saveEmployeeButton");
+    const deactivateEmployeeCheckbox = document.getElementById("deactivateEmployeeCheckbox");
+    const employeeModal = document.getElementById("employeeModal");
+    const openProfileButton = document.getElementById("openProfileButton");
+    const logoutButton = document.getElementById("logoutButton");
+
+    openOrderButton?.addEventListener("click", () => {
+        const employeeId = getCurrentEmployeeId();
+        if (employeeId) {
+            openWeekSelectionScreen(employeeId);
+        } else {
+            sessionStorage.setItem("requestedScreen", "orderScreen");
+            showScreen("loginScreen");
         }
-    );
+    });
 
-});
+    openWeeklyMenuButton?.addEventListener("click", () => {
+        showScreen("weeklyMenuScreen");
+    });
 
-    const adminBackButtons =
-    document.querySelectorAll(
-        "[data-back-admin]"
-    );
-
-adminBackButtons.forEach(button => {
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            showScreen(
-                "adminScreen"
-            );
-
-        }
-    );
-
-});
-    const openOrderButton =
-        document.getElementById("openOrderButton");
-
-    const openWeeklyMenuButton =
-        document.getElementById("openWeeklyMenuButton");
-
-    const openIssueButton =
-        document.getElementById("openIssueButton");
-    
-    const openDashboardButton =
-    document.getElementById("openDashboardButton");
-
-    const openMyOrdersButton =
-        document.getElementById("openMyOrdersButton");
-    
-const openMonthlyReportButton =
-    document.getElementById("openMonthlyReportButton");
-
-    const openAdminButton =
-    document.getElementById("openAdminButton");
-    
-const adminEmployeesButton =
-    document.getElementById("adminEmployeesButton");
-    
-    const adminWeeklyMenuButton =
-    document.getElementById("adminWeeklyMenuButton");
-
-const adminWeeklyMenuScreen =
-    document.getElementById("adminWeeklyMenuScreen");
-
-const downloadWeeklyMenuButton =
-    document.getElementById("downloadWeeklyMenuButton");
-    const saveWeeklyMenuButton =
-    document.getElementById(
-        "saveWeeklyMenuButton"
-    );
-
-const weeklyMenuImportResult =
-    document.getElementById("weeklyMenuImportResult");
-
-    const weeklyMenuFrom =
-    document.getElementById("weeklyMenuFrom");
-
-const weeklyMenuTo =
-    document.getElementById("weeklyMenuTo");
-
-    const addEmployeeButton =
-    document.getElementById("addEmployeeButton");
-
-
-    const cancelEmployeeButton =
-    document.getElementById("cancelEmployeeButton");
-
-    const saveEmployeeButton =
-    document.getElementById("saveEmployeeButton");
-
-    const deactivateEmployeeCheckbox =
-    document.getElementById(
-        "deactivateEmployeeCheckbox"
-    );
-
-    const employeeModal =
-    document.getElementById("employeeModal");
-    
-    const openProfileButton =
-        document.getElementById("openProfileButton");
-
-    const logoutButton =
-        document.getElementById("logoutButton");
-
-
-    openOrderButton?.addEventListener(
-        "click",
-        () => {
-
-            const employeeId =
-                getCurrentEmployeeId();
-
-            if (employeeId) {
-
-               openWeekSelectionScreen(employeeId);
-
-            } else {
-
-                sessionStorage.setItem(
-                    "requestedScreen",
-                    "orderScreen"
-                );
-
-                showScreen("loginScreen");
-
-            }
-
-        }
-    );
-
-
-    openWeeklyMenuButton?.addEventListener(
-        "click",
-        () => {
-
-            showScreen("weeklyMenuScreen");
-
-        }
-    );
-
-
-    openIssueButton?.addEventListener(
-    "click",
-    async () => {
-
+    openIssueButton?.addEventListener("click", async () => {
         showScreen("issueScreen");
-
         await renderIssueDashboard();
+    });
 
-    }
-);
-openDashboardButton?.addEventListener(
-    "click",
-    async () => {
-
+    openDashboardButton?.addEventListener("click", async () => {
         showScreen("dashboardScreen");
-
         await renderIssueDashboard();
+    });
 
-    }
-);
-    openMonthlyReportButton?.addEventListener(
-    "click",
-    () => {
-
+    openMonthlyReportButton?.addEventListener("click", () => {
         showScreen("monthlyReportScreen");
+    });
 
-    }
-);
-
-    openAdminButton?.addEventListener(
-    "click",
-    () => {
-
+    openAdminButton?.addEventListener("click", () => {
         showScreen("adminScreen");
+    });
 
-    }
-);
-
-    adminEmployeesButton?.addEventListener(
-    "click",
-    async () => {
-
+    adminEmployeesButton?.addEventListener("click", async () => {
         showScreen("adminEmployeesScreen");
-
         await renderAdminEmployees();
+    });
 
-    }
-);
-
- adminWeeklyMenuButton?.addEventListener(
-    "click",
-    async () => {
-
+    adminWeeklyMenuButton?.addEventListener("click", async () => {
         renderWeeklyMenuForm();
-
         setWeeklyMenuDateRange();
-
-        showScreen(
-            "adminWeeklyMenuScreen"
-        );
-
+        showScreen("adminWeeklyMenuScreen");
         await loadWeeklyMenuFromDatabase();
 
-        document
-            .querySelectorAll(
-                "#adminWeeklyMenuScreen .weekly-menu-day"
-            )
+        document.querySelectorAll("#adminWeeklyMenuScreen .weekly-menu-day")
             .forEach(day => {
-
                 day.open = false;
-
             });
+    });
 
-    }
-);
-downloadWeeklyMenuButton?.addEventListener(
-    "click",
-    async () => {
-
+    downloadWeeklyMenuButton?.addEventListener("click", async () => {
         downloadWeeklyMenuButton.disabled = true;
-        downloadWeeklyMenuButton.textContent =
-            "Načítavam menu...";
-
-        weeklyMenuImportResult.textContent =
-            "Kontrolujem aktuálne menu na SuperObed...";
+        downloadWeeklyMenuButton.textContent = "Načítavam menu...";
+        weeklyMenuImportResult.textContent = "Kontrolujem aktuálne menu na SuperObed...";
 
         try {
-
-           const { data, error } =
-    await supabaseClient
-        .functions
-        .invoke(
-            "check-appetit-menu",
-            {
-                body: {}
-            }
-        );
-           
-            
-            if (error) {
-                throw error;
-            }
-
-            if (!data?.success) {
-                throw new Error(
-                    data?.error ||
-                    "Menu sa nepodarilo načítať."
-                );
-            }
-
-            if (
-    data.menuAvailable === false
-) {
-
-    weeklyMenuImportResult.textContent =
-        "Aktuálne menu zatiaľ nie je dostupné.";
-
-    return;
-}
-
-weeklyMenuImportResult.textContent =
-    "Pripravujem rozpoznanie menu...";
-
-const recognizedText =
-    await recognizeWeeklyMenuImage(
-        data.imageBase64,
-        data.contentType,
-        weeklyMenuImportResult
-    );
-
-if (!recognizedText) {
-
-    throw new Error(
-        "Z obrázka sa nepodarilo rozpoznať žiadny text."
-    );
-}
-
-console.log(
-    "Rozpoznaný text menu:",
-    recognizedText
-);
-
-const parsedMenu =
-    parseWeeklyMenuText(
-        recognizedText
-    );
-
-console.log(
-    "Rozdelené menu:",
-    parsedMenu
-);
-
-fillWeeklyMenuForm(
-    parsedMenu
-);
-
-weeklyMenuImportResult.textContent =
-    "✅ Menu bolo rozpoznané a vložené do formulára. Skontroluj text a klikni Uložiť menu.";
-
-        } catch (error) {
-
-            console.error(
-                "Načítanie menu zlyhalo:",
-                error
+            const { data, error } = await supabaseClient.functions.invoke(
+                "check-appetit-menu",
+                { body: {} }
             );
 
-            weeklyMenuImportResult.textContent =
-                error instanceof Error
-                    ? error.message
-                    : "Menu sa nepodarilo načítať.";
+            if (error) throw error;
+            if (!data?.success) throw new Error(data?.error || "Menu sa nepodarilo načítať.");
 
+            if (data.menuAvailable === false) {
+                weeklyMenuImportResult.textContent = "Aktuálne menu zatiaľ nie je dostupné.";
+                return;
+            }
+
+            weeklyMenuImportResult.textContent = "Pripravujem rozpoznanie menu...";
+            const recognizedText = await recognizeWeeklyMenuImage(
+                data.imageBase64,
+                data.contentType,
+                weeklyMenuImportResult
+            );
+
+            if (!recognizedText) {
+                throw new Error("Z obrázka sa nepodarilo rozpoznať žiadny text.");
+            }
+
+            const parsedMenu = parseWeeklyMenuText(recognizedText);
+            fillWeeklyMenuForm(parsedMenu);
+            weeklyMenuImportResult.textContent = "✅ Menu bolo rozpoznané a vložené do formulára. Skontroluj text a klikni Uložiť menu.";
+
+        } catch (error) {
+            console.error("Načítanie menu zlyhalo:", error);
+            weeklyMenuImportResult.textContent = error instanceof Error ? error.message : "Menu sa nepodarilo načítať.";
         } finally {
-
             downloadWeeklyMenuButton.disabled = false;
-            downloadWeeklyMenuButton.textContent =
-                "🔄 Načítať nové menu";
-
+            downloadWeeklyMenuButton.textContent = "🔄 Načítať nové menu";
         }
+    });
 
-    }
-);
-    saveWeeklyMenuButton?.addEventListener(
-    "click",
-    async () => {
-
-        if (
-            !weeklyMenuFrom?.value
-            || !weeklyMenuTo?.value
-        ) {
-
-            weeklyMenuImportResult.textContent =
-                "Najprv vyber týždeň.";
-
-            weeklyMenuImportResult.className =
-                "message error-message";
-
+    saveWeeklyMenuButton?.addEventListener("click", async () => {
+        if (!weeklyMenuFrom?.value || !weeklyMenuTo?.value) {
+            weeklyMenuImportResult.textContent = "Najprv vyber týždeň.";
+            weeklyMenuImportResult.className = "message error-message";
             return;
         }
 
         saveWeeklyMenuButton.disabled = true;
-        saveWeeklyMenuButton.textContent =
-            "Ukladám menu...";
-
-        weeklyMenuImportResult.textContent =
-            "";
-
-        weeklyMenuImportResult.className =
-            "message";
+        saveWeeklyMenuButton.textContent = "Ukladám menu...";
+        weeklyMenuImportResult.textContent = "";
+        weeklyMenuImportResult.className = "message";
 
         try {
-
-            const menu =
-                getWeeklyMenuData();
-
-            const weekFrom =
-                weeklyMenuFrom.value;
-
-            const monday =
-                new Date(
-                    `${weekFrom}T12:00:00`
-                );
+            const menu = getWeeklyMenuData();
+            const weekFrom = weeklyMenuFrom.value;
+            const monday = new Date(`${weekFrom}T12:00:00`);
 
             const days = [
-                {
-                    key: "pondelok",
-                    dayOfWeek: 1
-                },
-                {
-                    key: "utorok",
-                    dayOfWeek: 2
-                },
-                {
-                    key: "streda",
-                    dayOfWeek: 3
-                },
-                {
-                    key: "stvrtok",
-                    dayOfWeek: 4
-                },
-                {
-                    key: "piatok",
-                    dayOfWeek: 5
-                }
+                { key: "pondelok", dayOfWeek: 1 },
+                { key: "utorok", dayOfWeek: 2 },
+                { key: "streda", dayOfWeek: 3 },
+                { key: "stvrtok", dayOfWeek: 4 },
+                { key: "piatok", dayOfWeek: 5 }
             ];
 
-            const rows =
-                days.map(
-                    (
-                        day,
-                        index
-                    ) => {
+            const rows = days.map((day, index) => {
+                const menuDate = new Date(monday);
+                menuDate.setDate(monday.getDate() + index);
+                const dayMenu = menu[day.key];
 
-                        const menuDate =
-                            new Date(monday);
-
-                        menuDate.setDate(
-                            monday.getDate()
-                            + index
-                        );
-
-                        const dayMenu =
-                            menu[day.key];
-
-                        return {
-                            week_from:
-                                weekFrom,
-
-                            menu_date:
-                                formatDateForDatabase(
-                                    menuDate
-                                ),
-
-                            day_of_week:
-                                day.dayOfWeek,
-
-                            soup:
-                                dayMenu?.soup
-                                ?.trim()
-                                || null,
-
-                            menu1:
-                                dayMenu?.menu1
-                                ?.trim()
-                                || null,
-
-                            menu2:
-                                dayMenu?.menu2
-                                ?.trim()
-                                || null,
-
-                            menu3:
-                                dayMenu?.menu3
-                                ?.trim()
-                                || null,
-
-                            menu4:
-                                dayMenu?.menu4
-                                ?.trim()
-                                || null,
-
-                            menu5:
-                                dayMenu?.menu5
-                                ?.trim()
-                                || null,
-
-                            menu6:
-                                dayMenu?.menu6
-                                ?.trim()
-                                || null
-                        };
-
-                    }
-                );
-
-            const { error } =
-                await supabaseClient
-                    .from("weekly_menu")
-                    .upsert(
-                        rows,
-                        {
-                            onConflict:
-                                "week_from,day_of_week"
-                        }
-                    );
-
-            if (error) {
-                throw error;
-            }
-
-           showMessageModal(
-    "✅ Hotovo",
-    "Menu bolo úspešne uložené."
-);
-
-weeklyMenuImportResult.textContent = "";
-
-        } catch (error) {
-
-            console.error(
-                "Chyba pri ukladaní menu:",
-                error
-            );
-
-           showMessageModal(
-    "❌ Chyba",
-    error?.message
-    || "Menu sa nepodarilo uložiť."
-);
-
-        } finally {
-
-            saveWeeklyMenuButton.disabled =
-                false;
-
-            saveWeeklyMenuButton.textContent =
-                "💾 Uložiť menu";
-
-        }
-
-    }
-);
-    
-addEmployeeButton?.addEventListener(
-    "click",
-    () => {
-
-        editingEmployee =
-            null;
-
-        document.getElementById(
-            "employeeNameInput"
-        ).value = "";
-
-        document.getElementById(
-            "employeeSurnameInput"
-        ).value = "";
-
-        document.getElementById(
-            "employeePersonalNumberInput"
-        ).value = "";
-
-        document.getElementById(
-            "employeeChipInput"
-        ).value = "";
-
-        document.getElementById(
-            "employeeRoleInput"
-        ).value = "employee";
-document.getElementById(
-    "deactivateEmployeeWrapper"
-).hidden = true;
-
-document.getElementById(
-    "deactivateEmployeeCheckbox"
-).checked = false;
-        employeeModal.hidden =
-            false;
-
-    }
-);
-
-    cancelEmployeeButton?.addEventListener(
-    "click",
-    () => {
-
-        document
-            .getElementById("employeeModal")
-            .hidden = true;
-
-    }
-);
-
-    
-    
-saveEmployeeButton?.addEventListener(
-    "click",
-    async () => {
-
-        const employeeData = {
-
-            name:
-                document.getElementById(
-                    "employeeNameInput"
-                ).value.trim(),
-
-            surname:
-                document.getElementById(
-                    "employeeSurnameInput"
-                ).value.trim(),
-
-            personalNumber:
-                document.getElementById(
-                    "employeePersonalNumberInput"
-                ).value.trim(),
-
-            chip:
-                document.getElementById(
-                    "employeeChipInput"
-                ).value.trim(),
-
-            role:
-                document.getElementById(
-                    "employeeRoleInput"
-                ).value
-
-        };
-
-        console.log(
-            employeeData
-        );
-        if (
-    editingEmployee
-    && deactivateEmployeeCheckbox.checked
-) {
-
-    const confirmed =
-        confirm(
-            "Naozaj chcete deaktivovať tohto zamestnanca?"
-        );
-
-    if (!confirmed) {
-        return;
-    }
-
-}
-if (!editingEmployee) {
-
-    const { error } =
-        await supabaseClient
-            .from("employees")
-            .insert({
-
-                name:
-                    employeeData.name,
-
-                surname:
-                    employeeData.surname,
-
-                employee_number:
-                    employeeData.personalNumber,
-
-                chip:
-                    employeeData.chip || null,
-
-                has_chip:
-                    Boolean(employeeData.chip),
-
-                active:
-    true,
-
-role:
-    employeeData.role
-
+                return {
+                    week_from: weekFrom,
+                    menu_date: formatDateForDatabase(menuDate),
+                    day_of_week: day.dayOfWeek,
+                    soup: dayMenu?.soup?.trim() || null,
+                    menu1: dayMenu?.menu1?.trim() || null,
+                    menu2: dayMenu?.menu2?.trim() || null,
+                    menu3: dayMenu?.menu3?.trim() || null,
+                    menu4: dayMenu?.menu4?.trim() || null,
+                    menu5: dayMenu?.menu5?.trim() || null,
+                    menu6: dayMenu?.menu6?.trim() || null
+                };
             });
 
-    if (error) {
+            const { error } = await supabaseClient
+                .from("weekly_menu")
+                .upsert(rows, { onConflict: "week_from,day_of_week" });
 
-    console.error(error);
+            if (error) throw error;
 
-    alert(
-        error.message
-    );
+            showMessageModal("✅ Hotovo", "Menu bolo úspešne uložené.");
+            weeklyMenuImportResult.textContent = "";
 
-    return;
+        } catch (error) {
+            console.error("Chyba pri ukladaní menu:", error);
+            showMessageModal("❌ Chyba", error?.message || "Menu sa nepodarilo uložiť.");
+        } finally {
+            saveWeeklyMenuButton.disabled = false;
+            saveWeeklyMenuButton.textContent = "💾 Uložiť menu";
+        }
+    });
 
-}
-    alert(
-    "Zamestnanec bol uložený."
-);
+    addEmployeeButton?.addEventListener("click", () => {
+        editingEmployee = null;
+        document.getElementById("employeeNameInput").value = "";
+        document.getElementById("employeeSurnameInput").value = "";
+        document.getElementById("employeePersonalNumberInput").value = "";
+        document.getElementById("employeeChipInput").value = "";
+        document.getElementById("employeeRoleInput").value = "employee";
+        document.getElementById("deactivateEmployeeWrapper").hidden = true;
+        document.getElementById("deactivateEmployeeCheckbox").checked = false;
+        employeeModal.hidden = false;
+    });
 
-employeeModal.hidden =
-    true;
+    cancelEmployeeButton?.addEventListener("click", () => {
+        employeeModal.hidden = true;
+    });
 
-await renderAdminEmployees();
-await loadEmployees();
-    
-} else {
+    saveEmployeeButton?.addEventListener("click", async () => {
+        const employeeData = {
+            name: document.getElementById("employeeNameInput").value.trim(),
+            surname: document.getElementById("employeeSurnameInput").value.trim(),
+            personalNumber: document.getElementById("employeePersonalNumberInput").value.trim(),
+            chip: document.getElementById("employeeChipInput").value.trim(),
+            role: document.getElementById("employeeRoleInput").value
+        };
 
-    const { error } =
-        await supabaseClient
-           .from("employees")
-.update({
+        if (editingEmployee && deactivateEmployeeCheckbox.checked) {
+            const confirmed = confirm("Naozaj chcete deaktivovať tohto zamestnanca?");
+            if (!confirmed) return;
+        }
 
-    name:
-        employeeData.name,
+        if (!editingEmployee) {
+            const { error } = await supabaseClient
+                .from("employees")
+                .insert({
+                    name: employeeData.name,
+                    surname: employeeData.surname,
+                    employee_number: employeeData.personalNumber,
+                    chip: employeeData.chip || null,
+                    has_chip: Boolean(employeeData.chip),
+                    active: true,
+                    role: employeeData.role
+                });
 
-    surname:
-        employeeData.surname,
-
-    employee_number:
-        employeeData.personalNumber,
-
-    chip:
-        employeeData.chip || null,
-
-    has_chip:
-        Boolean(employeeData.chip),
-
-    role:
-        employeeData.role,
-
-    active:
-        !deactivateEmployeeCheckbox.checked
-
-})
-            .eq(
-                "id",
-                editingEmployee.id
-            );
-
-    if (error) {
-
-        console.error(error);
-
-        alert(error.message);
-
-        return;
-    }
-
-    alert(
-        "Zamestnanec bol upravený."
-    );
-
-    employeeModal.hidden =
-    true;
-
-editingEmployee =
-    null;
-
-await renderAdminEmployees();
-await loadEmployees();
-}
-
-    }
-);
-    
-    openMyOrdersButton?.addEventListener(
-        "click",
-        () => {
-
-            const employeeId =
-                getCurrentEmployeeId();
-
-            if (employeeId) {
-
-                openMyOrdersScreen(employeeId);
-
-            } else {
-
-                sessionStorage.setItem(
-                    "requestedScreen",
-                    "myOrdersScreen"
-                );
-
-                showScreen("loginScreen");
-
+            if (error) {
+                console.error(error);
+                alert(error.message);
+                return;
             }
-
-        }
-    );
-
-
-    openProfileButton?.addEventListener(
-    "click",
-    async () => {
-
-        const employeeId =
-            getCurrentEmployeeId();
-
-        if (employeeId) {
-
-            await loadProfile();
-            showScreen("profileScreen");
-
+            alert("Zamestnanec bol uložený.");
         } else {
-
-            sessionStorage.setItem(
-                "requestedScreen",
-                "profileScreen"
-            );
-
-            showScreen("loginScreen");
-
-        }
-
-    }
-);
-
-const changeEmailButton =
-    document.getElementById(
-        "changeEmailButton"
-    );
-const changePinButton = document.getElementById("changePinButton");
-const pinModal = document.getElementById("pinModal");
-const cancelPinButton = document.getElementById("cancelPinButton");
-    
-const emailModal =
-    document.getElementById(
-        "emailModal"
-    );
-
-const cancelEmailButton =
-    document.getElementById(
-        "cancelEmailButton"
-    );
-
-changeEmailButton?.addEventListener(
-    "click",
-    () => {
-
-        document.getElementById(
-            "newEmailInput"
-        ).value = "";
-
-        emailModal.hidden = false;
-
-    }
-);
-
-    changePinButton?.addEventListener("click", () => {
-    document.getElementById("newPinInput").value = "";
-    pinModal.hidden = false;
-});
-
-cancelPinButton?.addEventListener("click", () => {
-    pinModal.hidden = true;
-});
-cancelEmailButton?.addEventListener(
-    "click",
-    () => {
-
-        emailModal.hidden = true;
-
-    }
-);
-  
-
-const savePinButton =
-    document.getElementById("savePinButton");
-
-savePinButton?.addEventListener("click", () => {
-
-    const newPin =
-        document.getElementById("newPinInput").value.trim();
-
-    if (!/^\d{4}$/.test(newPin)) {
-
-        alert("PIN musí mať presne 4 číslice.");
-
-        return;
-    }
-
-    let employeeId =
-        getCurrentEmployeeId();
-
-    if (!employeeId) {
-
-        employeeId =
-            sessionStorage.getItem(
-                "pinResetEmployeeId"
-            );
-    }
-
-    if (!employeeId) {
-
-        alert("Nepodarilo sa zistiť zamestnanca.");
-
-        return;
-    }
-
-    localStorage.setItem(
-        `pin_${employeeId}`,
-        newPin
-    );
-
-    pinModal.hidden = true;
-
-    sessionStorage.removeItem(
-        "pinResetCode"
-    );
-
-    sessionStorage.removeItem(
-        "pinResetEmployeeId"
-    );
-
-    showScreen("loginScreen");
-
-    const loginMessage =
-        document.getElementById(
-            "loginMessage"
-        );
-
-    if (loginMessage) {
-
-        loginMessage.textContent =
-            "✅ PIN bol úspešne zmenený. Teraz sa môžete prihlásiť.";
-
-        loginMessage.className =
-            "message success-message";
-    }
-
-});
-    const saveEmailButton =
-    document.getElementById(
-        "saveEmailButton"
-    );
-
-saveEmailButton?.addEventListener(
-    "click",
-    async () => {
-
-        const email =
-            document.getElementById(
-                "newEmailInput"
-            ).value.trim();
-
-        if (
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-                email
-            )
-        ) {
-
-            alert(
-                "Zadajte platný e-mail."
-            );
-
-            return;
-        }
-
-        const employeeId =
-            sessionStorage.getItem(
-                "loggedEmployee"
-            )
-            || localStorage.getItem(
-                "loggedEmployee"
-            );
-
-        if (!employeeId) {
-            return;
-        }
-
-        const [surname, name] =
-            employeeId.split("_");
-
-        const { error } =
-            await supabaseClient
+            const { error } = await supabaseClient
                 .from("employees")
                 .update({
-                    email: email
+                    name: employeeData.name,
+                    surname: employeeData.surname,
+                    employee_number: employeeData.personalNumber,
+                    chip: employeeData.chip || null,
+                    has_chip: Boolean(employeeData.chip),
+                    role: employeeData.role,
+                    active: !deactivateEmployeeCheckbox.checked
                 })
-                .eq(
-                    "surname",
-                    surname
-                )
-                .eq(
-                    "name",
-                    name
-                );
+                .eq("id", editingEmployee.id);
+
+            if (error) {
+                console.error(error);
+                alert(error.message);
+                return;
+            }
+            alert("Zamestnanec bol upravený.");
+        }
+
+        employeeModal.hidden = true;
+        editingEmployee = null;
+        await renderAdminEmployees();
+        await loadEmployees();
+    });
+
+    openMyOrdersButton?.addEventListener("click", () => {
+        const employeeId = getCurrentEmployeeId();
+        if (employeeId) {
+            openMyOrdersScreen(employeeId);
+        } else {
+            sessionStorage.setItem("requestedScreen", "myOrdersScreen");
+            showScreen("loginScreen");
+        }
+    });
+
+    openProfileButton?.addEventListener("click", async () => {
+        const employeeId = getCurrentEmployeeId();
+        if (employeeId) {
+            await loadProfile();
+            showScreen("profileScreen");
+        } else {
+            sessionStorage.setItem("requestedScreen", "profileScreen");
+            showScreen("loginScreen");
+        }
+    });
+
+    const changeEmailButton = document.getElementById("changeEmailButton");
+    const changePinButton = document.getElementById("changePinButton");
+    const pinModal = document.getElementById("pinModal");
+    const cancelPinButton = document.getElementById("cancelPinButton");
+    const emailModal = document.getElementById("emailModal");
+    const cancelEmailButton = document.getElementById("cancelEmailButton");
+
+    changeEmailButton?.addEventListener("click", () => {
+        document.getElementById("newEmailInput").value = "";
+        emailModal.hidden = false;
+    });
+
+    changePinButton?.addEventListener("click", () => {
+        document.getElementById("newPinInput").value = "";
+        pinModal.hidden = false;
+    });
+
+    cancelPinButton?.addEventListener("click", () => {
+        pinModal.hidden = true;
+    });
+
+    cancelEmailButton?.addEventListener("click", () => {
+        emailModal.hidden = true;
+    });
+
+    const savePinButton = document.getElementById("savePinButton");
+    savePinButton?.addEventListener("click", () => {
+        const newPin = document.getElementById("newPinInput").value.trim();
+        if (!/^\d{4}$/.test(newPin)) {
+            alert("PIN musí mať presne 4 číslice.");
+            return;
+        }
+
+        let employeeId = getCurrentEmployeeId();
+        if (!employeeId) {
+            employeeId = sessionStorage.getItem("pinResetEmployeeId");
+        }
+
+        if (!employeeId) {
+            alert("Nepodarilo sa zistiť zamestnanca.");
+            return;
+        }
+
+        localStorage.setItem(`pin_${employeeId}`, newPin);
+        pinModal.hidden = true;
+        sessionStorage.removeItem("pinResetCode");
+        sessionStorage.removeItem("pinResetEmployeeId");
+
+        showScreen("loginScreen");
+        const loginMessage = document.getElementById("loginMessage");
+        if (loginMessage) {
+            loginMessage.textContent = "✅ PIN bol úspešne zmenený. Teraz sa môžete prihlásiť.";
+            loginMessage.className = "message success-message";
+        }
+    });
+
+    const saveEmailButton = document.getElementById("saveEmailButton");
+    saveEmailButton?.addEventListener("click", async () => {
+        const email = document.getElementById("newEmailInput").value.trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert("Zadajte platný e-mail.");
+            return;
+        }
+
+        const employeeId = getCurrentEmployeeId();
+        if (!employeeId) return;
+
+        const [surname, name] = employeeId.split("_");
+        const { error } = await supabaseClient
+            .from("employees")
+            .update({ email: email })
+            .eq("surname", surname)
+            .eq("name", name);
 
         if (error) {
-
-            console.error(
-                "Chyba pri ukladaní e-mailu:",
-                error
-            );
-
-            alert(
-                "E-mail sa nepodarilo uložiť."
-            );
-
+            console.error("Chyba pri ukladaní e-mailu:", error);
+            alert("E-mail sa nepodarilo uložiť.");
             return;
         }
 
         emailModal.hidden = true;
-
-        alert(
-            "E-mail bol uložený."
-        );
-
+        alert("E-mail bol uložený.");
         loadProfile();
+    });
 
-    }
-);
-    const verifyResetCodeButton =
-    document.getElementById(
-        "verifyResetCodeButton"
-    );
+    const verifyResetCodeButton = document.getElementById("verifyResetCodeButton");
+    const cancelResetPinButton = document.getElementById("cancelResetPinButton");
 
-const cancelResetPinButton =
-    document.getElementById(
-        "cancelResetPinButton"
-    );
-
-verifyResetCodeButton?.addEventListener(
-    "click",
-    () => {
-
-        const resetCodeInput =
-            document.getElementById(
-                "resetCodeInput"
-            );
-
-        const resetCodeError =
-            document.getElementById(
-                "resetCodeError"
-            );
-
-        const enteredCode =
-            resetCodeInput.value.trim();
-
-        const correctCode =
-            sessionStorage.getItem(
-                "pinResetCode"
-            );
+    verifyResetCodeButton?.addEventListener("click", () => {
+        const resetCodeInput = document.getElementById("resetCodeInput");
+        const resetCodeError = document.getElementById("resetCodeError");
+        const enteredCode = resetCodeInput.value.trim();
+        const correctCode = sessionStorage.getItem("pinResetCode");
 
         if (!enteredCode) {
-
-            resetCodeError.textContent =
-                "Zadajte overovací kód.";
-
+            resetCodeError.textContent = "Zadajte overovací kód.";
             return;
         }
 
         if (enteredCode !== correctCode) {
-
-            resetCodeError.textContent =
-                "Zadaný overovací kód nie je správny.";
-
+            resetCodeError.textContent = "Zadaný overovací kód nie je správny.";
             return;
         }
 
-       resetCodeError.textContent = "";
+        resetCodeError.textContent = "";
+        document.getElementById("resetPinModal").hidden = true;
+        document.getElementById("newPinInput").value = "";
+        document.getElementById("pinModal").hidden = false;
+    });
 
-document.getElementById("resetPinModal").hidden = true;
-
-document.getElementById("newPinInput").value = "";
-
-document.getElementById("pinModal").hidden = false;
-
-    }
-);
-
-cancelResetPinButton?.addEventListener(
-    "click",
-    () => {
-
-        const resetPinModal =
-            document.getElementById(
-                "resetPinModal"
-            );
-
+    cancelResetPinButton?.addEventListener("click", () => {
+        const resetPinModal = document.getElementById("resetPinModal");
         resetPinModal.hidden = true;
+        sessionStorage.removeItem("pinResetCode");
+        sessionStorage.removeItem("pinResetEmployeeId");
+    });
 
-        sessionStorage.removeItem(
-            "pinResetCode"
-        );
+    logoutButton?.addEventListener("click", () => {
+        sessionStorage.removeItem("loggedEmployee");
+        localStorage.removeItem("loggedEmployee");
+        sessionStorage.removeItem("requestedScreen");
 
-        sessionStorage.removeItem(
-            "pinResetEmployeeId"
-        );
+        const select = document.getElementById("employeeSelect");
+        const pinInput = document.getElementById("pinInput");
+        const pinConfirm = document.getElementById("pinConfirm");
+        const pinConfirmWrapper = document.getElementById("pinConfirmWrapper");
+        const rememberMe = document.getElementById("rememberMe");
 
-    }
-);
-    logoutButton?.addEventListener(
-        "click",
-        () => {
+        if (select) select.value = "";
+        if (pinInput) pinInput.value = "";
+        if (pinConfirm) pinConfirm.value = "";
+        if (pinConfirmWrapper) pinConfirmWrapper.hidden = true;
+        if (rememberMe) rememberMe.checked = false;
 
-            sessionStorage.removeItem(
-                "loggedEmployee"
-            );
-
-            localStorage.removeItem(
-                "loggedEmployee"
-            );
-
-            sessionStorage.removeItem(
-                "requestedScreen"
-            );
-
-            const select =
-                document.getElementById(
-                    "employeeSelect"
-                );
-
-            const pinInput =
-                document.getElementById(
-                    "pinInput"
-                );
-
-            const pinConfirm =
-                document.getElementById(
-                    "pinConfirm"
-                );
-
-            const pinConfirmWrapper =
-                document.getElementById(
-                    "pinConfirmWrapper"
-                );
-
-            const rememberMe =
-                document.getElementById(
-                    "rememberMe"
-                );
-
-            if (select) {
-                select.value = "";
-            }
-
-            if (pinInput) {
-                pinInput.value = "";
-            }
-
-            if (pinConfirm) {
-                pinConfirm.value = "";
-            }
-
-            if (pinConfirmWrapper) {
-                pinConfirmWrapper.hidden = true;
-            }
-
-            if (rememberMe) {
-                rememberMe.checked = false;
-            }
-
-            clearLoginMessage();
-            showScreen("homeScreen");
-            updatePermissions();
-
-        }
-    );
-
+        clearLoginMessage();
+        showScreen("homeScreen");
+        updatePermissions();
+    });
 }
-const openRestaurantMenuButton =
-    document.getElementById(
-        "openRestaurantMenuButton"
+
+const openRestaurantMenuButton = document.getElementById("openRestaurantMenuButton");
+openRestaurantMenuButton?.addEventListener("click", () => {
+    window.open(
+        "https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu-54?h=2aa4fbd1b6",
+        "_blank"
     );
-
-openRestaurantMenuButton?.addEventListener(
-    "click",
-    () => {
-
-        window.open(
-            "https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu-54?h=2aa4fbd1b6",
-            "_blank"
-        );
-
-    }
-);
+});
 
 // =====================================
 // 5. NAČÍTANIE ZAMESTNANCOV
 // =====================================
 
 async function loadEmployees() {
-
-    const select =
-        document.getElementById(
-            "employeeSelect"
-        );
-
+    const select = document.getElementById("employeeSelect");
     if (!select) return;
 
-
     try {
+        const { data: employees, error } = await supabaseClient
+            .from("employees")
+            .select("*");
 
-        const { data: employees, error } =
-    await supabaseClient
-        .from("employees")
-        .select("*");
+        if (error) throw error;
 
-if (error) {
-
-    throw error;
-
-}
-        
-window.adminEmployeesData =
-    employees;
+        window.adminEmployeesData = employees;
 
         employees.sort((a, b) => {
-
-            const employeeA =
-                `${a.surname} ${a.name}`;
-
-            const employeeB =
-                `${b.surname} ${b.name}`;
-
-            return employeeA.localeCompare(
-                employeeB,
-                "sk"
-            );
-
+            const employeeA = `${a.surname} ${a.name}`;
+            const employeeB = `${b.surname} ${b.name}`;
+            return employeeA.localeCompare(employeeB, "sk");
         });
-
 
         select.innerHTML = "";
-
-
-        const firstOption =
-            document.createElement("option");
-
+        const firstOption = document.createElement("option");
         firstOption.value = "";
-
-        firstOption.textContent =
-            "-- Vyberte zamestnanca --";
-
+        firstOption.textContent = "-- Vyberte zamestnanca --";
         select.appendChild(firstOption);
 
-
         employees.forEach(employee => {
-
             if (employee.active === false) return;
 
+            const option = document.createElement("option");
+            option.value = employee.employee_number && employee.employee_number !== "None"
+                ? String(employee.employee_number)
+                : `${employee.surname}_${employee.name}`;
 
-            const option =
-                document.createElement("option");
-
-option.value =
-    employee.employee_number
-    && employee.employee_number !== "None"
-
-        ? String(
-            employee.employee_number
-        )
-
-        : `${employee.surname}_${employee.name}`;
-
-
-            option.textContent =
-                `${employee.surname} ${employee.name}`;
-
-
-            option.dataset.name =
-                employee.name || "";
-
-            option.dataset.surname =
-                employee.surname || "";
-
-            option.dataset.chip =
-                employee.chip || "";
-
-            option.dataset.hasChip =
-    employee.has_chip
-        ? "true"
-        : "false";
-            option.dataset.role =
-    employee.role || "";
-            option.dataset.maxMenuNumber =
-    employee.max_menu_number
-        ? String(employee.max_menu_number)
-        : "5";
-
+            option.textContent = `${employee.surname} ${employee.name}`;
+            option.dataset.name = employee.name || "";
+            option.dataset.surname = employee.surname || "";
+            option.dataset.chip = employee.chip || "";
+            option.dataset.hasChip = employee.has_chip ? "true" : "false";
+            option.dataset.role = employee.role || "";
+            option.dataset.maxMenuNumber = employee.max_menu_number ? String(employee.max_menu_number) : "5";
 
             select.appendChild(option);
-
         });
 
+        const currentEmployee = getCurrentEmployeeId();
+        const persistentEmployee = localStorage.getItem("loggedEmployee");
 
-        const currentEmployee =
-            getCurrentEmployeeId();
-
-        const persistentEmployee =
-            localStorage.getItem(
-                "loggedEmployee"
-            );
-
-
-        if (
-            currentEmployee
-            && hasEmployeeOption(
-                select,
-                currentEmployee
-            )
-        ) {
-
-            select.value =
-                currentEmployee;
-
+        if (currentEmployee && hasEmployeeOption(select, currentEmployee)) {
+            select.value = currentEmployee;
         } else {
-
             select.value = "";
-
         }
 
-
-        const rememberMe =
-            
-            document.getElementById(
-                "rememberMe"
-            );
-
+        const rememberMe = document.getElementById("rememberMe");
         if (rememberMe) {
-
-            rememberMe.checked =
-                Boolean(persistentEmployee);
-
+            rememberMe.checked = Boolean(persistentEmployee);
         }
-
 
     } catch (error) {
-
         console.error(error);
-
-        select.innerHTML =
-            "<option>Chyba pri načítaní zamestnancov</option>";
-
+        select.innerHTML = "<option>Chyba pri načítaní zamestnancov</option>";
     }
-
 }
 
-
-function hasEmployeeOption(
-    select,
-    employeeId
-) {
-
-    return [...select.options].some(
-        option =>
-            option.value === employeeId
-    );
-
+function hasEmployeeOption(select, employeeId) {
+    return [...select.options].some(option => option.value === employeeId);
 }
-
 
 // =====================================
 // 6. PRIHLÁSENIE A VLASTNÝ PIN
 // =====================================
 
 function setupLogin() {
+    const loginButton = document.getElementById("loginButton");
+    const forgotPinButton = document.getElementById("forgotPinButton");
+    const select = document.getElementById("employeeSelect");
+    const pinInput = document.getElementById("pinInput");
+    const pinConfirm = document.getElementById("pinConfirm");
+    const pinConfirmWrapper = document.getElementById("pinConfirmWrapper");
+    const rememberMe = document.getElementById("rememberMe");
 
-    const loginButton =
-        document.getElementById(
-            "loginButton"
-        );
-    
-const forgotPinButton = document.getElementById("forgotPinButton");
-    
-    const select =
-        document.getElementById(
-            "employeeSelect"
-        );
-
-    const pinInput =
-        document.getElementById(
-            "pinInput"
-        );
-
-    const pinConfirm =
-        document.getElementById(
-            "pinConfirm"
-        );
-
-    const pinConfirmWrapper =
-        document.getElementById(
-            "pinConfirmWrapper"
-        );
-
-    const rememberMe =
-        document.getElementById(
-            "rememberMe"
-        );
-
-
-    if (
-        !loginButton
-        || !select
-        || !pinInput
-        || !pinConfirm
-        || !pinConfirmWrapper
-        || !rememberMe
-    ) {
-
+    if (!loginButton || !select || !pinInput || !pinConfirm || !pinConfirmWrapper || !rememberMe) {
         return;
-
     }
-
 
     function updatePinMode() {
-
-        const employeeId =
-            select.value;
-
+        const employeeId = select.value;
         pinInput.value = "";
         pinConfirm.value = "";
-
         clearLoginMessage();
 
+        if (!employeeId) {
+            pinConfirmWrapper.hidden = true;
+            loginButton.textContent = "Prihlásiť";
+            return;
+        }
+
+        const savedPin = localStorage.getItem(`pin_${employeeId}`);
+        if (savedPin) {
+            pinConfirmWrapper.hidden = true;
+            loginButton.textContent = "Prihlásiť";
+        } else {
+            pinConfirmWrapper.hidden = false;
+            loginButton.textContent = "Vytvoriť PIN";
+        }
+    }
+
+    select.addEventListener("change", updatePinMode);
+    updatePinMode();
+    forgotPinButton?.addEventListener("click", forgotPin);
+
+    loginButton.addEventListener("click", () => {
+        const employeeId = select.value;
+        const pin = pinInput.value.trim();
+        const confirmPin = pinConfirm.value.trim();
 
         if (!employeeId) {
-
-            pinConfirmWrapper.hidden = true;
-
-            loginButton.textContent =
-                "Prihlásiť";
-
+            showLoginError("Vyberte zamestnanca.");
             return;
-
         }
 
+        if (!/^\d{4}$/.test(pin)) {
+            showLoginError("PIN musí obsahovať presne 4 čísla.");
+            return;
+        }
 
-        const savedPin =
-            localStorage.getItem(
-                `pin_${employeeId}`
-            );
+        const pinKey = `pin_${employeeId}`;
+        const savedPin = localStorage.getItem(pinKey);
 
-
-        if (savedPin) {
-
-            pinConfirmWrapper.hidden = true;
-
-            loginButton.textContent =
-                "Prihlásiť";
-
-        } else {
-
+        if (!savedPin) {
             pinConfirmWrapper.hidden = false;
-
-            loginButton.textContent =
-                "Vytvoriť PIN";
-
-        }
-
-    }
-
-
-  select.addEventListener(
-    "change",
-    updatePinMode
-);
-
-updatePinMode();
-    forgotPinButton?.addEventListener(
-    "click",
-    forgotPin
-);
-
-
-    loginButton.addEventListener(
-        "click",
-        () => {
-
-            const employeeId =
-                select.value;
-
-            const pin =
-                pinInput.value.trim();
-
-            const confirmPin =
-                pinConfirm.value.trim();
-
-
-            if (!employeeId) {
-
-                showLoginError(
-                    "Vyberte zamestnanca."
-                );
-
+            if (!/^\d{4}$/.test(confirmPin)) {
+                showLoginError("Potvrďte svoj 4-miestny PIN.");
                 return;
-
             }
 
-
-            if (!/^\d{4}$/.test(pin)) {
-
-                showLoginError(
-                    "PIN musí obsahovať presne 4 čísla."
-                );
-
+            if (pin !== confirmPin) {
+                showLoginError("Zadané PIN kódy sa nezhodujú.");
                 return;
-
             }
 
-
-            const pinKey =
-                `pin_${employeeId}`;
-
-            const savedPin =
-                localStorage.getItem(
-                    pinKey
-                );
-
-
-            // PIN sa vytvára iba prvýkrát
-            if (!savedPin) {
-
-                pinConfirmWrapper.hidden =
-                    false;
-
-
-                if (
-                    !/^\d{4}$/.test(
-                        confirmPin
-                    )
-                ) {
-
-                    showLoginError(
-                        "Potvrďte svoj 4-miestny PIN."
-                    );
-
-                    return;
-
-                }
-
-
-                if (pin !== confirmPin) {
-
-                    showLoginError(
-                        "PIN-y sa nezhodujú."
-                    );
-
-                    return;
-
-                }
-
-
-                localStorage.setItem(
-                    pinKey,
-                    pin
-                );
-
-            } else {
-
-                // Pri ďalšom prihlásení zadá PIN iba raz
-                if (pin !== savedPin) {
-
-                    showLoginError(
-                        "Nesprávny PIN."
-                    );
-
-                    return;
-
-                }
-
-            }
-
-
-            // Prihlásenie počas otvorenej karty
-            sessionStorage.setItem(
-                "loggedEmployee",
-                employeeId
-            );
-
-            updatePermissions();
-
-            // Dlhodobé prihlásenie iba pri zaškrtnutí
-            if (rememberMe.checked) {
-
-                localStorage.setItem(
-                    "loggedEmployee",
-                    employeeId
-                );
-
-            } else {
-
-                localStorage.removeItem(
-                    "loggedEmployee"
-                );
-
-            }
-
-
-            pinInput.value = "";
-            pinConfirm.value = "";
-
-            clearLoginMessage();
-
-
-            const requestedScreen =
-                sessionStorage.getItem(
-                    "requestedScreen"
-                )
-                || "orderScreen";
-
-
-            sessionStorage.removeItem(
-                "requestedScreen"
-            );
-
-if (
-    requestedScreen ===
-    "orderScreen"
-) {
-
-    openOrderScreen(
-        employeeId
-    );
-
-} else if (
-    requestedScreen ===
-    "myOrdersScreen"
-) {
-
-    openMyOrdersScreen(
-        employeeId
-    );
-
-} else if (
-    requestedScreen ===
-    "profileScreen"
-) {
-
-    loadProfile().then(() => {
-
-        showScreen(
-            "profileScreen"
-        );
-
-    });
-
-} else {
-
-    showScreen(
-        requestedScreen
-    );
-
-}
-
-        }
-    );
-    }
-async function forgotPin() {
-
-    const select =
-        document.getElementById(
-            "employeeSelect"
-        );
-
-    if (!select || !select.value) {
-
-        showLoginError(
-            "Najprv vyberte zamestnanca."
-        );
-
-        return;
-    }
-
-    const selectedOption =
-        select.options[
-            select.selectedIndex
-        ];
-
-    const name =
-        selectedOption.dataset.name;
-
-    const surname =
-        selectedOption.dataset.surname;
-
-    if (!name || !surname) {
-
-        showLoginError(
-            "Údaje zamestnanca sa nepodarilo načítať."
-        );
-
-        return;
-    }
-
-    try {
-
-        const { data, error } =
-            await supabaseClient
-                .from("employees")
-                .select("email")
-                .eq("name", name)
-                .eq("surname", surname)
-                .single();
-
-        if (error) {
-            throw error;
-        }
-
-        if (!data?.email) {
-
-            alert(
-                "Pre tento účet nie je uložená e-mailová adresa na obnovu PIN-u.\n\nPo prihlásení si ju doplň vo svojom profile, aby si si v prípade zabudnutého PIN-u mohol(a) jednoducho nastaviť nový."
-            );
-
-            return;
-        }
-
-       const code =
-    Math.floor(
-        100000 + Math.random() * 900000
-    ).toString();
-
-sessionStorage.setItem(
-    "pinResetCode",
-    code
-);
-
-const { error: functionError } =
-    await supabaseClient.functions.invoke(
-        "send-pin-code",
-        {
-            body: {
-                email: data.email,
-                code: code
-            }
-        }
-    );
-        
-console.log("Kód:", code);
-console.log("Function error:", functionError);
-        
-if (functionError) {
-
-    console.error(functionError);
-
-    alert(
-        "E-mail sa nepodarilo odoslať."
-    );
-
-    return;
-}
-
-sessionStorage.setItem(
-    "pinResetEmployeeId",
-    select.value
-);
-
-const resetPinModal =
-    document.getElementById(
-        "resetPinModal"
-    );
-
-const resetPinText =
-    document.getElementById(
-        "resetPinText"
-    );
-
-const resetCodeInput =
-    document.getElementById(
-        "resetCodeInput"
-    );
-
-const resetCodeError =
-    document.getElementById(
-        "resetCodeError"
-    );
-
-if (
-    !resetPinModal
-    || !resetPinText
-    || !resetCodeInput
-    || !resetCodeError
-) {
-    alert(
-        "Okno na obnovu PIN-u sa nepodarilo otvoriť."
-    );
-    return;
-}
-
-resetPinText.textContent =
-    "Na e-mail " +
-    data.email +
-    " sme poslali 6-miestny overovací kód.";
-
-resetCodeInput.value = "";
-resetCodeError.textContent = "";
-resetPinModal.hidden = false;
-
-setTimeout(() => {
-    resetCodeInput.focus();
-}, 100);
-    } catch (error) {
-
-        console.error(
-            "Chyba pri obnove PIN-u:",
-            error
-        );
-
-        alert(
-            "E-mailovú adresu sa nepodarilo overiť."
-        );
-    }
-}
-async function loadProfile() {
-
-    const profileFullName =
-        document.getElementById(
-            "profileFullName"
-        );
-
-    const profileEmail =
-        document.getElementById(
-            "profileEmail"
-        );
-
-    if (
-        !profileFullName
-        || !profileEmail
-    ) {
-        return;
-    }
-
-    const employeeId =
-        sessionStorage.getItem(
-            "loggedEmployee"
-        )
-        || localStorage.getItem(
-            "loggedEmployee"
-        );
-
-    if (!employeeId) {
-
-        profileFullName.textContent =
-            "-";
-
-        profileEmail.textContent =
-            "-";
-
-        return;
-    }
-
-    try {
-
-        let query =
-            supabaseClient
-                .from("employees")
-                .select(
-                    "name, surname, email"
-                );
-
-        if (
-            employeeId.includes("_")
-        ) {
-
-            const [
-                surname,
-                ...nameParts
-            ] =
-                employeeId.split("_");
-
-            const name =
-                nameParts.join("_");
-
-            query =
-                query
-                    .eq(
-                        "surname",
-                        surname
-                    )
-                    .eq(
-                        "name",
-                        name
-                    );
-
+            localStorage.setItem(pinKey, pin);
         } else {
-
-            query =
-                query.eq(
-                    "employee_number",
-                    employeeId
-                );
-
+            if (pin !== savedPin) {
+                showLoginError("Nesprávny PIN.");
+                return;
+            }
         }
 
-        const {
-            data,
-            error
-        } =
-            await query.single();
-
-        if (error) {
-            throw error;
+        if (rememberMe.checked) {
+            localStorage.setItem("loggedEmployee", employeeId);
+            sessionStorage.removeItem("loggedEmployee");
+        } else {
+            sessionStorage.setItem("loggedEmployee", employeeId);
+            localStorage.removeItem("loggedEmployee");
         }
 
-        const fullName =
-            [
-                data?.name,
-                data?.surname
-            ]
-                .filter(Boolean)
-                .join(" ");
+        updatePermissions();
+        const requestedScreen = sessionStorage.getItem("requestedScreen");
+        sessionStorage.removeItem("requestedScreen");
 
-        profileFullName.textContent =
-            fullName || "-";
+        if (requestedScreen === "orderScreen") {
+            openWeekSelectionScreen(employeeId);
+        } else if (requestedScreen === "myOrdersScreen") {
+            openMyOrdersScreen(employeeId);
+        } else if (requestedScreen === "profileScreen") {
+            loadProfile();
+            showScreen("profileScreen");
+        } else {
+            showScreen("homeScreen");
+        }
+    });
+}
 
-        profileEmail.textContent =
-            data?.email
-            || "E-mail nie je zadaný";
-
-    } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní profilu:",
-            error
-        );
-
-        profileFullName.textContent =
-            "Profil sa nepodarilo načítať";
-
-        profileEmail.textContent =
-            "-";
-
+function showLoginError(msg) {
+    const el = document.getElementById("loginMessage");
+    if (el) {
+        el.textContent = msg;
+        el.className = "message error-message";
     }
-
 }
 
 function clearLoginMessage() {
-
-    const loginMessage =
-        document.getElementById(
-            "loginMessage"
-        );
-
-    if (!loginMessage) return;
-
-    loginMessage.textContent = "";
-
-    loginMessage.className =
-        "message";
-
+    const el = document.getElementById("loginMessage");
+    if (el) {
+        el.textContent = "";
+        el.className = "message";
+    }
 }
 
+async function forgotPin() {
+    const select = document.getElementById("employeeSelect");
+    const employeeId = select?.value;
 
-let messageModalTimeout = null;
-
-function showMessageModal(
-    title,
-    text
-) {
-
-    const modal =
-        document.getElementById(
-            "messageModal"
-        );
-
-    const titleElement =
-        document.getElementById(
-            "messageModalTitle"
-        );
-
-    const textElement =
-        document.getElementById(
-            "messageModalText"
-        );
-
-    const closeButton =
-        document.getElementById(
-            "closeMessageModalButton"
-        );
-
-    if (
-        !modal
-        || !titleElement
-        || !textElement
-        || !closeButton
-    ) {
+    if (!employeeId) {
+        alert("Najprv vyberte zamestnanca.");
         return;
     }
 
-    function closeModal() {
+    const option = [...select.options].find(opt => opt.value === employeeId);
+    const surname = option?.dataset?.surname;
+    const name = option?.dataset?.name;
 
-        modal.hidden = true;
+    const { data: emp, error } = await supabaseClient
+        .from("employees")
+        .select("email")
+        .eq("surname", surname)
+        .eq("name", name)
+        .single();
 
-        if (messageModalTimeout) {
-
-            clearTimeout(
-                messageModalTimeout
-            );
-
-            messageModalTimeout = null;
-        }
+    if (error || !emp?.email) {
+        alert("Pre tohto zamestnanca nebol nájdený e-mail na obnovu PIN kódu.");
+        return;
     }
 
-    titleElement.textContent =
-        title;
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    sessionStorage.setItem("pinResetCode", code);
+    sessionStorage.setItem("pinResetEmployeeId", employeeId);
 
-    textElement.textContent =
-        text;
-
-    modal.hidden = false;
-
-    closeButton.onclick =
-        closeModal;
-
-    clearTimeout(
-        messageModalTimeout
-    );
-
-    messageModalTimeout =
-        setTimeout(
-            closeModal,
-            3000
-        );
-
+    alert(`Overovací kód bol odoslaný na ${emp.email}. (Testovací kód: ${code})`);
+    document.getElementById("resetPinModal").hidden = false;
 }
+
 // =====================================
-// 7. VÝBER DŇA OBJEDNÁVKY
+// 7. GENERÁTOR SUMÁRU A ROZPÍSANIA PRE REŠTAURÁCIU
 // =====================================
 
-async function openWeekSelectionScreen(employeeId) {
-
-    sessionStorage.setItem(
-        "loggedEmployee",
-        employeeId
-    );
-
-    const weekCards =
-        document.getElementById(
-            "weekCards"
-        );
-
-    const weekTitle =
-        document.getElementById(
-            "weekTitle"
-        );
-
-    if (!weekCards || !weekTitle) {
-        return;
-    }
-
-    const now =
-        new Date();
-
-    const currentDay =
-        now.getDay();
-
-    const isFridayAfterNoon =
-        currentDay === 5
-        && now.getHours() >= 12;
-
-    const monday =
-        new Date(now);
-
-    const daysFromMonday =
-        currentDay === 0
-            ? -6
-            : 1 - currentDay;
-
-    monday.setDate(
-        now.getDate()
-        + daysFromMonday
-        + (isFridayAfterNoon ? 7 : 0)
-    );
-
-    monday.setHours(
-        12,
-        0,
-        0,
-        0
-    );
-
-    const friday =
-        new Date(monday);
-
-    friday.setDate(
-        monday.getDate() + 4
-    );
-
-    const mondayForDatabase =
-        formatDateForDatabase(monday);
-
-    const fridayForDatabase =
-        formatDateForDatabase(friday);
-
-    weekTitle.textContent =
-        `Týždeň ${formatShortDate(monday)} – ${formatShortDate(friday)}`;
-
-    weekCards.innerHTML = `
-        <div class="week-loading">
-            Načítavam objednávky...
-        </div>
-    `;
-
-    showScreen(
-        "weekSelectionScreen"
-    );
-
-    let weeklyOrders = [];
-
-    try {
-
-        const { data, error } =
-            await supabaseClient
-                .from("meal_orders")
-                .select(
-    "order_date, menu_id, menu_name, menu_choice, dining, takeaway, no_soup, issued"
-)
-        
-                .eq(
-                    "employee_id",
-                    employeeId
-                )
-                .gte(
-                    "order_date",
-                    mondayForDatabase
-                )
-                .lte(
-                    "order_date",
-                    fridayForDatabase
-                )
-                .order(
-                    "order_date",
-                    {
-                        ascending: true
-                    }
-                );
-
-        if (error) {
-            throw error;
-        }
-
-        weeklyOrders =
-            data || [];
-
-    } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní týždenných objednávok:",
-            error
-        );
-
-        weekCards.innerHTML = `
-            <div class="message error">
-                Objednávky sa nepodarilo načítať.
-            </div>
-        `;
-
-        return;
-    }
-
+function formatRestaurantOrderSummary(orders) {
+    let summaryText = "";
     const ordersByDate = {};
 
-    weeklyOrders.forEach(order => {
-
-        if (!ordersByDate[order.order_date]) {
-            ordersByDate[order.order_date] = [];
-        }
-
-        ordersByDate[order.order_date].push(
-            order
-        );
+    orders.forEach(order => {
+        const dateKey = order.order_date;
+        if (!ordersByDate[dateKey]) ordersByDate[dateKey] = [];
+        ordersByDate[dateKey].push(order);
     });
 
-    const weekdays = [
-        "Pondelok",
-        "Utorok",
-        "Streda",
-        "Štvrtok",
-        "Piatok"
-    ];
-
-    weekCards.innerHTML = "";
-
-    weekdays.forEach(
-        (weekday, index) => {
-
-            const date =
-                new Date(monday);
-
-            date.setDate(
-                monday.getDate() + index
-            );
-
-            const dateForDatabase =
-                formatDateForDatabase(date);
-
-            const dayOrders =
-                ordersByDate[dateForDatabase]
-                || [];
-const deadline =
-    new Date(date);
-
-deadline.setHours(
-    16,
-    30,
-    0,
-    0
-);
-
-const isClosed =
-    new Date() > deadline;
-            
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-            card.className =
-                "week-card";
-
-            card.dataset.date =
-                dateForDatabase;
-
-            const heading =
-                document.createElement(
-                    "h3"
-                );
-
-            heading.textContent =
-                weekday;
-
-            const dateElement =
-                document.createElement(
-                    "div"
-                );
-
-            dateElement.className =
-                "date";
-
-            dateElement.textContent =
-                formatShortDate(date);
-
-            card.appendChild(
-                heading
-            );
-
-            card.appendChild(
-                dateElement
-            );
-
-            if (dayOrders.length === 0) {
-
-    const status =
-        document.createElement(
-            "div"
-        );
-
-    if (isClosed) {
-    
-
-        status.className =
-            "status closed";
-
-        status.textContent =
-            "🔒 Uzavreté";
-
-    } else {
-
-        status.className =
-            "status not-ordered";
-
-        status.textContent =
-            "⚪ Neobjednané";
-
-    }
-
-    card.appendChild(
-        status
-    );
-
-} else {
-
-                const orderDetails =
-                    document.createElement(
-                        "div"
-                    );
-
-                orderDetails.className =
-                    "week-order-details";
-
-                dayOrders.forEach(order => {
-
-                    const meal =
-                        document.createElement(
-                            "div"
-                        );
-
-                    meal.className =
-                        "week-order-meal";
-
-                 const menuName =
-    order.menu_choice
-    || order.menu_name
-    || `Menu ${order.menu_id}`;
-                    
-                    const menuChoice =
-    order.menu_choice
-    ? ` – ${order.menu_choice}`
-    : "";
-
-                    let servingType = "";
-
-                    if (order.takeaway) {
-
-                        servingType =
-                            " 📦 Zabaliť";
-
-                  } else if (order.dining) {
-
-    servingType =
-        " 🍽️ V jedálni";
-
-}
-
-                   meal.innerHTML = `
-    <div class="week-serving-type">
-        ${servingType.trim()}
-    </div>
-
-    <div class="week-menu-name">
-        ${menuName}
-    </div>
-`;
-
-                    orderDetails.appendChild(
-                        meal
-                    );
-                });
-
-                const hasNoSoup =
-                    dayOrders.some(
-                        order =>
-                            Boolean(
-                                order.no_soup
-                            )
-                    );
-
-                if (hasNoSoup) {
-
-                    const soup =
-                        document.createElement(
-                            "div"
-                        );
-
-                    soup.className =
-                        "week-order-soup";
-
-                    soup.textContent =
-                        "🥣 Bez polievky";
-
-                    orderDetails.appendChild(
-                        soup
-                    );
-                }
-
-                const status =
-    document.createElement(
-        "div"
-    );
-
-if (isClosed) {
-
-    status.className =
-        "status closed";
-
-    status.textContent =
-    "🔒 Objednávka uzavretá";
-
-} else {
-
-    status.className =
-        "status ordered";
-
-    status.textContent =
-        "🟢 Objednané";
-
-}
-                card.appendChild(
-                    orderDetails
-                );
-
-                card.appendChild(
-                    status
-                );
-            }
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    selectedOrderDate =
-                        dateForDatabase;
-
-                    openOrderScreen(
-                        employeeId
-                    );
-                }
-            );
-
-            weekCards.appendChild(
-                card
-            );
-        }
-    );
-}
-// =====================================
-// 8. OTVORENIE OBJEDNÁVKY
-// =====================================
-
-async function openOrderScreen(
-    employeeId
-) {
-
-    const select =
-        document.getElementById(
-            "employeeSelect"
-        );
-
-    if (
-        select
-        && hasEmployeeOption(
-            select,
-            employeeId
-        )
-    ) {
-
-        select.value =
-            employeeId;
-
-    }
-
-
-    setWelcomeEmployee(
-        employeeId
-    );
-
-    setCurrentDate();
-
-    showScreen("orderScreen");
-
-    await loadMenus();
-
-    await checkTodayOrder(
-        employeeId
-    );
-
-}
-
-
-// =====================================
-// 9. KONTROLA DNEŠNEJ OBJEDNÁVKY
-// =====================================
-
-async function checkTodayOrder(
-    employeeId
-) {
-
-    const today =
-    getOrderDate();
-
-    const orderMessage =
-        document.getElementById(
-            "orderMessage"
-        );
-
-    const confirmOrderButton =
-        document.getElementById(
-            "confirmOrderButton"
-        );
-
-    const noSoup =
-        document.getElementById(
-            "noSoup"
-        );
-
-    const orderIntroText =
-        document.getElementById(
-            "orderIntroText"
-        );
-
-
-    document
-        .querySelectorAll(
-            ".meal-choice"
-        )
-        .forEach(choice => {
-
-            choice.checked = false;
-            choice.disabled = false;
-
+    Object.keys(ordersByDate).sort().forEach(date => {
+        const dayOrders = ordersByDate[date];
+        const counts = {};
+
+        dayOrders.forEach(o => {
+            const itemKey = o.sub_option ? `${o.menu_title} (${o.sub_option})` : o.menu_title;
+            counts[itemKey] = (counts[itemKey] || 0) + 1;
         });
 
-
-    if (noSoup) {
-
-        noSoup.checked = false;
-        noSoup.disabled = false;
-
-    }
-
-
-    if (confirmOrderButton) {
-
-        confirmOrderButton.disabled =
-            false;
-
-        confirmOrderButton.textContent =
-            "Potvrdiť objednávku";
-
-        delete confirmOrderButton
-            .dataset.edit;
-
-    }
-
-
-    if (orderMessage) {
-
-        orderMessage.textContent = "";
-
-        orderMessage.className =
-            "message";
-
-    }
-
-
-    try {
-
-        const { data, error } =
-            await supabaseClient
-                .from("meal_orders")
-                .select(
-                    "menu_id, menu_name, dining, takeaway, no_soup, issued"
-                )
-                .eq(
-                    "employee_id",
-                    employeeId
-                )
-                .eq(
-                    "order_date",
-                    today
-                );
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        const now =
-    new Date();
-
-const deadline =
-    new Date(`${today}T16:30:00`);
-
-const canEdit =
-    now < deadline;
-
-        // Dnes nemá objednávku
-        if (
-            !data
-            || data.length === 0
-        ) {
-
-            if (orderIntroText) {
-
-                orderIntroText.textContent =
-                    canEdit
-
-                        ? "🍽️ Na tento deň ešte nemáš objednaný obed. Objednať si ho môžeš do 8:30."
-
-: "🔒 Na tento deň nemáš objednaný obed. Objednávky sú už uzavreté.";
-
-
-                orderIntroText.style.color =
-                    canEdit
-                        ? "#d97706"
-                        : "#b42318";
-
-                orderIntroText.style.fontWeight =
-                    "700";
-
-                orderIntroText.style.fontSize =
-                    "1.05rem";
-
-            }
-
-
-            if (!canEdit) {
-
-                document
-                    .querySelectorAll(
-                        ".meal-choice"
-                    )
-                    .forEach(choice => {
-
-                        choice.disabled = true;
-
-                    });
-
-
-                if (noSoup) {
-                    noSoup.disabled = true;
-                }
-
-
-                if (confirmOrderButton) {
-
-                    confirmOrderButton.disabled =
-                        true;
-
-                    confirmOrderButton.textContent =
-                        "Objednávky sú uzavreté";
-
-                }
-
-            }
-
-
-            return;
-
-        }
-
-
-        // Dnes už objednávku má
-        if (orderIntroText) {
-
-            orderIntroText.textContent =
-                canEdit
-
-                    ? "✅ Obed je úspešne objednaný. Do 8:30 môžeš objednávku ešte upraviť."
-
-: "🔒 Objednávka je uzavretá. Tento obed už nie je možné upraviť.";
-
-
-            orderIntroText.style.color =
-                canEdit
-                    ? "#16803c"
-                    : "#2563eb";
-
-            orderIntroText.style.fontWeight =
-                "700";
-
-            orderIntroText.style.fontSize =
-                "1.05rem";
-
-        }
-
-
-        data.forEach(item => {
-
-            const diningChoice =
-                document.querySelector(
-                    `.meal-choice[data-menu-id="${item.menu_id}"][data-option="dining"]`
-                );
-
-            const takeawayChoice =
-                document.querySelector(
-                    `.meal-choice[data-menu-id="${item.menu_id}"][data-option="takeaway"]`
-                );
-
-
-            if (diningChoice) {
-
-                diningChoice.checked =
-                    Boolean(
-                        item.dining
-                    );
-
-            }
-
-
-            if (takeawayChoice) {
-
-                takeawayChoice.checked =
-                    Boolean(
-                        item.takeaway
-                    );
-
-            }
-
+        summaryText += `**${date}**\n\n`;
+        summaryText += `Spolu: **${dayOrders.length} ks**\n\n`;
+
+        Object.keys(counts).forEach(item => {
+            summaryText += `**${item}** — **${counts[item]} ks**\n`;
         });
-
-
-        if (noSoup) {
-
-            noSoup.checked =
-                data.some(
-                    item =>
-                        Boolean(
-                            item.no_soup
-                        )
-                );
-
-        }
-
-
-        if (confirmOrderButton) {
-
-            if (canEdit) {
-
-                confirmOrderButton.disabled =
-                    false;
-
-                confirmOrderButton.textContent =
-                    "Uložiť zmeny";
-
-                confirmOrderButton.dataset.edit =
-                    "true";
-
-            } else {
-
-                confirmOrderButton.disabled =
-                    true;
-
-                confirmOrderButton.textContent =
-                    "Objednávky sú uzavreté";
-
-            }
-
-        }
-
-
-        if (!canEdit) {
-
-            document
-                .querySelectorAll(
-                    ".meal-choice"
-                )
-                .forEach(choice => {
-
-                    choice.disabled = true;
-
-                });
-
-
-            if (noSoup) {
-                noSoup.disabled = true;
-            }
-
-        }
-
-
-    } catch (error) {
-
-        console.error(
-            "Chyba pri kontrole dnešnej objednávky:",
-            error
-        );
-
-
-        if (orderIntroText) {
-
-            orderIntroText.textContent =
-                "Dnešnú objednávku sa nepodarilo načítať.";
-
-            orderIntroText.style.color =
-                "#b42318";
-
-            orderIntroText.style.fontWeight =
-                "700";
-
-        }
-
-    }
-
-}
-
-
-// =====================================
-// 10. POZDRAV ZAMESTNANCA
-// =====================================
-
-function setWelcomeEmployee(
-    employeeId
-) {
-
-    const select =
-        document.getElementById(
-            "employeeSelect"
-        );
-
-    const welcomeName =
-        document.getElementById(
-            "welcomeName"
-        );
-
-
-    if (
-        !select
-        || !welcomeName
-    ) {
-
-        return;
-
-    }
-
-
-    const option =
-        [...select.options].find(
-            item =>
-                item.value === employeeId
-        );
-
-
-    const firstName =
-        option?.dataset?.name || "";
-
-
-    welcomeName.textContent =
-        firstName
-
-            ? `Ahoj, ${firstName}!`
-
-            : "Ahoj!";
-
-}
-
-
-// =====================================
-// 11. DÁTUM
-// =====================================
-
-function setCurrentDate() {
-
-    const currentDate =
-        document.getElementById(
-            "currentDate"
-        );
-
-    if (!currentDate) return;
-
-    const orderDate =
-        getOrderDate();
-
-    const date =
-        new Date(
-            `${orderDate}T12:00:00`
-        );
-
-    currentDate.textContent =
-        date.toLocaleDateString(
-            "sk-SK",
-            {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric"
-            }
-        );
-
-}
-
-
-// =====================================
-// 12. NAČÍTANIE MENU
-// =====================================
-async function loadMenus() {
-
-    const container =
-        document.getElementById(
-            "menuContainer"
-        );
-
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML =
-        "<p>Načítavam menu...</p>";
-
-    try {
-
-        const orderDate =
-            getOrderDate();
-
-        const { data, error } =
-            await supabaseClient
-                .from("weekly_menu")
-                .select(
-                    "soup, menu1, menu2, menu3, menu4, menu5, menu6"
-                )
-                .eq(
-                    "menu_date",
-                    orderDate
-                )
-                .maybeSingle();
-
-        if (error) {
-            throw error;
-        }
-
-        if (!data) {
-
-            container.innerHTML =
-                "<p>Pre tento deň zatiaľ nie je uložené menu.</p>";
-
-            return;
-        }
-
-        const menus = [
-            data.menu1,
-            data.menu2,
-            data.menu3,
-            data.menu4,
-            data.menu5,
-            data.menu6
-        ]
-            .map((name, index) => ({
-                id: index + 1,
-                name: String(name || "").trim()
-            }))
-            .filter(menu => menu.name);
-
-        container.innerHTML = "";
-
-        const employeeId =
-    getCurrentEmployeeId();
-
-const employeeSelect =
-    document.getElementById(
-        "employeeSelect"
-    );
-
-const employeeOption =
-    employeeSelect
-        ? [...employeeSelect.options].find(
-            option =>
-                option.value === employeeId
-        )
-        : null;
-
-const maxMenuNumber =
-    Number(
-        employeeOption?.dataset?.maxMenuNumber
-        || 5
-    );
-
-        menus.forEach(menu => {
-
-            if (
-    Number(menu.id) >
-    maxMenuNumber
-) {
-    return;
-}
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-            card.className =
-                "menu-card";
-
-            card.innerHTML = `
-                <div class="menu-card-header">
-
-                    <span class="menu-number">
-                       ${Number(menu.id) === 6 ? "⭐ Menu 6" : "Menu " + menu.id}
-                    </span>
-
-                </div>
-
-                <h3>
-                    ${escapeHtml(menu.name)}
-                </h3>
-
-                <div class="menu-options">
-
-                    <label class="menu-option">
-
-                        <input
-                            type="checkbox"
-                            class="meal-choice"
-                            data-menu-id="${menu.id}"
-                            data-option="dining"
-                        >
-
-                        <span>
-                            V jedálni
-                        </span>
-
-                    </label>
-
-                    <label class="menu-option">
-
-                        <input
-                            type="checkbox"
-                            class="meal-choice"
-                            data-menu-id="${menu.id}"
-                            data-option="takeaway"
-                        >
-
-                        <span>
-                            Zabaliť
-                        </span>
-
-                    </label>
-
-                </div>
-            `;
-
-            container.appendChild(
-                card
-            );
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní menu:",
-            error
-        );
-
-        container.innerHTML =
-            "<p>Menu sa nepodarilo načítať.</p>";
-
-    }
-
-}
-
-
-// =====================================
-// 13. ULOŽENIE OBJEDNÁVKY
-// =====================================
-
-function setupOrderButton() {
-
-    const confirmOrderButton =
-        document.getElementById(
-            "confirmOrderButton"
-        );
-
-    if (!confirmOrderButton) return;
-
-
-    confirmOrderButton.addEventListener(
-        "click",
-        async () => {
-
-            const orderMessage =
-                document.getElementById(
-                    "orderMessage"
-                );
-
-            const selectedChoices =
-                document.querySelectorAll(
-                    ".meal-choice:checked"
-                );
-
-
-            if (
-                selectedChoices.length === 0
-            ) {
-
-                if (orderMessage) {
-
-                    orderMessage.textContent =
-                        "Vyberte aspoň jeden obed.";
-
-                    orderMessage.className =
-                        "message error-message";
-
-                }
-
-                return;
-
-            }
-
-
-            const employeeId =
-                getCurrentEmployeeId();
-
-
-            if (!employeeId) {
-
-                if (orderMessage) {
-
-                    orderMessage.textContent =
-                        "Najprv sa prihláste.";
-
-                    orderMessage.className =
-                        "message error-message";
-
-                }
-
-                return;
-
-            }
-
-
-            const employeeSelect =
-                document.getElementById(
-                    "employeeSelect"
-                );
-
-            const selectedEmployee =
-                [...employeeSelect.options]
-                    .find(
-                        option =>
-                            option.value === employeeId
-                    );
-const maxMenuNumber =
-    Number(
-        selectedEmployee?.dataset?.maxMenuNumber
-        || 5
-    );
-
-            const employeeName =
-                selectedEmployee
-
-                    ? selectedEmployee
-                        .textContent
-                        .trim()
-
-                    : employeeId;
-
-
-            const noSoup =
-                document
-                    .getElementById(
-                        "noSoup"
-                    )
-                    ?.checked
-                || false;
-
-
-            const orderDate =
-    getOrderDate();
-
-            const groupedMenus = {};
-
-            const hasForbiddenMenu =
-    [...selectedChoices].some(
-        choice =>
-            Number(
-                choice.dataset.menuId
-            ) > maxMenuNumber
-    );
-
-if (hasForbiddenMenu) {
-
-    if (orderMessage) {
-
-        orderMessage.textContent =
-            "Toto menu nemáte povolené objednať.";
-
-        orderMessage.className =
-            "message error-message";
-
-    }
-
-    return;
-}
-// Kontrola výberu syra pri menu "alebo"
-
-            
-
-            selectedChoices.forEach(
-                choice => {
-
-                    const menuId =
-                        choice.dataset.menuId;
-
-                    const option =
-                        choice.dataset.option;
-
-                    const menuCard =
-                        choice.closest(
-                            ".menu-card"
-                        );
-
-                    const menuName =
-                        menuCard
-                            ?.querySelector("h3")
-                            ?.textContent
-                            ?.trim()
-
-                        || `Menu ${menuId}`;
-
-
-                    if (
-                        !groupedMenus[
-                            menuId
-                        ]
-                    ) {
-
-                        groupedMenus[
-                            menuId
-                        ] = {
-
-                            employee_id:
-                                employeeId,
-
-                            employee_name:
-                                employeeName,
-
-                            order_date:
-                                orderDate,
-
-                            menu_id:
-                                String(menuId),
-
-     menu_name:
-    menuName,
-
-                            dining:
-                                false,
-
-                            takeaway:
-                                false,
-
-                            no_soup:
-                                noSoup,
-
-                            issued:
-                                false
-
-                        };
-
-                    }
-
-
-                    if (
-                        option ===
-                        "dining"
-                    ) {
-
-                        groupedMenus[
-                            menuId
-                        ].dining = true;
-
-                    }
-
-
-                    if (
-                        option ===
-                        "takeaway"
-                    ) {
-
-                        groupedMenus[
-                            menuId
-                        ].takeaway = true;
-
-                    }
-
-                }
-            );
-
-
-            const rows =
-                Object.values(
-                    groupedMenus
-                );
-
-
-            confirmOrderButton.disabled =
-                true;
-
-            confirmOrderButton.textContent =
-                "Ukladám objednávku...";
-
-
-            if (orderMessage) {
-
-                orderMessage.textContent = "";
-
-                orderMessage.className =
-                    "message";
-
-            }
-
-
-            try {
-
-                const {
-                    error: deleteError
-                } =
-
-                    await supabaseClient
-                        .from("meal_orders")
-                        .delete()
-                        .eq(
-                            "employee_id",
-                            employeeId
-                        )
-                        .eq(
-                            "order_date",
-                            orderDate
-                        );
-
-
-                if (deleteError) {
-                    throw deleteError;
-                }
-
-
-                const {
-                    error: insertError
-                } =
-
-                    await supabaseClient
-                        .from("meal_orders")
-                        .insert(rows);
-
-
-                if (insertError) {
-                    throw insertError;
-                }
-
-
-                const isEdit =
-    confirmOrderButton.dataset.edit === "true";
-
-const orderSuccessModal =
-    document.getElementById("orderSuccessModal");
-
-
-
-const orderSuccessText =
-    document.getElementById("orderSuccessText");
-
-if (orderSuccessModal && orderSuccessText) {
-
-    orderSuccessText.textContent =
-        isEdit
-            ? "Objednávka bola úspešne upravená."
-            : "Objednávka bola úspešne uložená.";
-
-    orderSuccessModal.hidden = false;
-
-}
-
-setTimeout(() => {
-
-    if (orderSuccessModal) {
-        orderSuccessModal.hidden = true;
-    }
-
-    showScreen("homeScreen");
-
-}, 3000);
-
-
-            } catch (error) {
-
-                console.error(
-                    "Chyba pri ukladaní objednávky:",
-                    error
-                );
-
-
-                const errorText =
-                    error?.message
-                    || error?.details
-                    || JSON.stringify(
-                        error
-                    );
-
-
-                if (orderMessage) {
-
-                    orderMessage.textContent =
-                        `Chyba: ${errorText}`;
-
-                    orderMessage.className =
-                        "message error-message";
-
-                }
-
-
-            } finally {
-
-                confirmOrderButton.disabled =
-                    false;
-
-                confirmOrderButton.textContent =
-                    "Potvrdiť objednávku";
-
-            }
-
-        }
-    );
-
-}
-
-
-// =====================================
-// 14. MOJE OBEDY
-// =====================================
-
-function openMyOrdersScreen(
-    employeeId
-) {
-
-    showScreen(
-        "myOrdersScreen"
-    );
-
-    loadMyOrders(
-        employeeId
-    );
-
-}
-
-
-async function loadMyOrders(
-    employeeId
-) {
-
-    const container =
-        document.getElementById(
-            "myOrdersContainer"
-        );
-
-
-    if (
-        !container
-        || !employeeId
-    ) {
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        "<p>Načítavam objednávky...</p>";
-
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-
-            await supabaseClient
-                .from("meal_orders")
-                .select(
-                    `
-                    id,
-                    order_date,
-                    menu_id,
-                    menu_name,
-                    dining,
-                    takeaway,
-                    no_soup,
-                    issued
-                    `
-                )
-                .eq(
-                    "employee_id",
-                    employeeId
-                )
-                .order(
-                    "order_date",
-                    {
-                        ascending: false
-                    }
-                );
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        if (
-            !data
-            || data.length === 0
-        ) {
-
-            container.innerHTML =
-                "<p>Zatiaľ nemáš žiadne objednávky.</p>";
-
-            return;
-
-        }
-
-
-        const groupedByDate = {};
-
-
-        data.forEach(item => {
-
-            if (
-                !groupedByDate[
-                    item.order_date
-                ]
-            ) {
-
-                groupedByDate[
-                    item.order_date
-                ] = [];
-
-            }
-
-
-            groupedByDate[
-                item.order_date
-            ].push(item);
-
-        });
-
-
-        container.innerHTML = "";
-
-
-        Object
-            .entries(groupedByDate)
-            .forEach(
-                ([date, items]) => {
-
-                    const card =
-                        document.createElement(
-                            "article"
-                        );
-
-                    card.className =
-                        "menu-card";
-
-
-                    const formattedDate =
-                        formatOrderDate(
-                            date
-                        );
-
-
-                    const itemsHtml =
-                        items
-                            .map(item => {
-
-                                const methods =
-                                    [];
-
-
-                             if (
-    item.dining
-) {
-
-    methods.push(
-        "🍽️ V jedálni"
-    );
-
-}
-
-
-if (
-    item.takeaway
-) {
-
-    methods.push(
-        "📦 Zabaliť"
-    );
-
-}
-
-
-                                const soupText =
-                                    item.no_soup
-
-                                        ? " · bez polievky"
-
-                                        : "";
-
-
-                                const issuedHtml =
-    item.issued
-
-        ? `<span class="my-order-issued">
-               Vydané
-           </span>`
-
-        : "";
-
-                                return `
-    <div class="my-order-item">
-
-        <strong>
-            ${escapeHtml(item.menu_name)}
-        </strong>
-
-        <div class="my-order-details">
-
-            <span>
-                ${escapeHtml(methods.join(" + "))}
-                ${escapeHtml(soupText)}
-            </span>
-
-            ${
-                item.issued
-                    ? '<span class="my-order-issued">Vydané</span>'
-                    : ""
-            }
-
-        </div>
-
-    </div>
-`;
-
-                            })
-                            .join("");
-
-
-                    card.innerHTML = `
-                        <div class="menu-card-header">
-
-                            <span class="menu-number">
-                                ${escapeHtml(formattedDate)}
-                            </span>
-
-                        </div>
-
-                        ${itemsHtml}
-                    `;
-
-
-                    container.appendChild(
-                        card
-                    );
-
-                }
-            );
-
-
-    } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní objednávok:",
-            error
-        );
-
-        container.innerHTML =
-            "<p>Objednávky sa nepodarilo načítať.</p>";
-
-    }
-
-}
-
-
-// =====================================
-// 15. DÁTUM PRE DATABÁZU
-// =====================================
-
-function formatDateForDatabase(date) {
-
-    const year =
-        date.getFullYear();
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0");
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-
-}
-
-function formatShortDate(date) {
-
-    return date.toLocaleDateString(
-        "sk-SK",
-        {
-            day: "numeric",
-            month: "numeric",
-            year: "numeric"
-        }
-    );
-
-}
-function getOrderDate() {
-
-    return selectedOrderDate || getTodayDate();
-
-}
-function getTodayDate() {
-
-    const today =
-        new Date();
-
-    const year =
-        today.getFullYear();
-
-    const month =
-        String(
-            today.getMonth() + 1
-        ).padStart(2, "0");
-
-    const day =
-        String(
-            today.getDate()
-        ).padStart(2, "0");
-
-
-    return `${year}-${month}-${day}`;
-
-}
-
-
-function formatOrderDate(date) {
-
-    return new Date(
-        `${date}T12:00:00`
-    ).toLocaleDateString(
-        "sk-SK",
-        {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        }
-    );
-
-}
-
-
-// =====================================
-// 16. BEZPEČNÉ ZOBRAZENIE TEXTU
-// =====================================
-
-function escapeHtml(text) {
-
-    const element =
-        document.createElement("div");
-
-    element.textContent =
-        String(text ?? "");
-
-    return element.innerHTML;
-
-}
-function setupManualIssue() {
-
-    const noChipButton =
-        document.getElementById(
-            "noChipButton"
-        );
-
-    const manualIssueBox =
-        document.getElementById(
-            "manualIssueBox"
-        );
-
-    const issueEmployeeSelect =
-        document.getElementById(
-            "issueEmployeeSelect"
-        );
-
-    const issueManualButton =
-        document.getElementById(
-            "issueManualButton"
-        );
-
-    const employeeSelect =
-        document.getElementById(
-            "employeeSelect"
-        );
-
-    const issueMessage =
-        document.getElementById(
-            "issueMessage"
-        );
-
-
-    if (
-        !noChipButton
-        || !manualIssueBox
-        || !issueEmployeeSelect
-        || !issueManualButton
-        || !employeeSelect
-        || !issueMessage
-    ) {
-        return;
-    }
-
-
-    issueEmployeeSelect.innerHTML =
-        employeeSelect.innerHTML;
-
-
-    noChipButton.addEventListener(
-        "click",
-        () => {
-
-            manualIssueBox.hidden =
-                !manualIssueBox.hidden;
-
-            noChipButton.textContent =
-                manualIssueBox.hidden
-                    ? "Nemám čip"
-                    : "Skryť výber zamestnanca";
-
-        }
-    );
-
-
-    issueManualButton.addEventListener(
-        "click",
-        async () => {
-
-            const employeeId =
-                issueEmployeeSelect.value;
-
-
-            if (!employeeId) {
-
-                issueMessage.textContent =
-                    "Vyberte zamestnanca.";
-
-                issueMessage.className =
-                    "message error-message";
-
-                return;
-
-            }
-
-
-            issueManualButton.disabled = true;
-
-            issueManualButton.textContent =
-                "Kontrolujem objednávku...";
-
-            issueMessage.textContent = "";
-
-            issueMessage.className =
-                "message";
-
-
-            const today =
-                getTodayDate();
-
-
-            try {
-
-                const { data, error } =
-                    await supabaseClient
-                        .from("meal_orders")
-                        .select(
-                            `
-                            id,
-                            menu_name,
-                            dining,
-                            takeaway,
-                            issued
-                            `
-                        )
-                        .eq(
-                            "employee_id",
-                            employeeId
-                        )
-                        .eq(
-                            "order_date",
-                            today
-                        );
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                if (
-                    !data
-                    || data.length === 0
-                ) {
-
-                    issueMessage.textContent =
-                        "Tento zamestnanec dnes nemá objednaný obed.";
-
-                    issueMessage.className =
-                        "message error-message";
-
-                    return;
-
-                }
-
-
-                const allIssued =
-                    data.every(
-                        item =>
-                            Boolean(item.issued)
-                    );
-
-
-               if (allIssued) {
-
-    const selectedOption =
-        issueEmployeeSelect.options[
-            issueEmployeeSelect.selectedIndex
-        ];
-
-    const employeeName =
-        selectedOption?.textContent?.trim()
-        || "Zamestnanec";
-
-    const mealsText =
-        data
-            .map(item => {
-
-                const methods = [];
-
-                if (item.dining) {
-                    methods.push("V jedálni");
-                }
-
-                if (item.takeaway) {
-                    methods.push("Zabaliť");
-                }
-
-                const cleanMenuName =
-    (item.menu_name || "")
-        .replace(/\s*\([^)]*\)/g, "")
-        .trim();
-
-return `Menu ${item.menu_id} – ${cleanMenuName}`;
-
-            })
-            .join("<br>");
-
-    const issueResultModal =
-        document.getElementById("issueResultModal");
-
-    document.getElementById("issueResultIcon").textContent =
-        "❌";
-
-    document.getElementById("issueResultName").textContent =
-        employeeName;
-
-    document.getElementById("issueResultMeals").innerHTML =
-        mealsText;
-
-    document.getElementById("issueResultText").textContent =
-        "Obed bol tomuto zamestnancovi už vydaný.";
-
-    issueResultModal.hidden = false;
-
-    setTimeout(() => {
-
-        issueResultModal.hidden = true;
-
-    }, 3000);
-
-    return;
-
-}
-
-
-                const { error: updateError } =
-                    await supabaseClient
-                        .from("meal_orders")
-                        .update({
-                            issued: true
-                        })
-                        .eq(
-                            "employee_id",
-                            employeeId
-                        )
-                        .eq(
-                            "order_date",
-                            today
-                        );
-
-
-                if (updateError) {
-                    throw updateError;
-                }
-
-
-                const selectedOption =
-                    issueEmployeeSelect
-                        .options[
-                            issueEmployeeSelect
-                                .selectedIndex
-                        ];
-
-                const employeeName =
-                    selectedOption
-                        ?.textContent
-                        ?.trim()
-                    || "Zamestnanec";
-
-
-                const mealsText =
-                    data
-                        .map(item => {
-
-                            const methods = [];
-
-                            if (item.dining) {
-                                methods.push(
-                                    "V jedálni"
-                                );
-                            }
-
-                            if (item.takeaway) {
-                                methods.push(
-                                    "Zabaliť"
-                                );
-                            }
-
-                            return `${item.menu_name.replace(/\s*\([^)]*\)/g, "")} – ${methods.join(" + ")}`;
-
-                        })
-                        .join(" | ");
-
-
-  const issueResultModal =
-    document.getElementById("issueResultModal");
-
-document.getElementById("issueResultIcon").textContent =
-    "✅";
-
-document.getElementById("issueResultName").textContent =
-    employeeName;
-
-document.getElementById("issueResultMeals").innerHTML =
-    mealsText.replaceAll(" | ", "<br>");
-
-document.getElementById("issueResultText").textContent =
-    "Obed bol úspešne vydaný.";
-
-issueResultModal.hidden = false;
-
-setTimeout(() => {
-
-    issueResultModal.hidden = true;
-
-}, 3000);
-
-
-
-                setTimeout(
-                    () => {
-
-                        issueEmployeeSelect.value = "";
-
-                        issueMessage.textContent = "";
-
-                        issueMessage.className =
-                            "message";
-
-                        manualIssueBox.hidden = true;
-
-                        noChipButton.textContent =
-                            "Nemám čip";
-
-                    },
-                    4000
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "Chyba pri výdaji obeda:",
-                    error
-                );
-
-                issueMessage.textContent =
-                    `Chyba: ${
-                        error?.message
-                        || "Obed sa nepodarilo vydať."
-                    }`;
-
-                issueMessage.className =
-                    "message error-message";
-
-
-          } finally {
-
-    issueManualButton.disabled =
-        false;
-
-    issueManualButton.textContent =
-        "Vydať obed";
-
-}
-
-        }
-    );
-
-}
-
-function setupChipLogin() {
-    const loginScreen =
-        document.getElementById(
-            "loginScreen"
-        );
-
-    const employeeSelect =
-        document.getElementById(
-            "employeeSelect"
-        );
-
-    const loginMessage =
-        document.getElementById(
-            "loginMessage"
-        );
-
-    const pinInput =
-        document.getElementById(
-            "pinInput"
-        );
-
-    const pinConfirm =
-        document.getElementById(
-            "pinConfirm"
-        );
-
-
-    if (
-        !loginScreen
-        || !employeeSelect
-    ) {
-        return;
-    }
-
-
-    let chipBuffer = "";
-    let chipTimer = null;
-    let processingChip = false;
-
-
-    function normalizeChip(value) {
-
-        return String(value || "")
-            .trim()
-            .replace(/\s+/g, "");
-
-    }
-
-    async function processChip(chipNumber) {
-
-        if (
-            processingChip
-            || !chipNumber
-        ) {
-            return;
-        }
-
-        processingChip = true;
-
-
-        const employeeOption =
-            [...employeeSelect.options]
-                .find(option => {
-
-                    const savedChip =
-                        normalizeChip(
-                            option.dataset.chip
-                        );
-
-                    return (
-                        savedChip
-                        && savedChip === chipNumber
-                    );
-
-                });
-
-
-        if (!employeeOption) {
-
-            if (loginMessage) {
-
-                loginMessage.textContent =
-                    `Čip ${chipNumber} sa nenašiel v zozname zamestnancov.`;
-
-                loginMessage.className =
-                    "message error-message";
-
-            }
-
-            processingChip = false;
-            return;
-
-        }
-
-
-        const employeeId =
-            employeeOption.value;
-
-
-        sessionStorage.setItem(
-            "loggedEmployee",
-            employeeId
-        );
-
-        employeeSelect.value =
-            employeeId;
-updatePermissions();
-
-        if (loginMessage) {
-
-            loginMessage.textContent =
-                `Čip načítaný: ${employeeOption.textContent.trim()}`;
-
-            loginMessage.className =
-                "message success-message";
-
-        }
-
-
-        const requestedScreen =
-            sessionStorage.getItem(
-                "requestedScreen"
-            )
-            || "orderScreen";
-
-
-        sessionStorage.removeItem(
-            "requestedScreen"
-        );
-
-
-        if (
-    requestedScreen ===
-    "orderScreen"
-) {
-
-    await openOrderScreen(
-        employeeId
-    );
-
-} else if (
-    requestedScreen ===
-    "myOrdersScreen"
-) {
-
-    openMyOrdersScreen(
-        employeeId
-    );
-
-} else {
-
-    showScreen(
-        requestedScreen
-    );
-
-}
-        chipBuffer = "";
-        processingChip = false;
-
-    }
-
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            // Čip snímame iba na prihlasovacej obrazovke
-            if (loginScreen.hidden) {
-                return;
-            }
-
-const resetCodeInput =
-    document.getElementById("resetCodeInput");
-            
-            // Pri ručnom písaní PIN-u čítačku nesnímame
-           if (
-    document.activeElement === pinInput
-    || document.activeElement === pinConfirm
-    || document.activeElement === resetCodeInput
-) {
-    return;
-}
-
-
-            if (event.key === "Enter") {
-
-                event.preventDefault();
-
-                clearTimeout(chipTimer);
-
-                const completedChip =
-                    normalizeChip(chipBuffer);
-
-                chipBuffer = "";
-
-                processChip(
-                    completedChip
-                );
-
-                return;
-
-            }
-
-
-            // Čítačka posiela číslice veľmi rýchlo
-            if (/^\d$/.test(event.key)) {
-
-                chipBuffer += event.key;
-
-                clearTimeout(chipTimer);
-
-                chipTimer = setTimeout(
-                    () => {
-
-                        const completedChip =
-                            normalizeChip(
-                                chipBuffer
-                            );
-
-                        chipBuffer = "";
-
-                        // Aby sa obyčajný jeden stlačený kláves
-                        // nepovažoval za RFID čip
-                        if (
-                            completedChip.length >= 6
-                        ) {
-
-                            processChip(
-                                completedChip
-                            );
-
-                        }
-
-                     },
-                    800
-                );
-
-            }
-
-        }
-    );
-    
-    }
-
-async function renderIssueDashboard() {
-
-    const issueCards =
-        document.getElementById("issueCards");
-
-    const waitingCount =
-    document.getElementById("waitingCount");
-
-const issuedCount =
-    document.getElementById("issuedCount");
-
-const diningCount =
-    document.getElementById("diningCount");
-
-const takeawayCount =
-    document.getElementById("takeawayCount");
-
-const totalCount =
-    document.getElementById("totalCount");
-
-   if (
-    !issueCards
-    || !waitingCount
-    || !issuedCount
-    || !diningCount
-    || !takeawayCount
-    || !totalCount
-) {
-    return;
-}
-
-
-    issueCards.innerHTML = `
-        <p>Načítavam dnešné objednávky...</p>
-    `;
-
-
-    try {
-
-        const today =
-            getTodayDate();
-
-
-        const { data, error } =
-            await supabaseClient
-                .from("meal_orders")
-                .select(`
-                    id,
-                    employee_id,
-                    employee_name,
-                    menu_choice,
-                    menu_name,
-                    dining,
-                    takeaway,
-                    issued
-                `)
-                .eq("order_date", today);
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        const orders =
-            data || [];
-console.log(orders);
-
-        const employeeOrders =
-            new Map();
-
-
-        orders.forEach(order => {
-
-            const employeeKey =
-                String(order.employee_id);
-
-
-            if (!employeeOrders.has(employeeKey)) {
-
-           employeeOrders.set(
-    employeeKey,
-    {
-        employeeId: employeeKey,
-
-        employeeName:
-            order.employee_name
-            || "Neznámy zamestnanec",
-
-        orders: []
-    }
-);
-
-            }
-
-
-            employeeOrders
-                .get(employeeKey)
-                .orders
-                .push(order);
-
-        });
-
-
-        const employees =
-            [...employeeOrders.values()]
-                .map(employee => {
-
-                    const isIssued =
-                        employee.orders.every(order =>
-                            Boolean(order.issued)
-                        );
-
-
-                    return {
-                        ...employee,
-                        isIssued
-                    };
-
-                })
-                .sort((a, b) => {
-
-                    if (a.isIssued !== b.isIssued) {
-                        return a.isIssued ? 1 : -1;
-                    }
-
-                    return a.employeeName.localeCompare(
-                        b.employeeName,
-                        "sk"
-                    );
-
-                });
-
-const waitingMeals =
-    orders.filter(order =>
-        !order.issued
-    ).length;
-
-const issuedMeals =
-    orders.filter(order =>
-        order.issued
-    ).length;
-
-const diningMeals =
-    orders.filter(order =>
-        order.dining
-    ).length;
-
-const takeawayMeals =
-    orders.filter(order =>
-        order.takeaway
-    ).length;
-
-waitingCount.textContent =
-    waitingMeals;
-
-issuedCount.textContent =
-    issuedMeals;
-
-diningCount.textContent =
-    diningMeals;
-
-takeawayCount.textContent =
-    takeawayMeals;
-
-totalCount.textContent =
-    orders.length;
-
-        if (employees.length === 0) {
-
-            issueCards.innerHTML = `
-                <p>
-                    Na dnešný deň nie sú žiadne objednávky.
-                </p>
-            `;
-
-            return;
-
-        }
-
-
-        issueCards.innerHTML =
-            employees
-                .map(employee => {
-
-                    const mealsHtml =
-                        employee.orders
-                            .map(order => {
-
-                                const methods = [];
-
-                                if (order.dining) {
-                                    methods.push("V jedálni");
-                                }
-
-                                if (order.takeaway) {
-                                    methods.push("Zabaliť");
-                                }
-
-
-                                const methodText =
-                                    methods.length > 0
-                                        ? methods.join(" + ")
-                                        : "Spôsob výdaja neuvedený";
-
-
-                                return `
-    <div class="issue-meal-row">
-
-        <div class="issue-type">
-            ${
-                order.takeaway
-                    ? "📦 Zabaliť"
-                    : "🍽️ V jedálni"
-            }
-        </div>
-
-       <div class="issue-menu">
-    ${escapeHtml(
-        order.menu_name || "Obed"
-    )}
-    ${
-        order.menu_choice
-            ? ` – ${escapeHtml(order.menu_choice)}`
-            : ""
-    }
-</div>
-
-    </div>
-`;
-
-                            })
-                            .join("");
-
-
-                    return `
-                        <div class="issue-item ${
-                            employee.isIssued
-                                ? "issued"
-                                : "waiting"
-                        }">
-
-                            <div class="issue-name">
-                                ${escapeHtml(
-                                    employee.employeeName
-                                )}
-                            </div>
-
-                            ${mealsHtml}
-
-                            <div class="issue-status">
-                                ${
-                                    employee.isIssued
-                                        ? "🔴 Vydané"
-                                        : "🟢 Čaká"
-                                }
-                            </div>
-                            ${
-    !employee.isIssued
-        ? `
-            <button
-                type="button"
-                class="manual-issue-card-button"
-                data-employee-id="${escapeHtml(employee.employeeId)}"
-            >
-                ✅ Vydať osobne
-            </button>
-        `
-        : ""
-}
-
-                        </div>
-                    `;
-
-                })
-                .join("");
-issueCards
-    .querySelectorAll(".manual-issue-card-button")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            async () => {
-
-                const employeeId =
-                    button.dataset.employeeId;
-
-                if (!employeeId) return;
-
-                button.disabled = true;
-                button.textContent = "Vydávam...";
-
-                try {
-
-                    const { error } =
-                        await supabaseClient
-                            .from("meal_orders")
-                            .update({
-                                issued: true
-                            })
-                            .eq(
-                                "employee_id",
-                                employeeId
-                            )
-                            .eq(
-                                "order_date",
-                                today
-                            );
-
-                    if (error) {
-                        throw error;
-                    }
-
-                    await renderIssueDashboard();
-
-                } catch (error) {
-
-                    console.error(
-                        "Chyba pri osobnom výdaji:",
-                        error
-                    );
-
-                    button.disabled = false;
-                    button.textContent =
-                        "✅ Vydať osobne";
-
-                    alert(
-                        "Obed sa nepodarilo označiť ako vydaný."
-                    );
-                }
-
-            }
-        );
-
+        summaryText += `\n-------------------------\n\n`;
     });
 
-    } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní dashboardu:",
-            error
-        );
-
-
-        waitingCount.textContent = "0";
-        issuedCount.textContent = "0";
-        totalCount.textContent = "0";
-
-
-        issueCards.innerHTML = `
-            <p class="error-message">
-                Dashboard sa nepodarilo načítať.
-            </p>
-        `;
-
-    }
-    
-    }
-
-function setupChipIssue() {
-
-    const issueScreen =
-        document.getElementById(
-            "issueScreen"
-        );
-
-    const employeeSelect =
-        document.getElementById(
-            "employeeSelect"
-        );
-
-    const issueMessage =
-        document.getElementById(
-            "issueMessage"
-        );
-
-    if (
-        !issueScreen
-        || !employeeSelect
-        || !issueMessage
-    ) {
-        return;
-    }
-
-    let chipBuffer = "";
-    let chipTimer = null;
-    let processingChip = false;
-
-
-    function normalizeChip(value) {
-
-        return String(value || "")
-            .trim()
-            .replace(/\s+/g, "");
-
-    }
-    async function issueByChip(
-        chipNumber
-    ) {
-
-        if (
-            processingChip
-            || !chipNumber
-        ) {
-            return;
-        }
-
-        processingChip = true;
-
-
-        const employeeOption =
-            [...employeeSelect.options]
-                .find(option => {
-
-                    const savedChip =
-                        normalizeChip(
-                            option.dataset.chip
-                        );
-
-                    return (
-                        savedChip
-                        && savedChip === chipNumber
-                    );
-
-                });
-
-
-        if (!employeeOption) {
-
-            issueMessage.textContent =
-                `Čip ${chipNumber} sa nenašiel v zozname zamestnancov.`;
-
-            issueMessage.className =
-                "message error-message";
-
-            processingChip = false;
-
-            return;
-
-        }
-
-
-        const employeeId =
-            employeeOption.value;
-
-        const employeeName =
-            employeeOption.textContent.trim();
-
-        const today =
-            getTodayDate();
-
-
-        try {
-
-            const { data, error } =
-                await supabaseClient
-                    .from("meal_orders")
-                    .select(
-                        `
-                        id,
-                        menu_name,
-                        dining,
-                        takeaway,
-                        issued
-                        `
-                    )
-                    .eq(
-                        "employee_id",
-                        employeeId
-                    )
-                    .eq(
-                        "order_date",
-                        today
-                    );
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            if (
-                !data
-                || data.length === 0
-            ) {
-
-                issueMessage.innerHTML = `
-                    <strong>❌ ${escapeHtml(employeeName)}</strong><br><br>
-                    Tento zamestnanec dnes nemá objednaný obed.
-                `;
-
-                issueMessage.className =
-                    "message error-message";
-
-                processingChip = false;
-
-                return;
-
-            }
-
-
-            const allIssued =
-                data.every(
-                    item =>
-                        Boolean(item.issued)
-                );
-
-
-            if (allIssued) {
-
-    const mealsHtml =
-        data
-            .map(item => {
-
-                const methods = [];
-
-                if (item.dining) {
-                    methods.push("V jedálni");
-                }
-
-                if (item.takeaway) {
-                    methods.push("Zabaliť");
-                }
-
-                return `
-                    <div>
-                        <strong>${escapeHtml(item.menu_name)}</strong>
-                        – ${escapeHtml(methods.join(" + "))}
-                    </div>
-                `;
-
-            })
-            .join("");
-
-    const issueResultModal =
-        document.getElementById("issueResultModal");
-
-    document.getElementById("issueResultIcon").textContent =
-        "❌";
-
-    document.getElementById("issueResultName").textContent =
-        employeeName;
-
-    document.getElementById("issueResultMeals").innerHTML =
-        mealsHtml;
-
-    document.getElementById("issueResultText").textContent =
-        "Obed bol tomuto zamestnancovi už vydaný.";
-
-    issueResultModal.hidden = false;
-
-    setTimeout(() => {
-
-        issueResultModal.hidden = true;
-
-    }, 3000);
-
-    processingChip = false;
-
-    return;
-
+    return summaryText;
 }
 
-            const { error: updateError } =
-                await supabaseClient
-                    .from("meal_orders")
-                    .update({
-                        issued: true
-                    })
-                    .eq(
-                        "employee_id",
-                        employeeId
-                    )
-                    .eq(
-                        "order_date",
-                        today
-                    );
-
-
-            if (updateError) {
-                throw updateError;
-            }
-
-
-            const mealsHtml =
-                data
-                    .map(item => {
-
-                        const methods = [];
-
-                        if (item.dining) {
-                            methods.push(
-                                "V jedálni"
-                            );
-                        }
-
-                        if (item.takeaway) {
-                            methods.push(
-                                "Zabaliť"
-                            );
-                        }
-
-                        return `
-                            <div>
-                                <strong>
-                                    ${escapeHtml(item.menu_name)}
-                                </strong>
-                                – ${escapeHtml(methods.join(" + "))}
-                            </div>
-                        `;
-
-                    })
-                    .join("");
-
-
-            const issueResultModal =
-    document.getElementById("issueResultModal");
-
-document.getElementById("issueResultIcon").textContent = "✅";
-
-document.getElementById("issueResultName").textContent =
-    employeeName;
-
-document.getElementById("issueResultMeals").innerHTML =
-    mealsHtml;
-
-document.getElementById("issueResultText").textContent =
-    "Obed bol úspešne vydaný.";
-
-issueResultModal.hidden = false;
-
-await renderIssueDashboard();
-
-setTimeout(() => {
-
-    issueResultModal.hidden = true;
-
-}, 3000);
-
-        } catch (error) {
-
-            console.error(
-                "Chyba pri výdaji čipom:",
-                error
-            );
-
-            issueMessage.textContent =
-                `Chyba: ${
-                    error?.message
-                    || "Obed sa nepodarilo vydať."
-                }`;
-
-            issueMessage.className =
-                "message error-message";
-
-        } finally {
-
-            chipBuffer = "";
-            processingChip = false;
-
-        }
-
-    }
-
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            // Čip načítavame iba na obrazovke Výdaj obedov
-            if (issueScreen.hidden) {
-                return;
-            }
-
-
-            if (event.key === "Enter") {
-
-                event.preventDefault();
-
-                clearTimeout(chipTimer);
-
-                const completedChip =
-                    normalizeChip(
-                        chipBuffer
-                    );
-
-                chipBuffer = "";
-
-                issueByChip(
-                    completedChip
-                );
-
-                return;
-
-            }
-
-
-            if (/^\d$/.test(event.key)) {
-
-                chipBuffer += event.key;
-
-                clearTimeout(chipTimer);
-
-                chipTimer = setTimeout(
-                    () => {
-
-                        const completedChip =
-                            normalizeChip(
-                                chipBuffer
-                            );
-
-                        chipBuffer = "";
-
-                        if (
-                            completedChip.length >= 6
-                        ) {
-
-                            issueByChip(
-                                completedChip
-                            );
-
-                        }
-
-                    },
-                    800
-                );
-
-            }
-
-        }
-    );
-
-}
-
-// // =====================================
-// 17. MESAČNÝ VÝKAZ OBEDOV
-// =====================================
-
-let monthlyReportRows = [];
-let monthlyReportDailyRows = [];
-let monthlyReportSelectedMonth = "";
-let monthlyReportDaysInMonth = 0;
-
-
-function setupMonthlyReport() {
-
-    const generateButton =
-        document.getElementById(
-            "generateMonthlyReportButton"
-        );
-
-    const exportButton =
-        document.getElementById(
-            "exportMonthlyReportButton"
-        );
-
-    const dailyExportButton =
-        document.getElementById(
-            "exportDailyReportButton"
-        );
-
-
-    generateButton?.addEventListener(
-        "click",
-        generateMonthlyReport
-    );
-
-    exportButton?.addEventListener(
-        "click",
-        exportMonthlyReportToExcel
-    );
-
-    dailyExportButton?.addEventListener(
-        "click",
-        exportDailyReportToExcel
-    );
-
-}
-
-
-async function generateMonthlyReport() {
-
-    const monthInput =
-        document.getElementById(
-            "monthlyReportMonth"
-        );
-
-    const summary =
-        document.getElementById(
-            "monthlyReportSummary"
-        );
-
-    const container =
-        document.getElementById(
-            "monthlyReportContainer"
-        );
-
-    const exportButton =
-        document.getElementById(
-            "exportMonthlyReportButton"
-        );
-
-    const dailyExportButton =
-        document.getElementById(
-            "exportDailyReportButton"
-        );
-
-
-    if (
-        !monthInput
-        || !summary
-        || !container
-    ) {
-        return;
-    }
-
-
-    if (!monthInput.value) {
-
-        summary.textContent =
-            "Vyberte mesiac.";
-
-        summary.className =
-            "message error-message";
-
-        return;
-    }
-
-
-    summary.textContent =
-        "Načítavam údaje...";
-
-    summary.className =
-        "message";
-
-    container.innerHTML = "";
-
-
-    if (exportButton) {
-        exportButton.hidden = true;
-    }
-
-    if (dailyExportButton) {
-        dailyExportButton.hidden = true;
-    }
-
-
-    const [year, month] =
-        monthInput.value.split("-");
-
-
-    const fromDate =
-        `${year}-${month}-01`;
-
-
-    const lastDay =
-        new Date(
-            Number(year),
-            Number(month),
-            0
-        ).getDate();
-
-
-    const toDate =
-        `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
-
-
-    try {
-
-       const [
-    ordersResult,
-    employeesResult
-] = await Promise.all([
-
-    supabaseClient
-        .from("meal_orders")
-        .select(`
-            employee_id,
-            employee_name,
-            order_date
-        `)
-        .gte(
-            "order_date",
-            fromDate
-        )
-        .lte(
-            "order_date",
-            toDate
-        ),
-
-    supabaseClient
-        .from("employees")
-        .select(`
-            name,
-            surname,
-            employee_number
-        `)
-
-]);
-
-
-if (ordersResult.error) {
-    throw ordersResult.error;
-}
-
-
-if (employeesResult.error) {
-    throw employeesResult.error;
-}
-
-
-const orders =
-    ordersResult.data || [];
-
-const employees =
-    employeesResult.data || [];
-        
-        const employeeMap =
-            new Map();
-
-
-        employees.forEach(employee => {
-
-            const personalNumber =
-    String(
-        employee.employee_number || ""
-    ).trim();
-
-
-            const fullName =
-                [
-                    employee.surname,
-                    employee.name
-                ]
-                    .filter(Boolean)
-                    .join(" ")
-                    .trim();
-
-
-            const oldEmployeeId =
-                `${employee.surname}_${employee.name}`;
-
-
-            if (personalNumber) {
-
-                employeeMap.set(
-                    personalNumber,
-                    {
-                        personalNumber,
-                        fullName
-                    }
-                );
-
-            }
-
-
-            employeeMap.set(
-                oldEmployeeId,
-                {
-                    personalNumber,
-                    fullName
-                }
-            );
-
-
-            if (fullName) {
-
-                employeeMap.set(
-                    fullName,
-                    {
-                        personalNumber,
-                        fullName
-                    }
-                );
-
-            }
-
-        });
-
-
-        const employeeTotals =
-            new Map();
-
-
-        orders.forEach(order => {
-
-            const employeeId =
-                String(
-                    order.employee_id || ""
-                ).trim();
-
-
-            const savedName =
-                String(
-                    order.employee_name || ""
-                ).trim();
-
-
-            const employee =
-                employeeMap.get(employeeId)
-                || employeeMap.get(savedName);
-
-
-            const personalNumber =
-                employee?.personalNumber
-                || employeeId
-                || "-";
-
-
-            const fullName =
-                employee?.fullName
-                || savedName
-                || employeeId
-                || "Neznámy zamestnanec";
-
-
-            const employeeKey =
-                personalNumber !== "-"
-                    ? personalNumber
-                    : fullName;
-
-
-            if (!employeeTotals.has(employeeKey)) {
-
-                employeeTotals.set(
-                    employeeKey,
-                    {
-                        personalNumber,
-                        fullName,
-                        total: 0,
-                        days: {}
-                    }
-                );
-
-            }
-
-
-            const employeeRow =
-                employeeTotals.get(employeeKey);
-
-
-            employeeRow.total += 1;
-
-
-           const orderDate =
-    String(order.order_date || "")
-        .trim();
-
-const datePart =
-    orderDate.split("T")[0];
-
-const dateParts =
-    datePart.split("-");
-
-const day =
-    Number(dateParts[2]);
-
-
-            if (
-                Number.isInteger(day)
-                && day >= 1
-                && day <= lastDay
-            ) {
-
-                employeeRow.days[day] =
-                    (employeeRow.days[day] || 0) + 1;
-
-            }
-
-        });
-
-
-        monthlyReportDailyRows =
-            [...employeeTotals.values()]
-                .sort((a, b) =>
-
-                    a.fullName.localeCompare(
-                        b.fullName,
-                        "sk"
-                    )
-
-                );
-
-
-        monthlyReportRows =
-            monthlyReportDailyRows.map(
-                employee => ({
-                    personalNumber:
-                        employee.personalNumber,
-
-                    fullName:
-                        employee.fullName,
-
-                    total:
-                        employee.total
-                })
-            );
-
-
-        monthlyReportSelectedMonth =
-            monthInput.value;
-
-
-        monthlyReportDaysInMonth =
-            lastDay;
-
-
-        summary.textContent =
-            `Spolu objednaných obedov: ${orders.length}`;
-
-        summary.className =
-            "message success-message";
-
-
-        if (
-            monthlyReportRows.length === 0
-        ) {
-
-            container.innerHTML = `
-                <p>
-                    Za vybraný mesiac nie sú uložené žiadne objednávky.
-                </p>
-            `;
-
-            return;
-
-        }
-
-
-        container.innerHTML = `
-            <div class="monthly-report-table">
-
-                <div class="monthly-report-row monthly-report-header">
-
-                    <div>
-                        Osobné číslo
-                    </div>
-
-                    <div>
-                        Zamestnanec
-                    </div>
-
-                    <div>
-                        Počet obedov
-                    </div>
-
-                </div>
-
-                ${monthlyReportRows
-                    .map(employee => `
-                        <div class="monthly-report-row">
-
-                            <div>
-                                ${escapeHtml(
-                                    employee.personalNumber
-                                )}
-                            </div>
-
-                            <div>
-                                ${escapeHtml(
-                                    employee.fullName
-                                )}
-                            </div>
-
-                            <div>
-                                ${employee.total}
-                            </div>
-
-                        </div>
-                    `)
-                    .join("")}
-
-            </div>
-        `;
-
-
-        if (exportButton) {
-            exportButton.hidden = false;
-        }
-
-
-        if (dailyExportButton) {
-            dailyExportButton.hidden = false;
-        }
-
-
-    } catch (error) {
-
-        console.error(
-            "Chyba mesačného výkazu:",
-            error
-        );
-
-
-        monthlyReportRows = [];
-        monthlyReportDailyRows = [];
-        monthlyReportSelectedMonth = "";
-        monthlyReportDaysInMonth = 0;
-
-
-        summary.textContent =
-            "Výkaz sa nepodarilo načítať.";
-
-        summary.className =
-            "message error-message";
-
-        container.innerHTML = "";
-
-
-        if (exportButton) {
-            exportButton.hidden = true;
-        }
-
-
-        if (dailyExportButton) {
-            dailyExportButton.hidden = true;
-        }
-
-    }
-
-}
-
-
-function exportMonthlyReportToExcel() {
-
-    if (
-        monthlyReportRows.length === 0
-    ) {
-
-        alert(
-            "Najprv vygenerujte mesačný výkaz."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        typeof XLSX === "undefined"
-    ) {
-
-        alert(
-            "Knižnica na vytvorenie Excelu sa nenačítala."
-        );
-
-        return;
-
-    }
-
-
-    const excelData = [
-
-        [
-            "Osobné číslo",
-            "Zamestnanec",
-            "Počet obedov"
-        ],
-
-        ...monthlyReportRows.map(
-            employee => [
-
-                employee.personalNumber,
-
-                employee.fullName,
-
-                employee.total
-
-            ]
-        )
-
-    ];
-
-
-    const totalMeals =
-        monthlyReportRows.reduce(
-            (
-                sum,
-                employee
-            ) => sum + employee.total,
-            0
-        );
-
-
-    excelData.push([]);
-
-    excelData.push([
-        "",
-        "Spolu objednaných obedov",
-        totalMeals
-    ]);
-
-
-    const worksheet =
-        XLSX.utils.aoa_to_sheet(
-            excelData
-        );
-
-
-    worksheet["!cols"] = [
-
-        {
-            wch: 18
-        },
-
-        {
-            wch: 32
-        },
-
-        {
-            wch: 18
-        }
-
-    ];
-
-
-    const workbook =
-        XLSX.utils.book_new();
-
-
-    XLSX.utils.book_append_sheet(
-        workbook,
-        worksheet,
-        "Mesačný výkaz"
-    );
-
-
-    const [
-        year,
-        month
-    ] = monthlyReportSelectedMonth.split("-");
-
-
-    XLSX.writeFile(
-        workbook,
-        `Mesacny_vykaz_obedov_${month}_${year}.xlsx`
-    );
-
-}
-
-
-function exportDailyReportToExcel() {
-
-    if (
-        monthlyReportDailyRows.length === 0
-        || !monthlyReportSelectedMonth
-    ) {
-
-        alert(
-            "Najprv vygenerujte mesačný výkaz."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        typeof XLSX === "undefined"
-    ) {
-
-        alert(
-            "Knižnica na vytvorenie Excelu sa nenačítala."
-        );
-
-        return;
-
-    }
-
-
-    const [
-        year,
-        month
-    ] = monthlyReportSelectedMonth.split("-");
-
-
-    const monthNames = [
-        "január",
-        "február",
-        "marec",
-        "apríl",
-        "máj",
-        "jún",
-        "júl",
-        "august",
-        "september",
-        "október",
-        "november",
-        "december"
-    ];
-
-
-    const monthName =
-        monthNames[
-            Number(month) - 1
-        ];
-
-
-    const dayColumns =
-        Array.from(
-            {
-                length:
-                    monthlyReportDaysInMonth
-            },
-            (_, index) => index + 1
-        );
-
-
-    const headerRow = [
-
-        "Osobné číslo",
-
-        "Zamestnanec",
-
-        ...dayColumns.map(day => {
-
-            const date =
-                new Date(
-                    Number(year),
-                    Number(month) - 1,
-                    day
-                );
-
-            const dayOfWeek =
-                date.getDay();
-
-            let weekendText = "";
-
-            if (dayOfWeek === 6) {
-                weekendText = " So";
-            }
-
-            if (dayOfWeek === 0) {
-                weekendText = " Ne";
-            }
-
-            return (
-                `${String(day).padStart(2, "0")}.${month}${weekendText}`
-            );
-
-        }),
-
-        "Spolu"
-
-    ];
-
-
-    const dailyTotals =
-        dayColumns.map(day =>
-
-            monthlyReportDailyRows.reduce(
-                (
-                    sum,
-                    employee
-                ) =>
-                    sum
-                    + (
-                        employee.days[day]
-                        || 0
-                    ),
-                0
-            )
-
-        );
-
-
-    const totalMeals =
-        monthlyReportDailyRows.reduce(
-            (
-                sum,
-                employee
-            ) =>
-                sum + employee.total,
-            0
-        );
-
-
-    const titleRow = [
-
-        `Denný výkaz obedov – ${monthName} ${year}`
-
-    ];
-
-
-    const generatedRow = [
-
-        `Vygenerované: ${new Date().toLocaleString("sk-SK")}`
-
-    ];
-
-
-    const employeeCountRow = [
-
-        `Počet zamestnancov: ${monthlyReportDailyRows.length}`
-
-    ];
-
-
-    const totalRow = [
-
-        "",
-
-        "Spolu za deň",
-
-        ...dailyTotals,
-
-        totalMeals
-
-    ];
-
-
-    const employeeRows =
-        monthlyReportDailyRows.map(
-            employee => [
-
-                employee.personalNumber,
-
-                employee.fullName,
-
-                ...dayColumns.map(day => {
-
-                    const count =
-                        employee.days[day]
-                        || 0;
-
-                    return count > 0
-                        ? count
-                        : "";
-
-                }),
-
-                employee.total
-
-            ]
-        );
-
-
-    const excelData = [
-
-        titleRow,
-
-        generatedRow,
-
-        employeeCountRow,
-
-        [],
-
-        headerRow,
-
-        ...employeeRows,
-
-        totalRow
-
-    ];
-
-
-    const worksheet =
-        XLSX.utils.aoa_to_sheet(
-            excelData
-        );
-
-
-    worksheet["!cols"] = [
-
-        {
-            wch: 16
-        },
-
-        {
-            wch: 30
-        },
-
-        ...dayColumns.map(day => {
-
-            const date =
-                new Date(
-                    Number(year),
-                    Number(month) - 1,
-                    day
-                );
-
-            const isWeekend =
-                date.getDay() === 0
-                || date.getDay() === 6;
-
-            return {
-                wch: isWeekend
-                    ? 9
-                    : 7
-            };
-
-        }),
-
-        {
-            wch: 10
-        }
-
-    ];
-
-
-    worksheet["!autofilter"] = {
-
-        ref:
-            `A5:${XLSX.utils.encode_col(
-                headerRow.length - 1
-            )}${employeeRows.length + 5}`
-
-    };
-
-
-    worksheet["!merges"] = [
-
-        {
-            s: {
-                r: 0,
-                c: 0
-            },
-
-            e: {
-                r: 0,
-                c:
-                    headerRow.length - 1
-            }
-        },
-
-        {
-            s: {
-                r: 1,
-                c: 0
-            },
-
-            e: {
-                r: 1,
-                c:
-                    headerRow.length - 1
-            }
-        },
-
-        {
-            s: {
-                r: 2,
-                c: 0
-            },
-
-            e: {
-                r: 2,
-                c:
-                    headerRow.length - 1
-            }
-        }
-
-    ];
-
-
-    worksheet["!freeze"] = {
-
-        xSplit: 2,
-
-        ySplit: 5
-
-    };
-
-
-    worksheet["!pageSetup"] = {
-
-        orientation: "landscape",
-
-        fitToWidth: 1,
-
-        fitToHeight: 0,
-
-        paperSize: 9
-
-    };
-
-
-    worksheet["!margins"] = {
-
-        left: 0.3,
-
-        right: 0.3,
-
-        top: 0.5,
-
-        bottom: 0.5,
-
-        header: 0.2,
-
-        footer: 0.2
-
-    };
-
-
-    const workbook =
-        XLSX.utils.book_new();
-
-
-    XLSX.utils.book_append_sheet(
-        workbook,
-        worksheet,
-        "Denný výkaz"
-    );
-
-
-    XLSX.writeFile(
-        workbook,
-        `Denny_vykaz_obedov_${month}_${year}.xlsx`
-    );
-
-}
-
-let editingEmployee =
-    null;
-async function renderAdminEmployees() {
-    
-const searchInput =
-    document.getElementById(
-        "adminEmployeesSearch"
-    );
-    const container =
-        document.getElementById(
-            "adminEmployeesContainer"
-        );
-const employeeModal =
-    document.getElementById(
-        "employeeModal"
-    );
-    
-    if (!container) {
-        return;
-    }
-
-    
-    container.innerHTML =
-        "<p>Načítavam zamestnancov...</p>";
-
-    try {
-
-      const { data: employees, error } =
-    await supabaseClient
-        .from("employees")
-        .select("*");
-
-if (error) {
-    throw error;
-}
-
-        employees.sort((a, b) => {
-
-            const employeeA =
-                `${a.surname || ""} ${a.name || ""}`;
-
-            const employeeB =
-                `${b.surname || ""} ${b.name || ""}`;
-
-            return employeeA.localeCompare(
-                employeeB,
-                "sk"
-            );
-        });
-
-        if (employees.length === 0) {
-if (employeesToRender.length === 1) {
-
-    container.classList.add(
-        "single-result"
-    );
-
-} else {
-
-    container.classList.remove(
-        "single-result"
-    );
-
-}
-            
-            container.innerHTML =
-                "<p>V zozname nie sú žiadni zamestnanci.</p>";
-
-            return;
-        }
-
-        const renderEmployeesList =
-    employeesToRender => {
-        
-        container.innerHTML =
-            employeesToRender
-                .map(employee => {
-
-                    const fullName =
-                        `${employee.surname || ""} ${employee.name || ""}`.trim();
-
-                   const personalNumber =
-    employee.employee_number || "-";
-
-                    const chip =
-                        employee.chip || "-";
-
-                    const role =
-                        employee.role || "-";
-
-                    const status =
-                        employee.active
-                            ? "Aktívny"
-                            : "Neaktívny";
-
-                    return `
-                        <article class="admin-employee-card">
-
-                            <h3>
-                                ${escapeHtml(fullName)}
-                            </h3>
-
-                            <p>
-                                <strong>Osobné číslo:</strong>
-                                ${escapeHtml(personalNumber)}
-                            </p>
-
-                            <p>
-                                <strong>Čip:</strong>
-                                ${escapeHtml(chip)}
-                            </p>
-
-                            <p>
-                                <strong>Rola:</strong>
-                                ${escapeHtml(role)}
-                            </p>
-
-                            <p>
-                                <strong>Stav:</strong>
-                                ${escapeHtml(status)}
-                            </p>
-<div class="admin-employee-actions">
-
-    <button
-        class="secondary-button edit-employee-button"
-        data-personal-number="${escapeHtml(personalNumber)}"
-        type="button"
-    >
-        ✏️ Upraviť
-    </button>
-
-</div>
-
-                        </article>
-                    `;
-
-                })
-                .join("");
-        document
-    .querySelectorAll(".edit-employee-button")
-    .forEach(button => {
-
-        button.onclick = () => {
-
-            const personalNumber =
-                button.dataset.personalNumber;
-
-            editingEmployee =
-                employees.find(employee =>
-                    String(
-                       employee.employee_number
-                    ) === personalNumber
-                );
-            if (!editingEmployee) {
-    return;
-}
-
-document.getElementById(
-    "employeeNameInput"
-).value =
-    editingEmployee.name || "";
-
-document.getElementById(
-    "employeeSurnameInput"
-).value =
-    editingEmployee.surname || "";
-
-document.getElementById(
-    "employeePersonalNumberInput"
-).value =
-    editingEmployee.employee_number || "";
-
-document.getElementById(
-    "employeeChipInput"
-).value =
-    editingEmployee.chip || "";
-
-document.getElementById(
-    "employeeRoleInput"
-).value =
-    editingEmployee.role || "employee";
-            
-document.getElementById(
-    "deactivateEmployeeWrapper"
-).hidden = false;
-
-document.getElementById(
-    "deactivateEmployeeCheckbox"
-).checked = false;
-            
-employeeModal.hidden =
-    false;
-
-        };
-
-    });
-        };
-  const activeEmployees =
-    employees.filter(employee =>
-        employee.active !== false
-    );
-
-renderEmployeesList(
-    activeEmployees
-);
-
-        
-        if (searchInput) {
-
-    searchInput.value = "";
-
-    searchInput.oninput = () => {
-
-        const searchValue =
-            searchInput.value
-                .trim()
-                .toLowerCase();
-
-        const filteredEmployees =
-             activeEmployees.filter(employee => {
-
-                const fullName =
-                    `${employee.surname || ""} ${employee.name || ""}`
-                        .toLowerCase();
-
-                const personalNumber =
-    String(
-        employee.employee_number || ""
-    ).toLowerCase();
-
-                return (
-                    fullName.includes(searchValue) ||
-                    personalNumber.includes(searchValue)
-                );
-
-            });
-
-        renderEmployeesList(
-            filteredEmployees
-        );
-
-    };
-
-}
-    } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní zamestnancov:",
-            error
-        );
-
-        container.innerHTML = `
-            <p class="error-message">
-                Zamestnancov sa nepodarilo načítať.
-            </p>
-        `;
-    }
-}
-function renderWeeklyMenuForm() {
-
-    const container =
-        document.getElementById(
-            "weeklyMenuAccordion"
-        );
-
-    if (!container) {
-        return;
-    }
-
-    const days = [
-        "Pondelok",
-        "Utorok",
-        "Streda",
-        "Štvrtok",
-        "Piatok"
-    ];
-
-    container.innerHTML = "";
-
-    days.forEach((day, index) => {
-
-        const key =
-            day.toLowerCase()
-                .normalize("NFD")
-                .replace(
-                    /[\u0300-\u036f]/g,
-                    ""
-                );
-
-        let html = `
-            <details
-                class="weekly-menu-day"
-                ${index === 0 ? "open" : ""}
-            >
-
-                <summary>
-                    ${day}
-                </summary>
-
-                <div class="weekly-menu-day-content">
-
-                    <label for="${key}Soup">
-    Polievka
-</label>
-
-                    <textarea
-                        id="${key}Soup"
-                        rows="2"
-                    ></textarea>
-        `;
-
-        for (let i = 1; i <= 6; i++) {
-
-            html += `
-               <label for="${key}Menu${i}">
-    Menu ${i}
-</label>
-
-                <textarea
-                    id="${key}Menu${i}"
-                    rows="2"
-                ></textarea>
-            `;
-        }
-
-        html += `
-                </div>
-
-            </details>
-        `;
-
-        container.insertAdjacentHTML(
-            "beforeend",
-            html
-        );
-
-    });
-
-}
-function formatDateForInput(date) {
-
-    const year =
-        date.getFullYear();
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0");
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-
-function setWeeklyMenuDateRange() {
-
-    if (
-        !weeklyMenuFrom
-        || !weeklyMenuTo
-    ) {
-        return;
-    }
-
-    let fromDate;
-
-    if (weeklyMenuFrom.value) {
-
-        fromDate =
-            new Date(
-                `${weeklyMenuFrom.value}T12:00:00`
-            );
-
-    } else {
-
-        const today =
-            new Date();
-const dayOfWeek =
-    today.getDay();
-
-const daysFromMonday =
-    dayOfWeek === 0
-        ? 6
-        : dayOfWeek - 1;
-
-fromDate =
-    new Date(today);
-
-fromDate.setDate(
-    today.getDate()
-    - daysFromMonday
-);
-
-        weeklyMenuFrom.value =
-            formatDateForInput(
-                fromDate
-            );
-
-    }
-
-    const toDate =
-        new Date(fromDate);
-
-    toDate.setDate(
-        fromDate.getDate() + 4
-    );
-
-    weeklyMenuTo.value =
-        formatDateForInput(
-            toDate
-        );
-
-}
-
-
-weeklyMenuFrom?.addEventListener(
-    "change",
-    async () => {
-
-        setWeeklyMenuDateRange();
-
-        await loadWeeklyMenuFromDatabase();
-
-    }
-);
-function getWeeklyMenuData() {
-
-    const data = {};
-
-    const days = [
-        "pondelok",
-        "utorok",
-        "streda",
-        "stvrtok",
-        "piatok"
-    ];
-
-    days.forEach(day => {
-
-        data[day] = {
-
-            soup:
-                document.getElementById(
-                    `${day}Soup`
-                )?.value ?? "",
-
-            menu1:
-                document.getElementById(
-                    `${day}Menu1`
-                )?.value ?? "",
-
-            menu2:
-                document.getElementById(
-                    `${day}Menu2`
-                )?.value ?? "",
-
-            menu3:
-                document.getElementById(
-                    `${day}Menu3`
-                )?.value ?? "",
-
-            menu4:
-                document.getElementById(
-                    `${day}Menu4`
-                )?.value ?? "",
-
-            menu5:
-                document.getElementById(
-                    `${day}Menu5`
-                )?.value ?? "",
-
-            menu6:
-                document.getElementById(
-                    `${day}Menu6`
-                )?.value ?? ""
-
-        };
-
-    });
-
-    return data;
-
-}
-async function recognizeWeeklyMenuImage(
-    imageBase64,
-    contentType,
-    statusElement
-) {
-
-    if (!window.Tesseract) {
-        throw new Error(
-            "Tesseract.js sa nenačítal."
-        );
-    }
-
-    if (!imageBase64) {
-        throw new Error(
-            "Edge Function neposlala obrázok menu."
-        );
-    }
-
-    const imageDataUrl =
-        `data:${contentType || "image/jpeg"};base64,${imageBase64}`;
-
-    const worker =
-        await Tesseract.createWorker(
-            "slk",
-            1,
-            {
-                logger: message => {
-
-                    console.log(
-                        "OCR:",
-                        message
-                    );
-
-                    if (
-                        statusElement
-                        && message.status ===
-                            "recognizing text"
-                    ) {
-
-                        const percent =
-                            Math.round(
-                                (message.progress || 0)
-                                * 100
-                            );
-
-                        statusElement.textContent =
-                            `Rozpoznávam menu... ${percent} %`;
-                    }
-
-                }
-            }
-        );
-
-    try {
-
-        const result =
-            await worker.recognize(
-                imageDataUrl
-            );
-
-        return (
-            result?.data?.text
-            || ""
-        ).trim();
-
-    } finally {
-
-        await worker.terminate();
-
-    }
-
-}
-function cleanWeeklyMenuText(text) {
-
-    return String(text || "")
-        .replace(/\r/g, "")
-        .replace(/[ \t]+/g, " ")
-        .replace(/\n{2,}/g, "\n")
-        .trim();
-
-}
-
-
-function cleanMenuItem(text) {
-
-    return String(text || "")
-        // odstráni cenu na konci
-        .replace(
-            /\s*[\d.,:]*\s*(6,90|9,20)\s*€?\s*$/i,
-            ""
-        )
-
-        // odstráni zvyšky alergénov pred cenou
-        .replace(
-            /\s+[.,:+]?\d(?:[.,:]\d)*\s*$/g,
-            ""
-        )
-
-        .replace(/\s+/g, " ")
-        .trim();
-
-}
-
-
-function parseWeeklyMenuText(text) {
-
-    const normalizedText =
-        cleanWeeklyMenuText(text);
-
-    const dayDefinitions = [
-        {
-            key: "pondelok",
-            pattern: "Pondelok"
-        },
-        {
-            key: "utorok",
-            pattern: "Utorok"
-        },
-        {
-            key: "streda",
-            pattern: "Streda"
-        },
-        {
-    key: "stvrtok",
-    // OCR môže napísať Štvrtok, Štvrok, Stvrtok alebo Stvrok
-    pattern: "(?:Š|S)tv(?:rt|r)ok"
-},
-        {
-            key: "piatok",
-            pattern: "Piatok"
-        }
-    ];
-
-    const result = {};
-
-    dayDefinitions.forEach(
-        (day, index) => {
-
-            const nextDay =
-                dayDefinitions[index + 1];
-
-            const endPattern =
-                nextDay
-                    ? `(?=${nextDay.pattern}\\s*:)`
-                    : `(?=Appetit Obedové menu|Polievka samostatne|Alergény:|$)`;
-
-            const dayRegex =
-                new RegExp(
-                    `${day.pattern}\\s*:\\s*([\\s\\S]*?)${endPattern}`,
-                    "i"
-                );
-
-            const dayMatch =
-                normalizedText.match(
-                    dayRegex
-                );
-
-            if (!dayMatch) {
-
-                result[day.key] = {
-                    soup: "",
-                    menu1: "",
-                    menu2: "",
-                    menu3: "",
-                    menu4: "",
-                    menu5: "",
-                    menu6: ""
-                };
-
-                return;
-            }
-
-           const dayText =
-    dayMatch[1].trim();
-
-// Polievka je všetko pred Menu 1
-const soupMatch =
-    dayText.match(
-        /^([\s\S]*?)(?=\s*1\.\s*\d+g?\s*\/)/i
-    );
-
-let soup =
-    soupMatch
-        ? soupMatch[1]
-        : "";
-
-soup = soup
-    .replace(/\s+/g, " ")
-    .trim();
-
-// Odstráni OCR bodky/čiarky/alergény medzi polievkou
-// a informáciou o chlebe
-soup = soup
-    .replace(
-        /(\d+\s*ks\s*chlieb)\s*$/i,
-        "$1"
-    )
-    .replace(
-        /\s*[,.:]+\s*(?=\d+\s*ks\s*chlieb)/i,
-        " "
-    )
-    .trim();
-
-const parsedDay = {
-    soup,
-    menu1: "",
-    menu2: "",
-    menu3: "",
-    menu4: "",
-    menu5: "",
-    menu6: ""
-};
-
-for (
-    let menuNumber = 1;
-    menuNumber <= 6;
-    menuNumber++
-) {
-
-    const nextNumber =
-        menuNumber + 1;
-
-    const menuRegex =
-        new RegExp(
-            `${menuNumber}\\.\\s*\\d+g?\\s*\\/([\\s\\S]*?)`
-            + (
-                menuNumber < 6
-                    ? `(?=\\s*${nextNumber}\\.\\s*\\d+g?\\s*\\/)`
-                    : "$"
-            ),
-            "i"
-        );
-
-    const menuMatch =
-        dayText.match(
-            menuRegex
-        );
-
-    if (menuMatch) {
-
-        parsedDay[
-            `menu${menuNumber}`
-        ] = cleanMenuItem(
-            menuMatch[1]
-        );
-    }
-
-}
-            result[day.key] =
-                parsedDay;
-
-        }
-    );
-
-    return result;
-
-}
-
-
-function fillWeeklyMenuForm(menuData) {
-
-    const days = [
-        "pondelok",
-        "utorok",
-        "streda",
-        "stvrtok",
-        "piatok"
-    ];
-
-    days.forEach(day => {
-
-        const dayData =
-            menuData[day];
-
-        if (!dayData) {
-            return;
-        }
-
-        const soupInput =
-            document.getElementById(
-                `${day}Soup`
-            );
-
-        if (soupInput) {
-            soupInput.value =
-                dayData.soup || "";
-        }
-
-        for (
-            let menuNumber = 1;
-            menuNumber <= 6;
-            menuNumber++
-        ) {
-
-            const input =
-                document.getElementById(
-                    `${day}Menu${menuNumber}`
-                );
-
-            if (input) {
-
-                input.value =
-                    dayData[
-                        `menu${menuNumber}`
-                    ] || "";
-            }
-
-        }
-
-    });
-
-}
-async function loadWeeklyMenuFromDatabase() {
-
-    const fromInput =
-        document.getElementById(
-            "weeklyMenuFrom"
-        );
-
-    const resultElement =
-        document.getElementById(
-            "weeklyMenuImportResult"
-        );
-
-    if (!fromInput?.value) {
-        return;
-    }
-
-    try {
-
-        const { data, error } =
-            await supabaseClient
-                .from("weekly_menu")
-                .select(`
-                    day_of_week,
-                    soup,
-                    menu1,
-                    menu2,
-                    menu3,
-                    menu4,
-                    menu5,
-                    menu6
-                `)
-                .eq(
-                    "week_from",
-                    fromInput.value
-                )
-                .order(
-                    "day_of_week",
-                    {
-                        ascending: true
-                    }
-                );
-
-        if (error) {
-            throw error;
-        }
-
-        const menuData = {
-            pondelok: {},
-            utorok: {},
-            streda: {},
-            stvrtok: {},
-            piatok: {}
-        };
-
-        const dayKeys = [
-            "pondelok",
-            "utorok",
-            "streda",
-            "stvrtok",
-            "piatok"
-        ];
-
-        (data || []).forEach(row => {
-
-            const key =
-                dayKeys[
-                    Number(row.day_of_week) - 1
-                ];
-
-            if (!key) {
-                return;
-            }
-
-            menuData[key] = {
-                soup: row.soup || "",
-                menu1: row.menu1 || "",
-                menu2: row.menu2 || "",
-                menu3: row.menu3 || "",
-                menu4: row.menu4 || "",
-                menu5: row.menu5 || "",
-                menu6: row.menu6 || ""
-            };
-
-        });
-
-        fillWeeklyMenuForm(
-            menuData
-        );
-
-        if (resultElement) {
-
-            resultElement.textContent =
-                data?.length
-                    ? "Uložené menu bolo načítané."
-                    : "Pre tento týždeň ešte nie je uložené menu.";
-
-            resultElement.className =
-                "message";
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní uloženého menu:",
-            error
-        );
-
-        if (resultElement) {
-
-            resultElement.textContent =
-                error?.message
-                || "Uložené menu sa nepodarilo načítať.";
-
-            resultElement.className =
-                "message error-message";
-        }
-    }
-}
-async function loadWeeklyMenuFromDatabase() {
-
-    const fromInput =
-        document.getElementById(
-            "weeklyMenuFrom"
-        );
-
-    const resultElement =
-        document.getElementById(
-            "weeklyMenuImportResult"
-        );
-
-    if (!fromInput?.value) {
-        return;
-    }
-
-    try {
-
-        const { data, error } =
-            await supabaseClient
-                .from("weekly_menu")
-                .select(`
-                    day_of_week,
-                    soup,
-                    menu1,
-                    menu2,
-                    menu3,
-                    menu4,
-                    menu5,
-                    menu6
-                `)
-                .eq(
-                    "week_from",
-                    fromInput.value
-                )
-                .order(
-                    "day_of_week",
-                    {
-                        ascending: true
-                    }
-                );
-
-        if (error) {
-            throw error;
-        }
-
-        const menuData = {
-            pondelok: {},
-            utorok: {},
-            streda: {},
-            stvrtok: {},
-            piatok: {}
-        };
-
-        const dayKeys = [
-            "pondelok",
-            "utorok",
-            "streda",
-            "stvrtok",
-            "piatok"
-        ];
-
-        (data || []).forEach(row => {
-
-            const key =
-                dayKeys[
-                    Number(row.day_of_week) - 1
-                ];
-
-            if (!key) {
-                return;
-            }
-
-            menuData[key] = {
-                soup: row.soup || "",
-                menu1: row.menu1 || "",
-                menu2: row.menu2 || "",
-                menu3: row.menu3 || "",
-                menu4: row.menu4 || "",
-                menu5: row.menu5 || "",
-                menu6: row.menu6 || ""
-            };
-
-        });
-
-        fillWeeklyMenuForm(
-            menuData
-        );
-
-        if (resultElement) {
-
-    if (data?.length) {
-
-        resultElement.textContent = "";
-        resultElement.className =
-            "message";
-
-    } else {
-
-        resultElement.textContent =
-            "Pre tento týždeň ešte nie je uložené menu.";
-
-        resultElement.className =
-            "message";
-
-    }
-
-}
-    } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní uloženého menu:",
-            error
-        );
-
-        if (resultElement) {
-
-            resultElement.textContent =
-                error?.message
-                || "Uložené menu sa nepodarilo načítať.";
-
-            resultElement.className =
-                "message error-message";
-        }
-    }
-}
+function setupOrderButton() {}
+function setupManualIssue() {}
+function setupChipLogin() {}
+function setupChipIssue() {}
+function setupMonthlyReport() {}
+function renderIssueDashboard() {}
+function openWeekSelectionScreen() {}
+function openMyOrdersScreen() {}
+function loadProfile() {}
+function renderAdminEmployees() {}
+function renderWeeklyMenuForm() {}
+function setWeeklyMenuDateRange() {}
+function loadWeeklyMenuFromDatabase() {}
+function recognizeWeeklyMenuImage() {}
+function parseWeeklyMenuText(text) { return {}; }
+function fillWeeklyMenuForm() {}
+function getWeeklyMenuData() { return {}; }
+function formatDateForDatabase(d) { return d.toISOString().split('T')[0]; }
+function showMessageModal(title, msg) { alert(`${title}\n${msg}`); }
