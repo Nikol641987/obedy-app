@@ -25,8 +25,7 @@ html {
 body {
     margin: 0;
     min-height: 100vh;
-    background:
-        radial-gradient(circle at top, #ffffff 0, #f5f8fc 38%, #edf2f7 100%);
+    background: radial-gradient(circle at top, #ffffff 0, #f5f8fc 38%, #edf2f7 100%);
     color: var(--text);
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -46,6 +45,11 @@ input:focus-visible,
 select:focus-visible {
     outline: 4px solid rgba(47, 102, 173, 0.18);
     outline-offset: 2px;
+}
+
+/* Atribút hidden musí obrazovku skutočne skryť */
+[hidden] {
+    display: none !important;
 }
 
 /* =========================================
@@ -70,6 +74,7 @@ select:focus-visible {
     object-fit: contain;
     margin: 0 auto 4px;
 }
+
 .app-header h1 {
     margin: 0;
     color: var(--text);
@@ -85,11 +90,6 @@ select:focus-visible {
     font-size: clamp(16px, 3.8vw, 20px);
 }
 
-/* Atribút hidden musí obrazovku skutočne skryť */
-[hidden] {
-    display: none !important;
-}
-
 .app-screen {
     animation: screenIn 0.22s ease;
 }
@@ -99,7 +99,6 @@ select:focus-visible {
         opacity: 0;
         transform: translateY(8px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -122,18 +121,14 @@ select:focus-visible {
     padding: 25px 20px;
     border: 1px solid rgba(47, 102, 173, 0.12);
     border-radius: 26px;
-    background:
-        linear-gradient(145deg, #ffffff 0%, #f7faff 100%);
+    background: linear-gradient(145deg, #ffffff 0%, #f7faff 100%);
     box-shadow: var(--shadow);
     color: var(--text);
     text-align: left;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        border-color 0.18s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .home-card:hover {
@@ -267,9 +262,7 @@ select:focus-visible {
     min-height: 56px;
     border-radius: 17px;
     font-weight: 750;
-    transition:
-        transform 0.16s ease,
-        filter 0.16s ease;
+    transition: transform 0.16s ease, filter 0.16s ease;
 }
 
 .main-button {
@@ -390,94 +383,8 @@ select:focus-visible {
     padding: 16px;
 }
 
-/* =========================================
-   VÝDAJ
-========================================= */
-
-.issue-card {
-    text-align: center;
-}
-
-.chip-symbol {
-    width: 82px;
-    height: 82px;
-    display: grid;
-    place-items: center;
-    margin: 27px auto 15px;
-    border-radius: 25px;
-    background: var(--tmv-light);
-    color: var(--tmv-blue);
-    font-size: 48px;
-}
-
-.issue-main-text {
-    margin: 0;
-    font-size: 27px;
-    font-weight: 800;
-}
-
-.issue-help-text {
-    max-width: 420px;
-    margin: 11px auto 24px;
-    color: var(--muted);
-    line-height: 1.5;
-}
-
-/* =========================================
-   MOBIL
-========================================= */
-
-@media (max-width: 620px) {
-    .app-wrapper {
-        width: min(100% - 22px, 540px);
-        padding-top: 20px;
-    }
-
-   .app-header {
-    margin-bottom: 12px;
-}
-
-    .home-grid {
-        grid-template-columns: 1fr;
-        gap: 13px;
-    }
-
-    .home-card {
-        min-height: 135px;
-        padding: 20px;
-        display: grid;
-        grid-template-columns: 54px 1fr;
-        grid-template-rows: auto auto;
-        column-gap: 15px;
-        align-items: center;
-    }
-
-    .home-icon {
-        grid-row: 1 / 3;
-        width: 54px;
-        height: 54px;
-        margin: 0;
-    }
-
-    .home-title {
-        margin: 0;
-        font-size: 21px;
-    }
-
-    .home-description {
-        align-self: start;
-    }
-
-    .content-card {
-        padding: 22px;
-    }
-
-    .menu-options {
-        grid-template-columns: 1fr;
-    }
-}
 /* =====================================
-   PRIHLÁSENIE RFID
+   PRIHLÁSENIE RFID & VÝDAJ
 ===================================== */
 
 .chip-login-box {
@@ -514,6 +421,7 @@ select:focus-visible {
     height: 1px;
     pointer-events: none;
 }
+
 .login-subtitle {
     text-align: center;
     color: #25579a;
@@ -527,15 +435,6 @@ select:focus-visible {
     border: none;
     border-top: 1px solid #dbe3ee;
 }
-.issue-chip-icon {
-    width: 120px;
-    height: auto;
-    display: block;
-    margin: 10px auto 25px;
-}
-/* =====================================
-   VÝDAJ OBEDOV
-===================================== */
 
 .issue-chip-icon {
     width: 95px;
@@ -565,121 +464,112 @@ select:focus-visible {
 .issue-card {
     max-width: 650px;
     margin: 0 auto;
-}
-.issue-success{
-    text-align:center;
-    padding:28px 20px;
+    text-align: center;
 }
 
-.issue-success-icon{
-    font-size:56px;
-    margin-bottom:12px;
+.issue-success {
+    text-align: center;
+    padding: 28px 20px;
 }
 
-.issue-success-name{
-    font-size:34px;
-    font-weight:800;
-    color:var(--tmv-blue);
-    margin-bottom:18px;
+.issue-success-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
 }
 
-.issue-success-meal{
-    font-size:24px;
-    font-weight:700;
-    line-height:1.6;
-    margin-bottom:22px;
+.issue-success-name {
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--tmv-blue);
+    margin-bottom: 18px;
 }
 
-.issue-success-text{
-    font-size:22px;
-    color:#1a7f37;
-    font-weight:700;
+.issue-success-meal {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.6;
+    margin-bottom: 22px;
 }
+
+.issue-success-text {
+    font-size: 22px;
+    color: #1a7f37;
+    font-weight: 700;
+}
+
 /* =====================================
    DASHBOARD VÝDAJA
 ===================================== */
 
-.issue-dashboard{
-    margin-top:35px;
+.issue-dashboard {
+    margin-top: 35px;
 }
 
-.issue-stats{
-    display:flex;
-    gap:16px;
-    margin-bottom:28px;
+.issue-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
 }
 
-.stat-card{
-    flex:1;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:18px;
-    box-shadow:var(--shadow);
+.stat-card {
+    flex: 1;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: var(--shadow);
 }
 
-.stat-number{
-    display:block;
-    font-size:34px;
-    font-weight:800;
-    color:var(--tmv-blue);
+.stat-number {
+    display: block;
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--tmv-blue);
 }
 
-.stat-label{
-    display:block;
-    margin-top:6px;
-    color:var(--muted);
-    font-weight:700;
+.stat-label {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-weight: 700;
 }
 
-.issue-list-title{
-    margin:10px 0 20px;
-    text-align:left;
-    color:var(--tmv-blue-dark);
+.issue-list-title {
+    margin: 10px 0 20px;
+    text-align: left;
+    color: var(--tmv-blue-dark);
 }
 
-.issue-cards{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(auto-fill,minmax(170px,1fr));
-
-    gap:16px;
-
+.issue-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 16px;
 }
 
-.issue-item{
-
-    background:#fff;
-
-    border-radius:18px;
-
-    border:2px solid #dce4ee;
-
-    padding:18px;
-
-    text-align:left;
-
-    box-shadow:0 8px 18px rgba(0,0,0,.06);
-
-    transition:.25s;
-
+.issue-item {
+    background: #fff;
+    border-radius: 18px;
+    border: 2px solid #dce4ee;
+    padding: 18px;
+    text-align: left;
+    box-shadow: 0 8px 18px rgba(0,0,0,.06);
+    transition: .25s;
 }
 
-.issue-item.waiting{
-
-    border-left:8px solid #24a148;
-
+.issue-item.waiting {
+    background: #f2fff6;
+    border-color: #9ad8aa;
+    border-left: 8px solid #24a148;
 }
 
-.issue-item.issued{
-
-    border-left:8px solid #d93025;
-
-    opacity:.75;
-
+.issue-item.issued {
+    background: #fff4f3;
+    border-color: #e4aaa6;
+    border-left: 8px solid #d93025;
+    opacity: 1;
 }
+
+/* Zväčšené meno zamestnanca s ochranou proti pretečeniu */
 .issue-name {
     font-size: 23px;
     font-weight: 800;
@@ -689,55 +579,45 @@ select:focus-visible {
     text-overflow: ellipsis;
     max-width: 100%;
 }
-.issue-menu{
 
-    font-size:15px;
-
-    line-height:1.35;
-
-    margin-left:22px;
-
+.issue-menu {
+    font-size: 15px;
+    line-height: 1.35;
+    margin-left: 22px;
 }
 
-.issue-type{
-
-    font-weight:700;
-
-    margin-bottom:4px;
-
-    color:inherit;
-
-    font-size:15px;
-
-}
-.issue-meal-row{
-    padding:10px 0;
-    border-top:1px solid var(--border);
+.issue-type {
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: inherit;
+    font-size: 15px;
 }
 
-.issue-meal-row:first-of-type{
-    border-top:0;
+.issue-meal-row {
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
 }
 
-.issue-status{
-    margin-top:14px;
-    padding-top:12px;
-    border-top:1px solid var(--border);
-    font-size:14px;
-    font-weight:800;
+.issue-meal-row:first-of-type {
+    border-top: 0;
 }
 
-.issue-item.waiting{
-    background:#f2fff6;
-    border-color:#9ad8aa;
+.issue-status {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 800;
 }
 
-.issue-item.issued{
-    background:#fff4f3;
-    border-color:#e4aaa6;
-    opacity:1;
-}
-.email-modal {
+/* =====================================
+   MODÁLNE OKNÁ
+===================================== */
+
+.email-modal,
+#resetPinModal,
+#orderSuccessModal,
+#issueResultModal {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.45);
@@ -748,15 +628,21 @@ select:focus-visible {
     z-index: 1000;
 }
 
-#emailModal[hidden] {
+#emailModal[hidden],
+#pinModal[hidden],
+#resetPinModal[hidden],
+#orderSuccessModal[hidden],
+#issueResultModal[hidden] {
     display: none !important;
 }
 
 #emailModal .modal-content,
-#pinModal .modal-content {
+#pinModal .modal-content,
+#resetPinModal .reset-pin-box,
+#orderSuccessModal .order-success-content,
+#issueResultModal .issue-result-content {
     background: #ffffff;
-    width: calc(100% - 40px);
-    max-width: 460px;
+    width: min(90vw, 460px);
     padding: 24px;
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -792,10 +678,7 @@ select:focus-visible {
 .modal-actions button {
     flex: 1;
 }
-#emailModal[hidden],
-#pinModal[hidden] {
-    display: none !important;
-}
+
 .link-button {
     background: none;
     border: none;
@@ -809,85 +692,16 @@ select:focus-visible {
 .link-button:hover {
     color: #084298;
 }
-/* Obnova PIN-u */
-
-#resetPinModal {
-    position: fixed;
-    inset: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: rgba(0, 0, 0, 0.45);
-    z-index: 9999;
-}
-
-#resetPinModal[hidden] {
-    display: none;
-}
-
-#resetPinModal .reset-pin-box {
-    width: 380px;
-    max-width: calc(100% - 40px);
-
-    background: #fff;
-    padding: 24px;
-    border-radius: 16px;
-
-    box-shadow: 0 12px 35px rgba(0,0,0,.25);
-}
-[hidden] {
-    display: none !important;
-}
-
-/* OKNO PO ÚSPEŠNOM ULOŽENÍ OBJEDNÁVKY */
-
-#orderSuccessModal {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.45);
-}
-
-#orderSuccessModal[hidden] {
-    display: none !important;
-}
-
-#orderSuccessModal .order-success-content {
-    width: min(90vw, 420px);
-    margin: 0;
-    padding: 32px 24px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-
-    text-align: center;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-}
 
 .order-success-icon {
     width: 64px;
     height: 64px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 50%;
     background: #e8f7ed;
     color: #16803c;
-
     font-size: 40px;
     font-weight: 700;
 }
@@ -897,42 +711,6 @@ select:focus-visible {
     font-size: 1.35rem;
     font-weight: 700;
     line-height: 1.4;
-}
-/* =====================================
-   MODAL VÝDAJA OBEDA
-===================================== */
-
-#issueResultModal {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.45);
-}
-
-#issueResultModal[hidden] {
-    display: none !important;
-}
-
-#issueResultModal .issue-result-content {
-    width: min(90vw, 500px);
-    margin: 0;
-    padding: 32px 26px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
-
-    text-align: center;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
 }
 
 .issue-result-icon {
@@ -956,6 +734,7 @@ select:focus-visible {
     font-size: 1.3rem;
     font-weight: 700;
 }
+
 /* ==========================
    VÝBER TÝŽDŇA
 ========================== */
@@ -1006,6 +785,7 @@ select:focus-visible {
     margin-top: 12px;
     font-weight: 600;
 }
+
 .week-order-meal {
     margin-top: 14px;
 }
@@ -1021,6 +801,7 @@ select:focus-visible {
 
 .week-menu-name {
     line-height: 1.35;
+    margin-left: 22px;
 }
 
 .week-order-details {
@@ -1030,6 +811,7 @@ select:focus-visible {
 .week-order-details + .status {
     margin-top: 22px;
 }
+
 .status.closed {
     display: inline-block;
     width: fit-content;
@@ -1040,9 +822,7 @@ select:focus-visible {
     font-weight: 700;
     font-size: 0.95rem;
 }
-.week-menu-name {
-    margin-left: 22px;
-}
+
 /* =====================================
    MESAČNÝ VÝKAZ OBEDOV
 ===================================== */
@@ -1078,16 +858,6 @@ select:focus-visible {
     font-weight: 700;
 }
 
-@media (max-width: 700px) {
-
-    .monthly-report-row {
-        grid-template-columns: 140px 1fr 90px;
-        gap: 10px;
-        padding: 12px;
-        font-size: 0.9rem;
-    }
-
-}
 /* =========================================
    ADMINISTRÁCIA
 ========================================= */
@@ -1105,7 +875,6 @@ select:focus-visible {
 #adminEmployeesScreen > .back-button,
 #adminWeeklyMenuScreen > .back-button,
 #adminEmailOrdersScreen > .back-button {
-   
     display: block;
     width: 100%;
     margin: 0 0 12px;
@@ -1127,21 +896,16 @@ select:focus-visible {
     text-align: left;
 }
 
-
-/* HLAVNÁ ADMINISTRÁCIA */
-
 #adminScreen .admin-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
     justify-content: start;
 }
+
 #adminScreen .home-card {
     width: 100%;
 }
-
-
-/* HORNÉ TLAČIDLÁ ZAMESTNANCOV */
 
 #adminEmployeesScreen .admin-toolbar {
     display: flex;
@@ -1149,10 +913,8 @@ select:focus-visible {
     justify-content: flex-start;
     align-items: center;
     gap: 16px;
-
     margin: 0 0 24px;
     padding-bottom: 22px;
-
     border-bottom: 1px solid #e5eaf3;
 }
 
@@ -1161,54 +923,39 @@ select:focus-visible {
     width: auto;
     min-width: 0;
     min-height: 48px;
-
     margin: 0;
     padding: 11px 18px;
-
     border-radius: 14px;
-
     font-size: 16px;
     line-height: 1.2;
     white-space: nowrap;
 }
+
 #adminEmployeesScreen #addEmployeeButton {
     min-width: 250px;
 }
 
-/* VYHĽADÁVANIE */
-
 #adminEmployeesSearch {
     display: block;
-
     width: 100%;
     max-width: 255px;
     height: 50px;
-
     margin: 0 0 26px;
-    margin-left: 0;
-
     padding: 0 15px;
-
     border: 1px solid var(--border);
     border-radius: 14px;
-
     background: #ffffff;
 }
+
 #adminEmployeesSearch:focus-visible {
     outline: 3px solid rgba(47, 102, 173, 0.18);
     outline-offset: -3px;
     border-color: var(--tmv-blue);
 }
 
-/* KARTY ZAMESTNANCOV */
-
 #adminEmployeesContainer {
     display: grid;
-    grid-template-columns: repeat(
-        2,
-        minmax(0, 1fr)
-    );
-
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
     margin-top: 0;
 }
@@ -1220,24 +967,20 @@ select:focus-visible {
 
 .admin-employee-card {
     padding: 22px;
-
     background: #ffffff;
     border: 1px solid #dbe4ef;
     border-radius: 18px;
-
     box-shadow: 0 8px 24px rgba(0, 45, 95, 0.08);
 }
 
 .admin-employee-card h3 {
     margin: 0 0 18px;
-
     color: #1f5c9e;
     font-size: 24px;
 }
 
 .admin-employee-card p {
     margin: 10px 0;
-
     color: #24282f;
     font-size: 16px;
     line-height: 1.45;
@@ -1250,7 +993,6 @@ select:focus-visible {
 .admin-employee-actions {
     display: flex;
     justify-content: flex-start;
-
     margin-top: 18px;
 }
 
@@ -1259,20 +1001,16 @@ select:focus-visible {
     min-width: 120px;
 }
 
-
 /* MODAL ZAMESTNANCA */
 
 #employeeModal {
     position: fixed;
     inset: 0;
     z-index: 9999;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 24px;
-
     background: rgba(15, 23, 42, 0.72);
     backdrop-filter: blur(6px);
 }
@@ -1285,14 +1023,10 @@ select:focus-visible {
     width: 100%;
     max-width: 560px;
     max-height: 90vh;
-
     overflow-y: auto;
-
     padding: 30px;
-
     background: #ffffff;
     border-radius: 22px;
-
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
 }
 
@@ -1303,9 +1037,7 @@ select:focus-visible {
 
 #employeeModal label {
     display: block;
-
     margin: 14px 0 6px;
-
     font-weight: 600;
 }
 
@@ -1313,22 +1045,17 @@ select:focus-visible {
 #employeeModal select {
     width: 100%;
     min-height: 48px;
-
     margin-bottom: 8px;
     padding: 10px 14px;
-
     border: 1px solid #cbd5e1;
     border-radius: 12px;
-
     font-size: 16px;
 }
-
 
 #employeeModal .modal-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
-
     margin-top: 24px;
 }
 
@@ -1336,54 +1063,15 @@ select:focus-visible {
     width: 100%;
 }
 
-
-/* MOBIL */
-
-@media (max-width: 620px) {
-
-  #adminScreen,
-#adminEmployeesScreen,
-#adminWeeklyMenuScreen {
-    width: min(100% - 22px, 540px);
-}
-
-    #adminScreen .content-card,
-#adminEmployeesScreen .content-card,
-#adminWeeklyMenuScreen .content-card {
-    padding: 22px;
-}
-
-    #adminEmployeesScreen .admin-toolbar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    #adminEmployeesScreen #importEmployeesButton,
-    #adminEmployeesScreen #addEmployeeButton {
-        width: 100%;
-    }
-
-    #adminEmployeesContainer,
-    #adminEmployeesContainer.single-result {
-        grid-template-columns: 1fr;
-    }
-}
 #deactivateEmployeeWrapper {
     display: flex;
     align-items: center;
     gap: 12px;
-
-    margin: 20px 0 6px;
+    margin: 18px 0 12px;
     padding: 14px 16px;
-
     border: 1px solid #dbe4ef;
     border-radius: 14px;
-
     background: #f8fbff;
-
-    color: #1f2937;
-    font-weight: 700;
-
     cursor: pointer;
 }
 
@@ -1391,60 +1079,49 @@ select:focus-visible {
     display: none !important;
 }
 
-#employeeModal #deactivateEmployeeCheckbox {
-    width: 20px;
-    height: 20px;
-    min-height: 0;
-
+#deactivateEmployeeWrapper label {
     margin: 0;
-    padding: 0;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
 
+#employeeModal #deactivateEmployeeCheckbox {
+    width: 22px !important;
+    height: 22px !important;
+    margin: 0 !important;
     flex: 0 0 auto;
-
     accent-color: var(--tmv-blue);
     cursor: pointer;
 }
-#deactivateEmployeeWrapper {
 
-    display: flex;
-    align-items: center;
-
-    gap: 12px;
-
-    margin: 18px 0 12px;
-
-    padding: 14px 16px;
-
-    border: 1px solid #dbe4ef;
-    border-radius: 14px;
-
-    background: #f8fbff;
-
-    cursor: pointer;
-
+#employeeModal select#employeeRoleInput {
+    display: block !important;
+    width: 100% !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    margin: 0 0 16px !important;
+    padding: 0 48px 0 16px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 14px !important;
+    background-color: #ffffff !important;
+    color: #202631 !important;
+    font-size: 18px !important;
+    box-sizing: border-box !important;
+    appearance: none !important;
+    background-image: linear-gradient(45deg, transparent 50%, #64748b 50%), linear-gradient(135deg, #64748b 50%, transparent 50%) !important;
+    background-position: calc(100% - 20px) 27px, calc(100% - 14px) 27px !important;
+    background-size: 6px 6px, 6px 6px !important;
+    background-repeat: no-repeat !important;
 }
 
-#deactivateEmployeeWrapper label {
-
-    margin: 0;
-
-    font-size: 18px;
-    font-weight: 600;
-
-    cursor: pointer;
-
+#employeeModal select#employeeRoleInput option {
+    color: #202631;
+    background-color: #ffffff;
 }
 
-#employeeModal #deactivateEmployeeCheckbox {
+/* TÝŽDENNÉ MENU ADMIN */
 
-    width: 22px !important;
-    height: 22px !important;
-
-    margin: 0 !important;
-
-    flex: 0 0 auto;
-
-}
 .weekly-menu-edit-form {
     margin-top: 28px;
 }
@@ -1465,17 +1142,13 @@ select:focus-visible {
     width: 100%;
     min-height: 56px;
     padding: 10px 12px;
-
     border: 1px solid var(--border);
     border-radius: 14px;
-
     background: #ffffff;
     color: var(--text);
-
     font-size: 15px;
     line-height: 1.35;
     font-family: inherit;
-
     resize: vertical;
     box-sizing: border-box;
 }
@@ -1484,43 +1157,28 @@ select:focus-visible {
     outline: 3px solid rgba(47, 102, 173, 0.16);
     border-color: var(--tmv-blue);
 }
-@media (max-width: 600px) {
-    #weeklyMenuAccordion textarea {
-        min-height: 110px;
-        font-size: 17px;
-        line-height: 1.4;
-    }
-}
+
 #saveWeeklyMenuButton {
     margin-top: 26px;
 }
+
 .weekly-menu-day {
     margin-top: 16px;
-
     border: 1px solid var(--border);
     border-radius: 16px;
-
     overflow: hidden;
-
     background: #ffffff;
 }
 
 .weekly-menu-day summary {
-
     list-style: none;
     cursor: pointer;
-
     padding: 14px 18px;
-
     background: #f5f8fc;
-
     color: var(--tmv-blue-dark);
-
     font-size: 18px;
     font-weight: 700;
-
     user-select: none;
-
 }
 
 .weekly-menu-day summary::-webkit-details-marker {
@@ -1528,45 +1186,33 @@ select:focus-visible {
 }
 
 .weekly-menu-day summary::after {
-
     content: "⌄";
-
     float: right;
-
     font-size: 22px;
-
     transition: .2s;
-
 }
 
 .weekly-menu-day[open] summary::after {
-
     transform: rotate(180deg);
-
 }
 
 .weekly-menu-day-content {
-
     display: flex;
     flex-direction: column;
-
     gap: 14px;
-
     padding: 20px;
-
 }
+
 .weekly-menu-week-picker {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-
     margin: 26px 0 20px;
 }
 
 .weekly-menu-week-picker label {
     display: block;
     margin-bottom: 7px;
-
     color: var(--text);
     font-weight: 700;
 }
@@ -1574,15 +1220,11 @@ select:focus-visible {
 .weekly-menu-week-picker input {
     width: 100%;
     height: 52px;
-
     padding: 0 14px;
-
     border: 1px solid var(--border);
     border-radius: 14px;
-
     background: #ffffff;
     color: var(--text);
-
     font: inherit;
 }
 
@@ -1590,110 +1232,107 @@ select:focus-visible {
     background: #f3f6fa;
 }
 
-@media (max-width: 620px) {
-
-    .weekly-menu-week-picker {
-        grid-template-columns: 1fr;
-    }
-
+#weeklyMenuMessage {
+    margin-top: 18px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: #e8f7ed;
+    color: #16803c;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
 }
-.small-modal {
 
+.small-modal {
     max-width: 420px;
     text-align: center;
-
 }
 
 .small-modal p {
-
     margin: 20px 0;
-
 }
+
+/* =========================================
+   RESPONSÍVNE PRAVIDLÁ (MOBIL)
+========================================= */
+
 @media (max-width: 768px) {
-
     .admin-grid {
-
-        display: grid;
         grid-template-columns: 1fr;
         gap: 20px;
-
     }
-
     .admin-card {
-
         width: 100%;
         min-width: 0;
-
     }
-
 }
-/* ADMINISTRÁCIA – MOBIL */
 
 @media (max-width: 620px) {
-
-    #adminScreen {
-        width: min(100% - 24px, 540px);
+    .app-wrapper {
+        width: min(100% - 22px, 540px);
+        padding-top: 20px;
     }
 
-    #adminScreen .content-card {
-        padding: 24px 18px;
-        border-radius: 24px;
+    .app-header {
+        margin-bottom: 12px;
     }
 
-    #adminScreen .content-card h2 {
-        margin-bottom: 24px;
-        font-size: 38px;
-        line-height: 1.1;
-    }
-
-    #adminScreen .admin-grid {
+    .home-grid {
         grid-template-columns: 1fr;
-        gap: 16px;
+        gap: 13px;
     }
 
-    #adminScreen .home-card {
-        width: 100%;
-        min-height: 150px;
+    .home-card {
+        min-height: 135px;
         padding: 20px;
-        border-radius: 22px;
+        display: grid;
+        grid-template-columns: 54px 1fr;
+        grid-template-rows: auto auto;
+        column-gap: 15px;
+        align-items: center;
     }
 
-    #adminScreen .home-icon {
-        width: 52px;
-        height: 52px;
-        margin-bottom: 14px;
-        font-size: 26px;
+    .home-icon {
+        grid-row: 1 / 3;
+        width: 54px;
+        height: 54px;
+        margin: 0;
     }
 
-    #adminScreen .home-title {
-        margin-bottom: 6px;
-        font-size: 22px;
+    .home-title {
+        margin: 0;
+        font-size: 21px;
     }
 
-    #adminScreen .home-description {
-        font-size: 15px;
-        line-height: 1.4;
+    .home-description {
+        align-self: start;
     }
-}
-/* ADMINISTRÁCIA – TELEFÓN */
 
-@media (max-width: 620px) {
+    .content-card {
+        padding: 22px;
+    }
 
-    #adminScreen {
+    .menu-options {
+        grid-template-columns: 1fr;
+    }
+
+    #adminScreen,
+    #adminEmployeesScreen,
+    #adminWeeklyMenuScreen {
         width: calc(100% - 24px);
         max-width: 540px;
-        margin: 0 auto;
-        padding: 0;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 0 40px;
     }
 
-    #adminScreen .back-button {
-        margin-left: 0;
-    }
-
-    #adminScreen .content-card {
+    #adminScreen .content-card,
+    #adminEmployeesScreen .content-card,
+    #adminWeeklyMenuScreen .content-card {
         width: 100%;
         padding: 22px 16px;
         border-radius: 24px;
+        box-sizing: border-box;
         overflow: hidden;
     }
 
@@ -1704,1138 +1343,38 @@ select:focus-visible {
     }
 
     #adminScreen .admin-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: 1fr;
         gap: 16px;
-        width: 100%;
     }
 
     #adminScreen .home-card {
-        width: 100%;
-        min-width: 0;
         min-height: 145px;
         padding: 20px;
         border-radius: 22px;
     }
 
-    #adminScreen .home-icon {
-        width: 50px;
-        height: 50px;
-        margin-bottom: 14px;
-        font-size: 25px;
+    #adminEmployeesScreen .admin-toolbar {
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    #adminScreen .home-title {
-        margin-bottom: 6px;
-        font-size: 22px;
+    #adminEmployeesScreen #importEmployeesButton,
+    #adminEmployeesScreen #addEmployeeButton {
+        width: 100%;
     }
 
-    #adminScreen .home-description {
-        font-size: 15px;
+    #adminEmployeesContainer,
+    #adminEmployeesContainer.single-result {
+        grid-template-columns: 1fr;
+    }
+
+    .weekly-menu-week-picker {
+        grid-template-columns: 1fr;
+    }
+
+    #weeklyMenuAccordion textarea {
+        min-height: 110px;
+        font-size: 17px;
         line-height: 1.4;
     }
-
 }
-#employeeModal select#employeeRoleInput {
-    display: block !important;
-    width: 100% !important;
-
-    height: 60px !important;
-    min-height: 60px !important;
-
-    margin: 0 0 16px !important;
-    padding: 0 48px 0 16px !important;
-
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 14px !important;
-
-    background-color: #ffffff !important;
-    color: #202631 !important;
-
-    font-size: 18px !important;
-    line-height: normal !important;
-
-    box-sizing: border-box !important;
-
-    -webkit-appearance: none !important;
-    appearance: none !important;
-
-    background-image:
-        linear-gradient(45deg, transparent 50%, #64748b 50%),
-        linear-gradient(135deg, #64748b 50%, transparent 50%) !important;
-
-    background-position:
-        calc(100% - 20px) 27px,
-        calc(100% - 14px) 27px !important;
-
-    background-size:
-        6px 6px,
-        6px 6px !important;
-
-    background-repeat: no-repeat !important;
-}
-
-#employeeModal select#employeeRoleInput option {
-    color: #202631;
-    background-color: #ffffff;
-}
-#weeklyMenuMessage {
-
-    margin-top: 18px;
-
-    padding: 14px 18px;
-
-    border-radius: 14px;
-
-    background: #e8f7ed;
-    color: #16803c;
-
-    font-size: 18px;
-    font-weight: 700;
-
-    text-align: center;
-
-}
-/* ADMIN OBRAZOVKY – SPRÁVNE OKRAJE NA TELEFÓNE */
-
-@media (max-width: 620px) {
-
-    #adminScreen,
-    #adminEmployeesScreen,
-    #adminWeeklyMenuScreen {
-        width: calc(100% - 24px);
-        max-width: 540px;
-
-        margin-left: auto;
-        margin-right: auto;
-
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-    #adminScreen .content-card,
-    #adminEmployeesScreen .content-card,
-    #adminWeeklyMenuScreen .content-card {
-        width: 100%;
-        max-width: 100%;
-
-        margin-left: 0;
-        margin-right: 0;
-
-        padding: 22px 16px;
-
-        overflow: hidden;
-        box-sizing: border-box;
-    }
-
-    #adminWeeklyMenuScreen .weekly-menu-week-picker,
-    #adminWeeklyMenuScreen .weekly-menu-day,
-    #adminWeeklyMenuScreen #downloadWeeklyMenuButton,
-    #adminWeeklyMenuScreen #saveWeeklyMenuButton {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-}
-
-/* TÝŽDENNÉ MENU – MOBILNÉ ROZLOŽENIE */
-
-@media (max-width: 620px) {
-
-    #adminWeeklyMenuScreen {
-        width: calc(100vw - 24px) !important;
-        max-width: 540px !important;
-
-        margin-left: auto !important;
-        margin-right: auto !important;
-        padding: 0 0 40px !important;
-
-        box-sizing: border-box !important;
-    }
-
-    #adminWeeklyMenuScreen > .back-button {
-        width: 100% !important;
-        margin: 0 0 14px !important;
-        padding-left: 4px !important;
-        text-align: left !important;
-    }
-
-    #adminWeeklyMenuScreen .content-card {
-        width: 100% !important;
-        max-width: 100% !important;
-
-        margin: 0 !important;
-        padding: 26px 20px !important;
-
-        border-radius: 24px !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-    }
-
-    #adminWeeklyMenuScreen .content-card h2 {
-        margin: 0 0 28px !important;
-
-        font-size: 36px !important;
-        line-height: 1.1 !important;
-    }
-
-    #adminWeeklyMenuScreen .weekly-menu-week-picker {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-        gap: 14px !important;
-
-        width: 100% !important;
-        margin: 0 0 20px !important;
-    }
-
-    #adminWeeklyMenuScreen .weekly-menu-week-picker > div {
-        width: 100% !important;
-        min-width: 0 !important;
-    }
-
-    #adminWeeklyMenuScreen .weekly-menu-week-picker label {
-        display: block !important;
-        margin: 0 0 8px !important;
-
-        font-size: 17px !important;
-        font-weight: 700 !important;
-    }
-
-    #adminWeeklyMenuScreen .weekly-menu-week-picker input {
-        display: block !important;
-
-        width: 100% !important;
-        min-width: 0 !important;
-        max-width: 100% !important;
-        height: 54px !important;
-
-        margin: 0 !important;
-        padding: 0 8px !important;
-
-        border-radius: 14px !important;
-
-        font-size: 16px !important;
-        text-align: center !important;
-
-        box-sizing: border-box !important;
-    }
-
-    #adminWeeklyMenuScreen #downloadWeeklyMenuButton,
-    #adminWeeklyMenuScreen #saveWeeklyMenuButton {
-        width: 100% !important;
-        max-width: 100% !important;
-
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-
-        box-sizing: border-box !important;
-    }
-
-}
-#messageModal {
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-
-    background: rgba(0,0,0,.45);
-    backdrop-filter: blur(4px);
-}
-
-#messageModal[hidden]{
-    display:none !important;
-}
-
-#messageModal .modal-content{
-
-    width:min(90vw,420px);
-
-    background:#fff;
-
-    border-radius:22px;
-
-    padding:30px 24px;
-
-    text-align:center;
-
-    box-shadow:0 24px 60px rgba(0,0,0,.28);
-
-}
-
-#messageModal h3{
-
-    margin:0 0 16px;
-
-    color:#16803c;
-
-    font-size:32px;
-
-}
-
-#messageModal p{
-
-    margin:0 0 24px;
-
-    font-size:18px;
-
-}
-
-#messageModal .modal-actions{
-
-    margin-top:0;
-
-}
-
-#messageModal button{
-
-    width:100%;
-
-}
-/* STAV VÝDAJA – MOBIL */
-
-@media (max-width: 620px) {
-
-    #dashboardScreen {
-        width: calc(100% - 24px);
-        max-width: 540px;
-        margin: 0 auto;
-    }
-
-    #dashboardScreen .content-card {
-        width: 100%;
-        padding: 22px 16px;
-        overflow: hidden;
-        box-sizing: border-box;
-    }
-#dashboardScreen .content-card h2 {
-    margin-bottom: 20px;
-    font-size: 28px;
-    line-height: 1.2;
-}
-
-    #dashboardScreen .issue-stats {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-        width: 100%;
-        margin-bottom: 22px;
-    }
-
-    #dashboardScreen .stat-card {
-    min-width: 0;
-    min-height: 110px;
-    padding: 14px 10px;
-
-    text-align: center;
-    box-sizing: border-box;
-}
-
-    #dashboardScreen .stat-number {
-        font-size: 34px;
-    }
-
-    #dashboardScreen .stat-label {
-        margin-top: 8px;
-        font-size: 15px;
-        line-height: 1.25;
-        overflow-wrap: anywhere;
-    }
-
-    #dashboardScreen .issue-cards {
-        grid-template-columns: 1fr;
-        gap: 14px;
-    }
-
-    #dashboardScreen .issue-item {
-        width: 100%;
-        min-width: 0;
-        padding: 18px;
-        box-sizing: border-box;
-    }
-
-    #dashboardScreen .issue-name {
-        font-size: 23px;
-        overflow-wrap: anywhere;
-    }
-
-    #dashboardScreen .issue-menu {
-        margin-left: 0;
-        font-size: 16px;
-        line-height: 1.45;
-        overflow-wrap: anywhere;
-    }
-
-    #dashboardScreen .issue-type {
-        font-size: 17px;
-    }
-
-}
-.my-order-details {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 6px;
-}
-
-.my-order-issued {
-    display: inline-block;
-    padding: 4px 9px;
-
-    border-radius: 999px;
-
-    background: #fde8e7;
-    color: #b42318;
-
-    font-size: 14px;
-    font-weight: 800;
-}
-/* Odhlásenie na hlavnej obrazovke */
-
-.home-logout {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 12px;
-}
-
-.home-logout-button {
-    background: transparent;
-    border: none;
-    color: #2f65ad;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    padding: 8px 12px;
-}
-/* STAV VÝDAJA – kompaktnejšie objednávky na mobile */
-
-@media (max-width: 620px) {
-
-    #dashboardScreen .issue-item {
-        padding: 14px 16px;
-    }
-
-    #dashboardScreen .issue-name {
-        margin-bottom: 5px;
-    }
-
-    #dashboardScreen .issue-meal-row {
-        padding: 6px 0;
-    }
-
-    #dashboardScreen .issue-type {
-        margin-bottom: 2px;
-    }
-
-    #dashboardScreen .issue-status {
-        margin-top: 8px;
-        padding-top: 8px;
-    }
-}
-/* =====================================
-   STAV VÝDAJA – DNEŠNÁ OBJEDNÁVKA
-===================================== */
-
-.today-menu-summary {
-    margin: 0 0 28px;
-    padding: 20px;
-
-    background: #f8fbff;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-}
-
-.today-menu-summary-title {
-    margin-bottom: 8px;
-
-    color: var(--tmv-blue-dark);
-    font-size: 21px;
-    font-weight: 800;
-}
-
-.today-menu-total {
-    margin-bottom: 16px;
-    font-size: 18px;
-}
-
-.today-menu-list {
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 0;
-}
-
-.today-menu-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-
-    padding: 6px 0;
-    font-size: 16px;
-}
-
-.today-menu-serving {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 24px;
-
-    margin-top: 14px;
-    font-size: 15px;
-}
-.today-menu-date {
-    margin-top: -4px;
-    margin-bottom: 14px;
-    color: var(--text-soft);
-    font-size: 15px;
-    font-weight: 600;
-}
-/* Výdaj obedov – dlhý text musí zostať v karte */
-
-#dashboardScreen .issue-meal-name {
-    overflow-wrap: anywhere;
-    word-break: normal;
-    max-width: 100%;
-}
-/* Tlačidlo "Vydať osobne" v stave výdaja */
-
-.manual-issue-card-button {
-    width: 100%;
-
-    margin-top: 8px;
-    padding: 12px 16px;
-
-    border: none;
-    border-radius: 14px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--tmv-blue),
-            var(--tmv-blue-dark)
-        );
-
-    color: #ffffff;
-
-    font-size: 16px;
-    font-weight: 800;
-
-    box-shadow:
-        0 8px 18px
-        rgba(47, 102, 173, 0.22);
-
-    cursor: pointer;
-
-    transition:
-        transform 0.16s ease,
-        filter 0.16s ease;
-}
-
-.manual-issue-card-button:hover {
-    filter: brightness(1.04);
-    transform: translateY(-1px);
-}
-
-.manual-issue-card-button:active {
-    transform: scale(0.98);
-}
-
-.manual-issue-card-button:disabled {
-    opacity: 0.65;
-    cursor: default;
-    transform: none;
-}
-/* Výdaj obedov – správne zalamovanie dlhého názvu jedla */
-
-#dashboardScreen .issue-menu {
-    max-width: 100%;
-    min-width: 0;
-
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    white-space: normal;
-}
-/* =====================================
-   MOJE OBEDY – PREHĽAD JEDÁL
-===================================== */
-
-.my-order-item {
-    padding: 14px 0;
-    border-top: 1px solid var(--border);
-}
-
-.my-order-item:first-child {
-    border-top: 0;
-    padding-top: 6px;
-}
-
-.my-order-top-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px 12px;
-    margin-bottom: 8px;
-}
-
-.my-order-method {
-    font-size: 17px;
-    font-weight: 700;
-}
-
-.my-order-meal-name {
-    font-size: 17px;
-    line-height: 1.45;
-    font-weight: 500;
-    overflow-wrap: anywhere;
-}
-
-.my-order-status {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 800;
-}
-
-.my-order-status.issued {
-    background: #fde8e7;
-    color: #b42318;
-}
-
-.my-order-status.waiting {
-    background: #e8f7ed;
-    color: #16803c;
-}
-/* =====================================
-   ODOSIELANIE OBJEDNÁVOK – VEĽKOSŤ OKNA
-===================================== */
-
-#adminEmailOrdersScreen {
-    width: min(100% - 28px, 760px);
-    margin: 0 auto;
-    padding-bottom: 48px;
-}
-
-#adminEmailOrdersScreen > .back-button {
-    display: block;
-    width: 100%;
-    margin: 0 0 12px;
-    padding: 8px 2px;
-    text-align: left;
-}
-
-#adminEmailOrdersScreen .content-card {
-    width: 100%;
-    margin: 0;
-    padding: 28px;
-}
-
-@media (max-width: 620px) {
-    #adminEmailOrdersScreen {
-        width: calc(100% - 24px);
-        max-width: 540px;
-        margin: 0 auto;
-    }
-
-    #adminEmailOrdersScreen .content-card {
-        width: 100%;
-        padding: 22px 16px;
-        box-sizing: border-box;
-    }
-}
-
-/* =====================================
-   ADMIN KARTY – OPRAVA ROZLOŽENIA
-===================================== */
-
-#adminScreen .admin-grid {
-    display: grid !important;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr)) !important;
-
-    gap: 16px !important;
-
-    width: 100% !important;
-}
-
-#adminScreen .home-card {
-    width: 100% !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-}
-
-#adminScreen .home-icon {
-    flex: 0 0 auto;
-}
-
-@media (max-width: 620px) {
-
-    #adminScreen .admin-grid {
-        grid-template-columns: 1fr !important;
-    }
-
-}
-/* =====================================
-   HISTÓRIA OBJEDNÁVOK – RIADKY
-===================================== */
-
-#orderEmailHistory {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 14px !important;
-    margin-top: 20px !important;
-}
-
-#orderEmailHistory .order-email-history-item {
-    display: grid !important;
-
-    grid-template-columns:
-        1.2fr
-        0.9fr
-        1fr
-        1.5fr !important;
-
-    align-items: center !important;
-
-    width: 100% !important;
-    box-sizing: border-box !important;
-
-    padding: 18px 20px !important;
-    margin: 0 !important;
-
-    background: #f8fbff !important;
-    border: 1px solid #d9e4f2 !important;
-    border-radius: 16px !important;
-
-    box-shadow:
-        0 4px 14px
-        rgba(30, 70, 110, 0.06) !important;
-}
-
-#orderEmailHistory .history-col {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-
-    gap: 7px !important;
-
-    min-width: 0 !important;
-
-    padding: 0 18px !important;
-
-    border-left:
-        1px solid #d9e4f2 !important;
-
-    font-size: 15px !important;
-    line-height: 1.4 !important;
-}
-
-#orderEmailHistory .history-col:first-child {
-    border-left: none !important;
-    padding-left: 0 !important;
-}
-
-#orderEmailHistory .history-col:last-child {
-    padding-right: 0 !important;
-}
-
-#orderEmailHistory .history-date {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-
-    gap: 10px !important;
-}
-
-#orderEmailHistory .history-date strong {
-    color: #24558f !important;
-    font-size: 17px !important;
-}
-
-#orderEmailHistory .history-icon {
-    font-size: 22px !important;
-    flex-shrink: 0 !important;
-}
-
-#orderEmailHistory .history-status {
-    margin-top: 5px !important;
-    white-space: nowrap !important;
-}
-
-#orderEmailHistory .history-email {
-    overflow-wrap: anywhere !important;
-}
-
-
-/* TABLET */
-
-@media (max-width: 800px) {
-
-    #orderEmailHistory .order-email-history-item {
-        grid-template-columns:
-            1fr 1fr !important;
-
-        row-gap: 16px !important;
-    }
-
-    #orderEmailHistory .history-col {
-        border-left: none !important;
-        padding: 0 !important;
-    }
-}
-
-
-/* MOBIL */
-
-@media (max-width: 520px) {
-
-    #orderEmailHistory .order-email-history-item {
-        grid-template-columns:
-            1fr !important;
-
-        gap: 12px !important;
-    }
-}
-/* =====================================
-   ADMINISTRÁCIA – KARTY VEDĽA SEBA
-===================================== */
-
-.admin-menu,
-.admin-grid,
-.admin-cards {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 22px !important;
-    width: 100% !important;
-    align-items: stretch !important;
-}
-
-/* jednotlivé karty */
-.admin-menu > *,
-.admin-grid > *,
-.admin-cards > * {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
-}
-
-/* tablet – 2 vedľa seba */
-@media (max-width: 900px) {
-    .admin-menu,
-    .admin-grid,
-    .admin-cards {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    }
-}
-
-/* mobil – pod sebou */
-@media (max-width: 600px) {
-    .admin-menu,
-    .admin-grid,
-    .admin-cards {
-        grid-template-columns: 1fr !important;
-    }
-}
-/* =====================================
-   HISTÓRIA OBJEDNÁVOK – DESKTOP OPRAVA
-===================================== */
-
-@media (min-width: 901px) {
-
-    #orderEmailHistory .order-email-history-item {
-        display: grid !important;
-        grid-template-columns:
-            1.15fr
-            0.95fr
-            1fr
-            1.4fr !important;
-
-        align-items: center !important;
-        gap: 0 !important;
-
-        width: 100% !important;
-        box-sizing: border-box !important;
-
-        padding: 18px 20px !important;
-        margin: 0 0 14px 0 !important;
-
-        background: #f8fbff !important;
-        border: 1px solid #d9e4f2 !important;
-        border-radius: 16px !important;
-
-        box-shadow:
-            0 4px 14px rgba(30, 70, 110, 0.06) !important;
-    }
-
-    #orderEmailHistory .history-col {
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-
-        gap: 8px !important;
-
-        min-width: 0 !important;
-
-        padding: 0 18px !important;
-
-        border-left: 1px solid #d9e4f2 !important;
-
-        font-size: 15px !important;
-        line-height: 1.4 !important;
-    }
-
-    #orderEmailHistory .history-col:first-child {
-        border-left: 0 !important;
-        padding-left: 0 !important;
-    }
-
-    #orderEmailHistory .history-col:last-child {
-        padding-right: 0 !important;
-    }
-
-    #orderEmailHistory .history-date {
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        gap: 10px !important;
-    }
-
-    #orderEmailHistory .history-icon {
-        font-size: 22px !important;
-        flex-shrink: 0 !important;
-    }
-
-    #orderEmailHistory .history-email {
-        overflow-wrap: anywhere !important;
-    }
-}
-/* =====================================
-   HISTÓRIA ODOSLANÝCH OBJEDNÁVOK
-===================================== */
-
-#orderEmailHistory {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    width: 100%;
-    margin-top: 20px;
-}
-
-#orderEmailHistory .order-email-history-item {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr 1fr 1.5fr;
-    align-items: center;
-
-    width: 100%;
-    margin: 0;
-    padding: 18px 22px;
-
-    box-sizing: border-box;
-
-    background: #f7faff;
-    border: 1px solid #d9e4f2;
-    border-radius: 18px;
-
-    box-shadow: 0 4px 14px rgba(30, 70, 110, 0.06);
-}
-
-#orderEmailHistory .history-col {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 7px;
-
-    min-width: 0;
-    padding: 0 20px;
-
-    font-size: 15px;
-    line-height: 1.4;
-}
-
-#orderEmailHistory .history-col + .history-col {
-    border-left: 1px solid #d9e4f2;
-}
-
-#orderEmailHistory .history-date {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-
-    padding-left: 0;
-}
-
-#orderEmailHistory .history-date strong {
-    color: var(--tmv-blue-dark);
-    font-size: 17px;
-}
-
-#orderEmailHistory .history-icon {
-    flex: 0 0 auto;
-    font-size: 23px;
-}
-
-#orderEmailHistory .history-status {
-    margin-top: 5px;
-    white-space: nowrap;
-}
-
-#orderEmailHistory .history-email {
-    padding-right: 0;
-    overflow-wrap: anywhere;
-}
-
-
-/* TABLET */
-
-@media (max-width: 900px) {
-
-    #orderEmailHistory .order-email-history-item {
-        grid-template-columns: 1fr 1fr;
-        gap: 18px 0;
-    }
-
-    #orderEmailHistory .history-col {
-        padding: 0 16px;
-        border-left: none;
-    }
-
-    #orderEmailHistory .history-col:nth-child(even) {
-        border-left: 1px solid #d9e4f2;
-    }
-
-    #orderEmailHistory .history-date {
-        padding-left: 0;
-    }
-}
-
-
-/* MOBIL */
-
-@media (max-width: 560px) {
-
-    #orderEmailHistory .order-email-history-item {
-        grid-template-columns: 1fr;
-    }
-
-    #orderEmailHistory .history-col,
-    #orderEmailHistory .history-date,
-    #orderEmailHistory .history-email {
-        padding: 10px 0;
-        border-left: none;
-    }
-
-    #orderEmailHistory .history-col + .history-col {
-        border-top: 1px solid #d9e4f2;
-    }
-}
-/* Zmenšenie samotnej kartičky */
-.issue-item {
-  padding: 8px 12px !important;    /* Menšie vnútorné odsadenie */
-  min-width: 180px !important;     /* Menšia minimálna šírka */
-  margin: 4px !important;          /* Menšie medzery medzi okienkami */
-}
-
-/* Menší nadpis s menom zamestnanca */
-.issue-name {
-  font-size: 1.0rem !important;    /* Menšie písmo mena */
-  margin-bottom: 4px !important;
-  font-weight: bold;
-}
-
-/* Riadok jedla na rovnakom riadku s červeným tučným menu */
-.issue-meal-row {
-    padding: 6px 0;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Pekne odtlačí menu doprava alebo vedľa textu */
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-.issue-meal-row:first-of-type {
-    border-top: 0;
-}
-
-/* Červené a hrubé zvýraznenie pre Menu */
-.issue-meal-row .issue-menu-highlight,
-.issue-meal-row span:last-child {
-    color: #d32f2f !important;
-    font-weight: 900 !important;
-    font-size: 1.05rem;
-    margin-left: auto;
-}
-
-/* Zmenšenie indikátora stavu (Čaká / Vydané) */
-.issue-status {
-  font-size: 0.8rem !important;
-  margin-top: 4px !important;
-  margin-bottom: 6px !important;
-}
-
-/* Zmenšenie tlačidla "Vydať osobne" */
-.manual-issue-card-button {
-  padding: 4px 8px !important;
-  font-size: 0.8rem !important;
-  width: 100%;
-}
-/* =====================================
-   ZVÝRAZNENIE MENU VO VÝDAJI OBEDOV
-===================================== */
-.issue-cards .issue-meal-row span:first-child {
-    color: #202631 !important;
-    font-weight: 700;
-}
-
-.issue-cards .issue-meal-row span:last-child,
-.issue-cards .issue-menu-highlight {
-    color: #e53935 !important;
-    font-weight: 900 !important;
-}
-/* =====================================
-   ZVÝRAZNENIE MENU VO VÝDAJI OBEDOV
-===================================== */
-.issue-cards .issue-meal-row span:first-child {
-    color: #202631 !important;
-    font-weight: 700;
-}
-
-.issue-cards .issue-meal-row span:last-child,
-.issue-cards .issue-menu-highlight {
-    color: #e53935 !important;
-    font-weight: 900 !important;
-}
-.menu-red {
-    color: #e53935 !important;
-    font-weight: 800 !important;
-}
-.issue-menu-name,
-.today-menu-name {
-    color: red;
-    font-weight: 700;
-}
-
-.issue-menu-text,
-.today-menu-text {
-    display: block;
-    margin-top: 3px;
-}
-.issue-menu {
-    color: red !important;
-}
-/* Automatické skrátenie dlhého názvu jedla na kartách výdaja */
-.issue-menu, .week-menu-name, .issue-success-meal, .issue-result-meals {
-    /* Ak by ste to potrebovali riešiť štýlovo */
-}
-
-/* Náhrada zobrazeného textu cez CSS (ak sa nachádza v špecifických elementoch) */
-/* Poznámka: Najistejšie je, ak toto prepíšete priamo tam, kde JS vypisuje jedlo, 
-   alebo použijete tento selektor, ak ho obklopuje samostatný tag. */
