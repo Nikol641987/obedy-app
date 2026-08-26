@@ -72,11 +72,11 @@ async function loadMyOrders(employeeId) {
 
                     // Úprava názvu: ak existuje konkrétny výber syra a v názve je "alebo", nahradíme ho
                     let displayMealName = item.menu_name || "";
-                    if (item.menu_choice && displayMealName.toLowerCase().includes(" alebo ")) {
-                        const parts = displayMealName.split(",");
-                        const restOfMeal = parts.slice(1).join(",");
-                        displayMealName = item.menu_choice + (restOfMeal ? `, ${restOfMeal.trim()}` : "");
-                    }
+
+if (item.menu_choice && displayMealName.toLowerCase().includes(" alebo ")) {
+    // Nahradí celý blok "Syr alebo Camembert (brusnice)" za vybranú možnosť
+    displayMealName = displayMealName.replace(/^.*?vyprážaný syr alebo grilovaný camembert \(brusnice\)/i, item.menu_choice);
+}
 
                     return `
                         <div class="my-order-item">
