@@ -150,6 +150,38 @@ async function openWeekSelectionScreen(employeeId) {
 
             card.appendChild(orderDetails);
             card.appendChild(status);
+
+            // TLAČIDLO NA ZRUŠENIE OBJEDNÁVKY (správne umiestnené tu vo vnútri)
+            if (!isClosed) {
+                const cancelButton = document.createElement("button");
+                cancelButton.className = "main-button cancel-order-btn";
+                cancelButton.style.cssText = "margin-top: 10px; background-color: #ef4444; font-size: 0.85rem; padding: 6px;";
+                cancelButton.textContent = "❌ Zrušiť objednávku";
+                
+                cancelButton.addEventListener("click", async (e) => {
+                    e.stopPropagation(); // Zabráni otvoreniu detailu dňa
+                    
+                    if (!confirm(`Naozaj chcete zrušiť objednávku na dňa ${formatShortDate(date)}?`)) return;
+
+                    try {
+                        const { error } = await supabaseClient
+                            .from("meal_orders")
+                            .delete()
+                            .eq("employee_id", employeeId)
+                            .eq("order_date", dateForDatabase);
+
+                        if (error) throw error;
+
+                        alert("Objednávka bola úspešne zrušená.");
+                        openWeekSelectionScreen(employeeId); // Obnoví zoznam týždňa
+                    } catch (err) {
+                        console.error("Chyba pri rušení objednávky:", err);
+                        alert("Nepodarilo sa zrušiť objednávku.");
+                    }
+                });
+
+                card.appendChild(cancelButton);
+            }
         }
 
         card.addEventListener("click", () => {
