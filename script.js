@@ -3287,7 +3287,13 @@ if (hasForbiddenMenu) {
                             ?.trim()
 
                         || `Menu ${menuId}`;
-
+const menuChoice =
+    menuCard
+        ?.querySelector(
+            `.menu-choice[data-menu-id="${menuId}"]:checked`
+        )
+        ?.value || null;
+                    
 
                     if (
                         !groupedMenus[
@@ -3309,13 +3315,16 @@ if (hasForbiddenMenu) {
                                 orderDate,
 
                             menu_id:
-                                String(menuId),
+    String(menuId),
 
-     menu_name:
+menu_name:
     menuName,
 
-                            dining:
-                                false,
+menu_choice:
+    menuChoice,
+
+dining:
+    false,
 
                             takeaway:
                                 false,
