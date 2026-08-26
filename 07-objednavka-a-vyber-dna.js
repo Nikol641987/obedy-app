@@ -329,7 +329,6 @@ function setCurrentDate() {
 // =====================================
 // 12. NAČÍTANIE MENU
 // =====================================
-
 async function loadMenus() {
     const container = document.getElementById("menuContainer");
     if (!container) return;
@@ -388,6 +387,9 @@ async function loadMenus() {
 
             const card = document.createElement("article");
             card.className = "menu-card";
+            card.dataset.menuId = menu.id;
+
+            const hasChoice = menu.name.toLowerCase().includes(" alebo ");
 
             card.innerHTML = `
                 <div class="menu-card-header">
@@ -397,7 +399,7 @@ async function loadMenus() {
                 </div>
                 <h3>${escapeHtml(menu.name)}</h3>
                 ${
-                    menu.name.toLowerCase().includes(" alebo ")
+                    hasChoice
                         ? `
                             <div class="menu-choice-box">
                                 <strong>Vyberte si:</strong>
@@ -432,7 +434,6 @@ async function loadMenus() {
         container.innerHTML = "<p>Menu sa nepodarilo načítať.</p>";
     }
 }
-
 // =====================================
 // 13. ULOŽENIE OBJEDNÁVKY
 // =====================================
