@@ -744,6 +744,17 @@ const takeawayMeals =
         order.takeaway
     ).length;
 
+
+// Horné karty – rozdelenie výdaja
+diningCount.textContent =
+    diningMeals;
+
+takeawayCount.textContent =
+    takeawayMeals;
+
+
+// Tu vypočítame reálny súčet všetkých menu cez menu_id
+
 // Tu vypočítame reálny súčet všetkých menu cez menu_id
 const menuCountsTemp = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
 orders.forEach(order => {
