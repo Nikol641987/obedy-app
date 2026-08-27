@@ -736,15 +736,14 @@ const issuedMeals =
 
 const diningMeals =
     orders.filter(order =>
-        order.dining === true
+        !order.takeaway
     ).length;
 
 const takeawayMeals =
     orders.filter(order =>
-        order.takeaway === true &&
-        order.dining !== true
+        order.takeaway
     ).length;
-
+        
 // Horné karty – rozdelenie výdaja
 diningCount.textContent =
     diningMeals;
