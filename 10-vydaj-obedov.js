@@ -744,20 +744,18 @@ const takeawayMeals =
         order.takeaway
     ).length;
 
-waitingCount.textContent =
-    waitingMeals;
+// Tu vypočítame reálny súčet všetkých menu cez menu_id
+const menuCountsTemp = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+orders.forEach(order => {
+    const menuNumber = Number(order.menu_id);
+    if (menuCountsTemp[menuNumber] !== undefined) {
+        menuCountsTemp[menuNumber]++;
+    }
+});
+const totalPortions = Object.values(menuCountsTemp).reduce((a, b) => a + b, 0);
 
-issuedCount.textContent =
-    issuedMeals;
-
-diningCount.textContent =
-    diningMeals;
-
-takeawayCount.textContent =
-    takeawayMeals;
-
-totalCount.textContent =
-    orders.length;
+// Nastavíme hornú kartu Spolu na reálny počet porcií
+totalCount.textContent = totalPortions;
 
         const todayMenuSummary =
     document.getElementById(
@@ -861,10 +859,10 @@ const todayFormattedCapitalized =
     ${todayFormattedCapitalized}
 </div>
 
-        <div class="today-menu-total">
+       <div class="today-menu-total">
             Spolu:
             <strong>
-                ${orders.length} ks
+                ${totalPortions} ks
             </strong>
         </div>
 
