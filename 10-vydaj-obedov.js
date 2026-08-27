@@ -894,7 +894,6 @@ async function renderIssueDashboard() {
 
     }
     
-    }
 
 function setupChipIssue() {
 
