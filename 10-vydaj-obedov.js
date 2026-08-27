@@ -736,12 +736,13 @@ const issuedMeals =
 
 const diningMeals =
     orders.filter(order =>
-        order.dining
+        order.dining === true &&
+        order.takeaway !== true
     ).length;
 
 const takeawayMeals =
     orders.filter(order =>
-        order.takeaway
+        order.takeaway === true
     ).length;
 
 
