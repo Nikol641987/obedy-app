@@ -591,481 +591,294 @@ const resetCodeInput =
     }
 
 async function renderIssueDashboard() {
+    const issueCards = document.getElementById("issueCards");
+    const waitingCount = document.getElementById("waitingCount");
+    const issuedCount = document.getElementById("issuedCount");
+    const diningCount = document.getElementById("diningCount");
+    const takeawayCount = document.getElementById("takeawayCount");
+    const totalCount = document.getElementById("totalCount");
 
-    const issueCards =
-        document.getElementById("issueCards");
-
-    const waitingCount =
-    document.getElementById("waitingCount");
-
-const issuedCount =
-    document.getElementById("issuedCount");
-
-const diningCount =
-    document.getElementById("diningCount");
-
-const takeawayCount =
-    document.getElementById("takeawayCount");
-
-const totalCount =
-    document.getElementById("totalCount");
-
-   if (
-    !issueCards
-    || !waitingCount
-    || !issuedCount
-    || !diningCount
-    || !takeawayCount
-    || !totalCount
-) {
-    return;
-}
-
+    if (
+        !issueCards
+        || !waitingCount
+        || !issuedCount
+        || !diningCount
+        || !takeawayCount
+        || !totalCount
+    ) {
+        return;
+    }
 
     issueCards.innerHTML = `
         <p>Načítavam dnešné objednávky...</p>
     `;
 
-
     try {
+        const today = getTodayDate();
 
-        const today =
-            getTodayDate();
-
-
-        const { data, error } =
-            await supabaseClient
-                .from("meal_orders")
-              .select(`
-    id,
-    employee_id,
-    employee_name,
-    menu_id,
-    menu_name,
-    menu_choice,
-    dining,
-    takeaway,
-    issued
-`)
-                .eq("order_date", today);
-
+        const { data, error } = await supabaseClient
+            .from("meal_orders")
+            .select(`
+                id,
+                employee_id,
+                employee_name,
+                menu_id,
+                menu_name,
+                menu_choice,
+                dining,
+                takeaway,
+                issued
+            `)
+            .eq("order_date", today);
 
         if (error) {
             throw error;
         }
 
+        const orders = data || [];
 
-        const orders =
-            data || [];
-console.log(orders);
+        // Výpočet jednotlivých štatistík pre počítadlá
+        const waitingMeals = orders.filter(order => !order.issued).length;
+        const issuedMeals = orders.filter(order => order.issued).length;
+        const diningMeals = orders.filter(order => order.dining).length;
+        const takeawayMeals = orders.filter(order => order.takeaway).length;
 
-        const employeeOrders =
-            new Map();
+        // PREPIS HODNÔT DO HTML ELEMENTOV NA DASHBOARDE (tu chýbali aktualizácie)
+        waitingCount.textContent = waitingMeals;
+        issuedCount.textContent = issuedMeals;
+        diningCount.textContent = diningMeals;
+        takeawayCount.textContent = takeawayMeals;
 
+        // Výpočet celkového počtu porcií cez menu_id
+        const menuCountsTemp = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+        orders.forEach(order => {
+            const menuNumber = Number(order.menu_id);
+            if (menuCountsTemp[menuNumber] !== undefined) {
+                menuCountsTemp[menuNumber]++;
+            }
+        });
+        const totalPortions = Object.values(menuCountsTemp).reduce((a, b) => a + b, 0);
+        totalCount.textContent = totalPortions;
+
+        const employeeOrders = new Map();
 
         orders.forEach(order => {
-
-            const employeeKey =
-                String(order.employee_id);
-
+            const employeeKey = String(order.employee_id);
 
             if (!employeeOrders.has(employeeKey)) {
-
-           employeeOrders.set(
-    employeeKey,
-    {
-        employeeId: employeeKey,
-
-        employeeName:
-            order.employee_name
-            || "Neznámy zamestnanec",
-
-        orders: []
-    }
-);
-
+                employeeOrders.set(
+                    employeeKey,
+                    {
+                        employeeId: employeeKey,
+                        employeeName: order.employee_name || "Neznámy zamestnanec",
+                        orders: []
+                    }
+                );
             }
 
-
-            employeeOrders
-                .get(employeeKey)
-                .orders
-                .push(order);
-
+            employeeOrders.get(employeeKey).orders.push(order);
         });
 
+        const employees = [...employeeOrders.values()]
+            .map(employee => {
+                const isIssued = employee.orders.every(order => Boolean(order.issued));
+                return {
+                    ...employee,
+                    isIssued
+                };
+            })
+            .sort((a, b) => {
+                if (a.isIssued !== b.isIssued) {
+                    return a.isIssued ? 1 : -1;
+                }
+                return a.employeeName.localeCompare(b.employeeName, "sk");
+            });
 
-        const employees =
-            [...employeeOrders.values()]
-                .map(employee => {
+        const todayMenuSummary = document.getElementById("todayMenuSummary");
 
-                    const isIssued =
-                        employee.orders.every(order =>
-                            Boolean(order.issued)
-                        );
+        if (todayMenuSummary) {
+            const menuCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+            orders.forEach(order => {
+                const menuNumber = Number(order.menu_id);
+                if (menuCounts[menuNumber] !== undefined) {
+                    menuCounts[menuNumber]++;
+                }
+            });
 
+            const menuRows = [1, 2, 3, 4, 5, 6]
+                .filter(menuNumber => menuCounts[menuNumber] > 0)
+                .map(menuNumber => {
+                    const menuOrder = orders.find(order => Number(order.menu_id) === menuNumber);
+                    const menuText = (menuOrder?.menu_name || "").replace(/\s*\([^)]*\)/g, "").trim();
+                    const label = menuNumber === 6 ? "⭐ Menu 6" : `Menu ${menuNumber}`;
 
-                    return {
-                        ...employee,
-                        isIssued
-                    };
-
+                    return `
+                        <div class="today-menu-row">
+                            <span>
+                                <span style="color:red;">${label}</span> – ${escapeHtml(menuText)}
+                            </span>
+                            <strong>
+                                ${menuCounts[menuNumber]} ks
+                            </strong>
+                        </div>
+                    `;
                 })
-                .sort((a, b) => {
+                .join("");
 
-                    if (a.isIssued !== b.isIssued) {
-                        return a.isIssued ? 1 : -1;
-                    }
-
-                    return a.employeeName.localeCompare(
-                        b.employeeName,
-                        "sk"
-                    );
-
-                });
-
-const waitingMeals =
-    orders.filter(order =>
-        !order.issued
-    ).length;
-
-const issuedMeals =
-    orders.filter(order =>
-        order.issued
-    ).length;
-
-const diningMeals =
-    orders.filter(order =>
-        order.dining
-    ).length;
-
-const takeawayMeals =
-    orders.filter(order =>
-        order.takeaway
-    ).length;
-
-// Tu vypočítame reálny súčet všetkých menu cez menu_id
-const menuCountsTemp = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
-orders.forEach(order => {
-    const menuNumber = Number(order.menu_id);
-    if (menuCountsTemp[menuNumber] !== undefined) {
-        menuCountsTemp[menuNumber]++;
-    }
-});
-const totalPortions = Object.values(menuCountsTemp).reduce((a, b) => a + b, 0);
-
-// Nastavíme hornú kartu Spolu na reálny počet porcií
-totalCount.textContent = totalPortions;
-
-        const todayMenuSummary =
-    document.getElementById(
-        "todayMenuSummary"
-    );
-
-if (todayMenuSummary) {
-
-    const menuCounts = {
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 0,
-        5: 0,
-        6: 0
-    };
-
-    orders.forEach(order => {
-
-        const menuNumber =
-            Number(
-                order.menu_id
+            const todayFormatted = new Date(today + "T12:00:00").toLocaleDateString(
+                "sk-SK",
+                {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "numeric",
+                    year: "numeric"
+                }
             );
 
-        if (
-            menuCounts[
-                menuNumber
-            ] !== undefined
-        ) {
-
-            menuCounts[
-                menuNumber
-            ]++;
-
+            const todayFormattedCapitalized = todayFormatted.charAt(0).toUpperCase() + todayFormatted.slice(1);
+            
+            todayMenuSummary.innerHTML = `
+                <div class="today-menu-summary-title">
+                    Dnešná objednávka
+                </div>
+                <div class="today-menu-date">
+                    ${todayFormattedCapitalized}
+                </div>
+                <div class="today-menu-total">
+                    Spolu:
+                    <strong>
+                        ${totalPortions} ks
+                    </strong>
+                </div>
+                <div class="today-menu-list">
+                    ${menuRows}
+                </div>
+                <div class="today-menu-serving">
+                    <span>
+                        🍽️ V jedálni:
+                        <strong>
+                            ${diningMeals} ks
+                        </strong>
+                    </span>
+                    <span>
+                        📦 Zabaliť:
+                        <strong>
+                            ${takeawayMeals} ks
+                        </strong>
+                    </span>
+                </div>
+            `;
         }
 
-    });
-
-    const menuRows =
-        [1, 2, 3, 4, 5, 6]
-            .filter(
-                menuNumber =>
-                    menuCounts[
-                        menuNumber
-                    ] > 0
-            )
-            .map(
-                menuNumber => {
-
-                    const menuOrder =
-    orders.find(
-        order =>
-            Number(order.menu_id) === menuNumber
-    );
-
-const menuText =
-    (menuOrder?.menu_name || "")
-        .replace(/\s*\([^)]*\)/g, "")
-        .trim();
-
-const label =
-    menuNumber === 6
-        ? "⭐ Menu 6"
-        :`Menu ${menuNumber}`
-
-return `
-    <div class="today-menu-row">
-        <span>
-            <span style="color:red;">${label}</span> – ${escapeHtml(menuText)}
-        </span>
-        <strong>
-            ${menuCounts[menuNumber]} ks
-        </strong>
-    </div>
-`;
-
-                }
-            )
-            .join("");
-const todayFormatted =
-    new Date(today + "T12:00:00")
-        .toLocaleDateString(
-            "sk-SK",
-            {
-                weekday: "long",
-                day: "numeric",
-                month: "numeric",
-                year: "numeric"
-            }
-        );
-
-const todayFormattedCapitalized =
-    todayFormatted.charAt(0).toUpperCase()
-    + todayFormatted.slice(1);
-    todayMenuSummary.innerHTML = `
-        <div class="today-menu-summary-title">
-            Dnešná objednávka
-        </div>
-
-        <div class="today-menu-date">
-    ${todayFormattedCapitalized}
-</div>
-
-       <div class="today-menu-total">
-            Spolu:
-            <strong>
-                ${totalPortions} ks
-            </strong>
-        </div>
-
-        <div class="today-menu-list">
-            ${menuRows}
-        </div>
-
-        <div class="today-menu-serving">
-            <span>
-                🍽️ V jedálni:
-                <strong>
-                    ${diningMeals} ks
-                </strong>
-            </span>
-
-            <span>
-                📦 Zabaliť:
-                <strong>
-                    ${takeawayMeals} ks
-                </strong>
-            </span>
-        </div>
-    `;
-
-}
-        
         if (employees.length === 0) {
-
             issueCards.innerHTML = `
                 <p>
                     Na dnešný deň nie sú žiadne objednávky.
                 </p>
             `;
-
             return;
-
         }
 
+        issueCards.innerHTML = employees
+            .map(employee => {
+                const mealsHtml = employee.orders
+                    .map(order => {
+                        const methods = [];
+                        if (order.dining) methods.push("V jedálni");
+                        if (order.takeaway) methods.push("Zabaliť");
 
-        issueCards.innerHTML =
-            employees
-                .map(employee => {
-
-                    const mealsHtml =
-                        employee.orders
-                            .map(order => {
-
-                                const methods = [];
-
-                                if (order.dining) {
-                                    methods.push("V jedálni");
-                                }
-
-                                if (order.takeaway) {
-                                    methods.push("Zabaliť");
-                                }
-
-
-                                const methodText =
-                                    methods.length > 0
-                                        ? methods.join(" + ")
-                                        : "Spôsob výdaja neuvedený";
-
-
-                                return `
-    <div class="issue-meal-row">
-
-        <div class="issue-type">
-            ${
-                order.takeaway
-                    ? "📦 Zabaliť"
-                    : "🍽️ V jedálni"
-            }
-        </div>
-
-      <div class="issue-menu">
-    <span style="color:red;">
-        Menu ${order.menu_id}
-    </span>
-
-    ${
-        order.menu_choice
-            ? `<div class="issue-menu-choice">
-                🧀 ${escapeHtml(order.menu_choice)}
-              </div>`
-            : ""
-    }
-</div>
-
-    </div>
-`;
-
-                            })
-                            .join("");
-
-
-                    return `
-                        <div class="issue-item ${
-                            employee.isIssued
-                                ? "issued"
-                                : "waiting"
-                        }">
-
-                            <div class="issue-name">
-                                ${escapeHtml(
-                                    employee.employeeName
-                                )}
+                        return `
+                            <div class="issue-meal-row">
+                                <div class="issue-type">
+                                    ${order.takeaway ? "📦 Zabaliť" : "🍽️ V jedálni"}
+                                </div>
+                                <div class="issue-menu">
+                                    <span style="color:red;">
+                                        Menu ${order.menu_id}
+                                    </span>
+                                    ${
+                                        order.menu_choice
+                                            ? `<div class="issue-menu-choice">
+                                                🧀 ${escapeHtml(order.menu_choice)}
+                                              </div>`
+                                            : ""
+                                    }
+                                </div>
                             </div>
+                        `;
+                    })
+                    .join("");
 
-                            ${mealsHtml}
-
-                            <div class="issue-status">
-                                ${
-                                    employee.isIssued
-                                        ? "🔴 Vydané"
-                                        : "🟢 Čaká"
-                                }
-                            </div>
-                            ${
-    !employee.isIssued
-        ? `
-            <button
-                type="button"
-                class="manual-issue-card-button"
-                data-employee-id="${escapeHtml(employee.employeeId)}"
-            >
-                ✅ Vydať osobne
-            </button>
-        `
-        : ""
-}
-
+                return `
+                    <div class="issue-item ${employee.isIssued ? "issued" : "waiting"}">
+                        <div class="issue-name">
+                            ${escapeHtml(employee.employeeName)}
                         </div>
-                    `;
+                        ${mealsHtml}
+                        <div class="issue-status">
+                            ${employee.isIssued ? "🔴 Vydané" : "🟢 Čaká"}
+                        </div>
+                        ${
+                            !employee.isIssued
+                                ? `
+                                    <button
+                                        type="button"
+                                        class="manual-issue-card-button"
+                                        data-employee-id="${escapeHtml(employee.employeeId)}"
+                                    >
+                                        ✅ Vydať osobne
+                                    </button>
+                                `
+                                : ""
+                        }
+                    </div>
+                `;
+            })
+            .join("");
 
-                })
-                .join("");
-issueCards
-    .querySelectorAll(".manual-issue-card-button")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            async () => {
-
-                const employeeId =
-                    button.dataset.employeeId;
-
+        issueCards.querySelectorAll(".manual-issue-card-button").forEach(button => {
+            button.addEventListener("click", async () => {
+                const employeeId = button.dataset.employeeId;
                 if (!employeeId) return;
 
                 button.disabled = true;
                 button.textContent = "Vydávam...";
 
                 try {
+                    const { error } = await supabaseClient
+                        .from("meal_orders")
+                        .update({ issued: true })
+                        .eq("employee_id", employeeId)
+                        .eq("order_date", today);
 
-                    const { error } =
-                        await supabaseClient
-                            .from("meal_orders")
-                            .update({
-                                issued: true
-                            })
-                            .eq(
-                                "employee_id",
-                                employeeId
-                            )
-                            .eq(
-                                "order_date",
-                                today
-                            );
-
-                    if (error) {
-                        throw error;
-                    }
+                    if (error) throw error;
 
                     await renderIssueDashboard();
-
                 } catch (error) {
-
-                    console.error(
-                        "Chyba pri osobnom výdaji:",
-                        error
-                    );
-
+                    console.error("Chyba pri osobnom výdaji:", error);
                     button.disabled = false;
-                    button.textContent =
-                        "✅ Vydať osobne";
-
-                    alert(
-                        "Obed sa nepodarilo označiť ako vydaný."
-                    );
+                    button.textContent = "✅ Vydať osobne";
+                    alert("Obed sa nepodarilo označiť ako vydaný.");
                 }
-
-            }
-        );
-
-    });
+            });
+        });
 
     } catch (error) {
+        console.error("Chyba pri načítaní dashboardu:", error);
 
-        console.error(
-            "Chyba pri načítaní dashboardu:",
-            error
-        );
+        waitingCount.textContent = "0";
+        issuedCount.textContent = "0";
+        diningCount.textContent = "0";
+        takeawayCount.textContent = "0";
+        totalCount.textContent = "0";
+
+        issueCards.innerHTML = `
+            <p class="error-message">
+                Dashboard sa nepodarilo načítať.
+            </p>
+        `;
+    }
+}
 
 
         waitingCount.textContent = "0";
