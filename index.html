@@ -498,7 +498,8 @@
     </div>
 
 </section>
-    <!-- MOJE OBEDY -->
+    
+   <!-- MOJE OBEDY -->
     <section id="myOrdersScreen" class="app-screen" hidden>
 
         <button class="back-button" data-back-home>
@@ -507,6 +508,20 @@
 
         <div class="content-card">
             <h2>Moje obedy</h2>
+
+            <!-- 👉 TU VLOŽTE TENTO FILTER S POČÍTADLOM -->
+            <div class="orders-filter-box" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <label for="monthFilter" style="font-weight: bold; margin-right: 10px;">📅 Vybrať mesiac:</label>
+                    <select id="monthFilter" class="form-select" style="display: inline-block; width: auto;">
+                        <!-- Sem sa mesiace naplnia automaticky -->
+                    </select>
+                </div>
+                <div id="monthlyCountBadge" style="font-weight: bold; background: #e9ecef; padding: 8px 15px; border-radius: 5px; color: #333;">
+                    Spolu za mesiac: <span id="orderCountNumber">0</span> obedov
+                </div>
+            </div>
+            <!-- KONIEC PRIDANEJ ČASTI -->
 
             <div id="myOrdersContainer">
                 Po prihlásení sa tu zobrazia tvoje objednávky.
