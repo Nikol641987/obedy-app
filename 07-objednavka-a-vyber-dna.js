@@ -530,6 +530,7 @@ async function loadMenus() {
         container.innerHTML = "<p>Menu sa nepodarilo načítať.</p>";
     }
 }
+
 // =====================================
 // 13. ULOŽENIE OBJEDNÁVKY
 // =====================================
@@ -612,19 +613,37 @@ function setupOrderButton() {
             }
         }
 
-        const groupedMenus = {};
+        const rowsToInsert = [];
+
+        // Prejdeme všetky vybrané možnosti a ak má niekto zvolené oboje (aj jedáleň, aj zabaliť),
+        // vytvoríme pre dané menu dva samostatné riadky do databázy.
+        const menuSelections = {};
 
         selectedChoices.forEach(choice => {
             const menuId = choice.dataset.menuId;
-            const option = choice.dataset.option;
-            const menuCard = choice.closest(".menu-card");
+            const option = choice.dataset.option; // "dining" alebo "takeaway"
 
+            if (!menuSelections[menuId]) {
+                menuSelections[menuId] = {
+                    dining: false,
+                    takeaway: false
+                };
+            }
+
+            if (option === "dining") menuSelections[menuId].dining = true;
+            if (option === "takeaway") menuSelections[menuId].takeaway = true;
+        });
+
+        Object.keys(menuSelections).forEach(menuId => {
+            const menuCard = document.querySelector(`.menu-card[data-menu-id="${menuId}"]`);
             const menuName = menuCard?.querySelector("h3")?.textContent?.trim() || `Menu ${menuId}`;
             const checkedRadio = menuCard ? menuCard.querySelector(`input[name="menu-choice-${menuId}"]:checked`) : null;
             const menuChoice = checkedRadio ? checkedRadio.value : null;
+            const selection = menuSelections[menuId];
 
-            if (!groupedMenus[menuId]) {
-                groupedMenus[menuId] = {
+            // Ak si zvolil "V jedálni", vytvoríme pre to samostatný riadok
+            if (selection.dining) {
+                rowsToInsert.push({
                     employee_id: employeeId,
                     employee_name: employeeName,
                     order_date: orderDate,
@@ -632,19 +651,32 @@ function setupOrderButton() {
                     menu_name: menuName,
                     menu_choice: menuChoice,
                     soup_choice: selectedSoupChoice,
-                    note: globalNoteValue, // Opravené na správnu premennú
-                    dining: false,
+                    note: globalNoteValue,
+                    dining: true,
                     takeaway: false,
                     no_soup: noSoup,
                     issued: false
-                };
+                });
             }
 
-            if (option === "dining") groupedMenus[menuId].dining = true;
-            if (option === "takeaway") groupedMenus[menuId].takeaway = true;
+            // Ak si zvolil "Zabaliť", vytvoríme pre to druhý samostatný riadok
+            if (selection.takeaway) {
+                rowsToInsert.push({
+                    employee_id: employeeId,
+                    employee_name: employeeName,
+                    order_date: orderDate,
+                    menu_id: String(menuId),
+                    menu_name: menuName,
+                    menu_choice: menuChoice,
+                    soup_choice: selectedSoupChoice,
+                    note: globalNoteValue,
+                    dining: false,
+                    takeaway: true,
+                    no_soup: noSoup,
+                    issued: false
+                });
+            }
         });
-
-        const rows = Object.values(groupedMenus);
 
         confirmOrderButton.disabled = true;
         confirmOrderButton.textContent = "Ukladám objednávku...";
@@ -665,7 +697,7 @@ function setupOrderButton() {
 
             const { error: insertError } = await supabaseClient
                 .from("meal_orders")
-                .insert(rows);
+                .insert(rowsToInsert);
 
             if (insertError) throw insertError;
 
