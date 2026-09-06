@@ -15,7 +15,7 @@ async function openWeekSelectionScreen(employeeId) {
     const isFridayAfterNoon = currentDay === 5 && now.getHours() >= 12;
 
     const monday = new Date(now);
-    const daysFromMonday = currentDay === 0 ? -6 : 1 - currentDay;
+    const daysFromMonday = currentDay === 0 ? 1 : 1 - currentDay;
 
     monday.setDate(now.getDate() + daysFromMonday + (isFridayAfterNoon ? 7 : 0));
     monday.setHours(7, 30, 0, 0);
