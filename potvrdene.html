@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Objednávka potvrdená</title>
+</head>
+
+<body style="margin:0; padding:0; background:#f1f5f9; font-family:Arial,Helvetica,sans-serif; color:#1e293b;">
+
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:25px; box-sizing:border-box;">
+
+<div style="width:100%; max-width:520px; background:#ffffff; border-radius:18px; padding:45px 30px; text-align:center; box-sizing:border-box; box-shadow:0 8px 30px rgba(0,0,0,0.08);">
+
+<div style="width:80px; height:80px; margin:0 auto 25px auto; border-radius:50%; background:#dcfce7; display:flex; align-items:center; justify-content:center; font-size:42px;">
+&#9989;
+</div>
+
+<h1 style="margin:0 0 15px 0; color:#15803d; font-size:28px; line-height:1.2;">
+Objednávka bola potvrdená
+</h1>
+
+<p style="margin:0; color:#475569; font-size:17px; line-height:1.6;">
+Ďakujeme. Úspešne ste potvrdili prijatie objednávky obedov.
+</p>
+
+<div style="margin:28px 0; padding:18px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
+
+<div style="font-size:13px; color:#64748b; margin-bottom:6px;">
+DÁTUM OBJEDNÁVKY
+</div>
+
+<div id="orderDate" style="font-size:18px; font-weight:bold; color:#1e293b;">
+</div>
+
+</div>
+
+<p style="margin:25px 0 0 0; color:#94a3b8; font-size:14px;">
+Toto okno môžete teraz zatvoriť.
+</p>
+
+</div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const date = params.get("date");
+
+if (date) {
+    document.getElementById("orderDate").textContent = date;
+}
+</script>
+
+</body>
+</html>
