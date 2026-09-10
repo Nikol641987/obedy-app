@@ -415,9 +415,11 @@ async function loadOrderEmailHistory() {
                             : "";
 
                     const statusText =
-    item.status === "sent"
-        ? "✅ Odoslané"
-        : "❌ Chyba";
+    item.status === "confirmed"
+        ? "🟢 Objednávka potvrdená"
+        : item.status === "sent"
+            ? "✅ Odoslané"
+            : "❌ Chyba";
 
 return `
     <div class="order-email-history-item">
