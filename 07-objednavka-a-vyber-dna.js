@@ -102,7 +102,7 @@ async function openWeekSelectionScreen(employeeId) {
         const deadline = new Date(date);
         deadline.setHours(7, 30, 0, 0);
 
-        const isClosed = new Date() > deadline;
+        const isClosed = !isDeadlineExempt(employeeId) && new Date() > deadline;
 
         const card = document.createElement("div");
         card.className = "week-card";
@@ -267,7 +267,7 @@ async function checkTodayOrder(employeeId) {
         const now = new Date();
         const [year, month, day] = today.split("-").map(Number);
         const deadline = new Date(year, month - 1, day, 7, 30, 0);
-        const canEdit = now < deadline;
+        const canEdit = isDeadlineExempt(employeeId) || now < deadline;
 
         if (!data || data.length === 0) {
             if (orderIntroText) {
