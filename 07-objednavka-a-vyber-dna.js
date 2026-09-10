@@ -2,6 +2,16 @@
 // 7. VÝBER DŇA OBJEDNÁVKY
 // =====================================
 
+function isDeadlineExempt(employeeId) {
+    const select = document.getElementById("employeeSelect");
+    if (!select) return false;
+
+    const option = [...select.options].find(option => option.value === employeeId);
+    if (!option) return false;
+
+    return option.textContent.trim().toLowerCase() === "mitice návšteva";
+}
+
 async function openWeekSelectionScreen(employeeId) {
     sessionStorage.setItem("loggedEmployee", employeeId);
 
