@@ -672,18 +672,18 @@ return `
             }
 
             alert(
-                "Testovací e-mail bol úspešne odoslaný."
+                "e-mail bol úspešne odoslaný."
             );
 
         } catch (error) {
 
             console.error(
-                "Chyba pri odosielaní testovacieho e-mailu:",
+                "Chyba pri odosielaní e-mailu:",
                 error
             );
 
             alert(
-                "Testovací e-mail sa nepodarilo odoslať."
+                "e-mail sa nepodarilo odoslať."
             );
 
         } finally {
@@ -692,7 +692,7 @@ return `
                 false;
 
             sendTestOrderEmailButton.textContent =
-                "📧 Odoslať testovací e-mail";
+                "📧 Odoslať e-mail do reštaurácie - manuálne";
         }
 
     }
