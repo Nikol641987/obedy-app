@@ -1,6 +1,6 @@
 // 4. NAVIGÁCIA
 // =====================================
-
+console.log("JS SÚBOR NAČÍTANÝ");
 function setupNavigation() {
 
     const backButtons =
@@ -635,7 +635,7 @@ return `
     sendTestOrderEmailButton?.addEventListener(
     "click",
     async () => {
-        console.log("MANUAL EMAIL CLICK");
+    
 
         const email =
             restaurantEmailInput?.value.trim();
