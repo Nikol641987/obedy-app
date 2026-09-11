@@ -1622,7 +1622,7 @@ cancelResetPinButton?.addEventListener(
         }
     );
 
-}
+
 setupNavigation();
 
 const openRestaurantMenuButton =
@@ -1642,4 +1642,4 @@ openRestaurantMenuButton?.addEventListener(
     }
 );
 
-// =====================================
+
