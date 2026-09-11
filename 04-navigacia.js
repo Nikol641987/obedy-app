@@ -7,63 +7,23 @@ function setupNavigation() {
     isNavigationInitialized = true;
 
     const backButtons =
-    document.querySelectorAll(
-        "[data-back-home]"
-    );
+        document.querySelectorAll("[data-back-home]");
 
-backButtons.forEach(button => {
-
-    button.addEventListener(
-        "click",
-        () => {
-
+    backButtons.forEach(button => {
+        button.addEventListener("click", () => {
             showScreen("homeScreen");
-
-        }
-    );
-
-});
+        });
+    });
 
     const adminBackButtons =
-    document.querySelectorAll(
-        "[data-back-admin]"
-    );
+        document.querySelectorAll("[data-back-admin]");
 
-adminBackButtons.forEach(button => {
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            showScreen(
-                "adminScreen"
-            );
-
-        }
-    );
-
-});
-    }
-
-    const adminBackButtons =
-    document.querySelectorAll(
-        "[data-back-admin]"
-    );
-
-adminBackButtons.forEach(button => {
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            showScreen(
-                "adminScreen"
-            );
-
-        }
-    );
-
-});
+    adminBackButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            showScreen("adminScreen");
+        });
+    });
+}
     const openOrderButton =
         document.getElementById("openOrderButton");
 
