@@ -1635,6 +1635,8 @@ cancelResetPinButton?.addEventListener(
     );
 
 }
+setupNavigation();
+
 const openRestaurantMenuButton =
     document.getElementById(
         "openRestaurantMenuButton"
