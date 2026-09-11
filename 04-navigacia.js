@@ -1,7 +1,13 @@
 // 4. NAVIGÁCIA
 // =====================================
+// 4. NAVIGÁCIA
+// =====================================
+
+let isNavigationInitialized = false;
 
 function setupNavigation() {
+    if (isNavigationInitialized) return;
+    isNavigationInitialized = true;
 
     const backButtons =
     document.querySelectorAll(
@@ -15,6 +21,26 @@ backButtons.forEach(button => {
         () => {
 
             showScreen("homeScreen");
+
+        }
+    );
+
+});
+
+    const adminBackButtons =
+    document.querySelectorAll(
+        "[data-back-admin]"
+    );
+
+adminBackButtons.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            showScreen(
+                "adminScreen"
+            );
 
         }
     );
