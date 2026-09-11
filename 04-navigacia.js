@@ -662,7 +662,10 @@ return `
                     {
                    body: {
     email:
-        email
+        email,
+
+    test:
+        true
 }
                     }
                 );
