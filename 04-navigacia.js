@@ -401,20 +401,17 @@ async function loadOrderEmailHistory() {
                     let statusText = "";
 let statusColor = "";
 
-if (item.status === "sent") {
+if (item.status === "sent" || item.status === "test_sent") {
     statusText = "🔴 Odoslaná";
     statusColor = "#dc2626";
 } else if (item.status === "confirmed") {
     statusText = "🟢 Potvrdená";
     statusColor = "#16a34a";
-} else if (item.status === "manual" || item.status === "success" || !item.status) {
-    statusText = "🔴 Odoslaná";
-    statusColor = "#dc2626";
 } else {
     statusText = "❌ Chyba";
     statusColor = "#dc2626";
 }
-
+                    
 return `
     <div class="order-email-history-item">
 
