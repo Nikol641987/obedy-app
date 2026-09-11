@@ -414,12 +414,19 @@ async function loadOrderEmailHistory() {
                             )
                             : "";
 
-                    const statusText =
-    item.status === "confirmed"
-        ? "🟢 Objednávka potvrdená"
-        : item.status === "sent"
-            ? "✅ Odoslané"
-            : "❌ Chyba";
+                    let statusText = "";
+let statusColor = "";
+
+if (item.status === "sent") {
+    statusText = "🔴 Odoslaná";
+    statusColor = "#dc2626";
+} else if (item.status === "confirmed") {
+    statusText = "🟢 Objednávka potvrdená";
+    statusColor = "#16a34a";
+} else {
+    statusText = "❌ Chyba";
+    statusColor = "#dc2626";
+}
 
 return `
     <div class="order-email-history-item">
