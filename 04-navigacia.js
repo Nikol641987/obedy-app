@@ -660,13 +660,10 @@ return `
                 await supabaseClient.functions.invoke(
                     "send-order-email",
                     {
-                        body: {
-                            email:
-                                email,
-
-                            test:
-                                true
-                        }
+                   body: {
+    email:
+        email
+}
                     }
                 );
 
