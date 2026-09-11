@@ -635,6 +635,7 @@ return `
     sendTestOrderEmailButton?.addEventListener(
     "click",
     async () => {
+        console.log("MANUAL EMAIL CLICK");
 
         const email =
             restaurantEmailInput?.value.trim();
