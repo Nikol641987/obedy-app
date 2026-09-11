@@ -407,6 +407,9 @@ if (item.status === "sent") {
 } else if (item.status === "confirmed") {
     statusText = "🟢 Potvrdená";
     statusColor = "#16a34a";
+} else if (item.status === "manual" || item.status === "success" || !item.status) {
+    statusText = "🔴 Odoslaná";
+    statusColor = "#dc2626";
 } else {
     statusText = "❌ Chyba";
     statusColor = "#dc2626";
