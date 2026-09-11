@@ -421,7 +421,7 @@ if (item.status === "sent") {
     statusText = "🔴 Odoslaná";
     statusColor = "#dc2626";
 } else if (item.status === "confirmed") {
-    statusText = "🟢 Objednávka potvrdená";
+    statusText = "🟢 Potvrdená";
     statusColor = "#16a34a";
 } else {
     statusText = "❌ Chyba";
