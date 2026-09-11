@@ -1,8 +1,8 @@
 // 4. NAVIGÁCIA
 // =====================================
-console.log("JS SÚBOR NAČÍTANÝ");
+
 function setupNavigation() {
-console.log("SETUP NAVIGATION SPUSTENÉ");
+
     const backButtons =
     document.querySelectorAll(
         "[data-back-home]"
