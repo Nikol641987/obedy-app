@@ -1,8 +1,5 @@
 // 4. NAVIGÁCIA
 // =====================================
-// 4. NAVIGÁCIA
-// =====================================
-
 let isNavigationInitialized = false;
 
 function setupNavigation() {
@@ -46,6 +43,7 @@ adminBackButtons.forEach(button => {
     );
 
 });
+    }
 
     const adminBackButtons =
     document.querySelectorAll(
