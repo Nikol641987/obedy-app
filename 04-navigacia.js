@@ -439,9 +439,9 @@ return `
                     ${formattedDate}
                 </strong>
 
-                <div class="history-status">
-                    ${statusText}
-                </div>
+               <div class="history-status" style="color: ${statusColor}; font-weight: bold;">
+    ${statusText}
+</div>
             </div>
         </div>
 
