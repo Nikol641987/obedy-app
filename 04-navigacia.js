@@ -344,6 +344,7 @@ async function loadOrderEmailHistory() {
                     order_summary,
                     status,
                     error_message
+                    confirmed_at
                 `)
                 .order(
                     "order_date",
