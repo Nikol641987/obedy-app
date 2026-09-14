@@ -343,7 +343,7 @@ async function loadOrderEmailHistory() {
                     takeaway_orders,
                     order_summary,
                     status,
-                    error_message
+                    error_message,
                     confirmed_at
                 `)
                 .order(
@@ -398,8 +398,25 @@ async function loadOrderEmailHistory() {
                                 }
                             )
                             : "";
+                    const formattedConfirmedTime =
+                        item.confirmed_at
+                            ? new Date(
+                                item.confirmed_at
+                              )
+                            .toLocaleTimeString(
+                                "sk-SK",
+                                {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    timeZone:
+                                        "Europe/Bratislava"
+                                }
+                            )
+                            : "";
 
                     let statusText = "";
+
+    
 let statusColor = "";
 
 if (item.status === "sent" || item.status === "test_sent") {
@@ -424,12 +441,12 @@ return `
                     ${formattedDate}
                 </strong>
 
-               <div class="history-status" style="color: ${statusColor}; font-weight: bold;">
+              <div class="history-status" style="color: ${statusColor}; font-weight: bold;">
     ${statusText}
 </div>
-            </div>
-        </div>
-
+              ${item.confirmed_at ? `<div style="font-size: 11px; color: #6b7280; margin-top: 2px;">Potvrdené: ${formattedConfirmedTime}</div>` : ""}
+                        </div>
+                    </div>
 
         <div class="history-col">
             <div>
