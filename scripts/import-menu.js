@@ -3,7 +3,7 @@ const fs = require("fs");
 const { execFileSync } = require("child_process");
 
 const MENU_URL =
-    "https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu";
+    "https://superobed.sk/podnik/4m-restaurant/denne-menu";
 
 const SUPABASE_URL =
     "https://krzouuhouzzlvsygmalb.supabase.co";
