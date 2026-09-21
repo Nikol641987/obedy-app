@@ -727,7 +727,7 @@ downloadWeeklyMenuButton?.addEventListener(
     await supabaseClient
         .functions
         .invoke(
-            "check-appetit-menu",
+            "check-4M-menu",
             {
                 body: {}
             }
