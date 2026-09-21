@@ -1653,7 +1653,7 @@ openRestaurantMenuButton?.addEventListener(
     () => {
 
         window.open(
-            "https://superobed.sk/podnik/appetit-obedove-menu-rozvoz/denne-menu",
+            "https://superobed.sk/podnik/4m-restaurant/denne-menu-34?h=3be11773ba",
             "_blank"
         );
 
