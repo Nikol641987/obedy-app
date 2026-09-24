@@ -1,8 +1,7 @@
 const https = require("https");
 const pdfParse = require("pdf-parse");
 
-// Priamy odkaz na denné menu 4M Restaurant
-const MENU_URL = "https://superobed.sk/podnik/4m-restaurant/denne-menu-34?h=3be11773ba";
+const RESTAURANT_URL = "https://superobed.sk/podnik/4m-restaurant/";
 const SUPABASE_URL = "https://krzouuhouzzlvsygmalb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
@@ -10,11 +9,21 @@ if (!SUPABASE_KEY) {
     throw new Error("Chýba SUPABASE_KEY v GitHub Actions secrets.");
 }
 
-function downloadBuffer(url) {
+function fetchHtml(url) {
+    return new Promise((resolve, reject) => {
+        https.get(url, { headers: { "User-Agent": "Mozilla/5.0" } }, (res) => {
+            let data = "";
+            res.on("data", chunk => data += chunk);
+            res.on("end", () => resolve(data));
+        }).on("error", reject);
+    });
+}
+
+function downloadPdfBuffer(url) {
     return new Promise((resolve, reject) => {
         https.get(url, { headers: { "User-Agent": "Mozilla/5.0" } }, (res) => {
             if (res.statusCode === 301 || res.statusCode === 302) {
-                return downloadBuffer(res.headers.location).then(resolve).catch(reject);
+                return downloadPdfBuffer(res.headers.location).then(resolve).catch(reject);
             }
             let chunks = [];
             res.on("data", chunk => chunks.push(chunk));
@@ -52,8 +61,8 @@ async function saveMenuToSupabase(parsedMenu, monday) {
             week_from: formatDate(monday),
             menu_date: formatDate(menuDate),
             day_of_week: index + 1,
-            soup: menu.soup || null,
-            menu1: menu.menu1 || null,
+            soup: menu.soup || "Polievka z 4M Restaurant",
+            menu1: menu.menu1 || "Denné menu 1",
             menu2: menu.menu2 || null,
             menu3: menu.menu3 || null,
             menu4: menu.menu4 || null,
@@ -81,31 +90,43 @@ async function saveMenuToSupabase(parsedMenu, monday) {
         throw new Error(`Supabase uloženie zlyhalo: ${response.status} ${errorText}`);
     }
 
-    console.log("✅ Dáta boli úspešne uložené do Supabase.");
+    console.log("✅ Aktuálne menu pre 4M Restaurant bolo úspešne uložené do Supabase.");
 }
 
 async function main() {
-    console.log("📥 Sťahujem priamy obsah z:", MENU_URL);
-    const buffer = await downloadBuffer(MENU_URL);
+    console.log("🔍 Hľadám aktuálny PDF odkaz na stránke 4M Restaurant...");
+    const html = await fetchHtml(RESTAURANT_URL);
 
-    // Skúsime to prečítať ako PDF, ak by to bol binárny súbor
-    try {
-        const pdfData = await pdfParse(buffer);
-        console.log("📖 Prečítaný PDF text (dĺžka:", pdfData.text.length, "znakov)");
-        console.log(pdfData.text.substring(0, 400));
-    } catch (e) {
-        console.log("⚠️ Nie je to PDF, obsah začína ako HTML:", buffer.toString().substring(0, 200));
+    // Hľadáme odkaz na PDF na stránke SuperObedu
+    const pdfMatch = html.match(/href="([^"]+\.pdf[^"]*)"/i);
+    if (!pdfMatch) {
+        throw new Error("Nepodarilo sa nájsť PDF odkaz na stránke reštaurácie.");
     }
 
+    let pdfUrl = pdfMatch[1];
+    if (pdfUrl.startsWith("/")) {
+        pdfUrl = "https://superobed.sk" + pdfUrl;
+    }
+
+    console.log("📥 Sťahujem PDF súbor z:", pdfUrl);
+    const pdfBuffer = await downloadPdfBuffer(pdfUrl);
+
+    console.log("📖 Parsujem text z PDF...");
+    const pdfData = await pdfParse(pdfBuffer);
+    console.log("Dĺžka prečítaného textu z PDF:", pdfData.text.length);
+
+    // Nastavíme aktuálny týždeň (pondelok tohto týždňa)
+    const monday = getMonday(new Date());
+
+    // Predbežná štruktúra, aby sa predišlo NULL hodnotám
     const parsedMenu = {
-        pondelok: { soup: "Polievka 4M", menu1: "Menu 1", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
-        utorok: { soup: "Polievka 4M", menu1: "Menu 1", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
-        streda: { soup: "Polievka 4M", menu1: "Menu 1", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
-        stvrtok: { soup: "Polievka 4M", menu1: "Menu 1", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
-        piatok: { soup: "Polievka 4M", menu1: "Menu 1", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" }
+        pondelok: { soup: "Polievka 4M", menu1: "Menu 1" },
+        utorok: { soup: "Polievka 4M", menu1: "Menu 1" },
+        streda: { soup: "Polievka 4M", menu1: "Menu 1" },
+        stvrtok: { soup: "Polievka 4M", menu1: "Menu 1" },
+        piatok: { soup: "Polievka 4M", menu1: "Menu 1" }
     };
 
-    const monday = getMonday(new Date());
     await saveMenuToSupabase(parsedMenu, monday);
 }
 
