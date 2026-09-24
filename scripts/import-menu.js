@@ -50,45 +50,46 @@ function parseRealMenu(text) {
 
     const parsed = {};
     Object.values(daysMap).forEach(day => {
-        parsed[day] = { soup: null, menu1: null, menu2: null, menu3: null, menu4: null, menu5: null, menu6: null };
+        parsed[day] = { soup: [], menu1: null, menu2: null, menu3: null, menu4: null, menu5: null, menu6: null };
     });
 
     const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
     let currentDay = null;
+    let capturingSoup = false;
 
     lines.forEach(line => {
         const upperLine = line.toUpperCase();
         
         // Zistenie dňa v týždni
+        let foundDay = false;
         for (const [key, val] of Object.entries(daysMap)) {
             if (upperLine.startsWith(key)) {
                 currentDay = val;
-                // Ak je polievka hneď na riadku s dňom (napr. "PONDELOK: Gulášová")
+                foundDay = true;
+                capturingSoup = true; // Začíname zbierať polievky pre tento deň
+                
                 const parts = line.split(":");
                 if (parts.length > 1 && parts[1].trim()) {
-                    parsed[currentDay].soup = parts[1].trim();
+                    parsed[currentDay].soup.push(parts[1].trim());
                 }
-                return;
+                break;
             }
         }
+        if (foundDay) return;
 
         if (!currentDay) return;
 
-       // Ak riadok začína ako polievka (alebo je to riadok hneď po dni, kde nie je "MENU")
-        if (!upperLine.startsWith("MENU")) {
-            // Ak už máme prvú polievku, a toto nie je názov dňa, tak je to druhá polievka
-            let isDay = Object.keys(daysMap).some(d => upperLine.startsWith(d));
-            if (!isDay && currentDay) {
-                if (!parsed[currentDay].soup) {
-                    parsed[currentDay].soup = line;
-                } else if (!parsed[currentDay].soup.includes(line)) {
-                    // Pripojíme druhú polievku k prvej
-                    parsed[currentDay].soup += ", " + line;
-                }
-                return;
-            }
+        // Ak narazíme na MENU, prestávame zbierať polievky
+        if (upperLine.startsWith("MENU")) {
+            capturingSoup = false;
         }
-        
+
+        // Ak práve zbierame polievky (riadky medzi dňom a prvým menu)
+        if (capturingSoup && !upperLine.startsWith("MENU")) {
+            parsed[currentDay].soup.push(line);
+            return;
+        }
+
         // Parsovanie Menu 1 až 4
         if (upperLine.startsWith("MENU 1:")) {
             parsed[currentDay].menu1 = line.replace(/^MENU\s*1:\s*/i, "").trim();
@@ -99,18 +100,23 @@ function parseRealMenu(text) {
         } else if (upperLine.startsWith("MENU 4:")) {
             parsed[currentDay].menu4 = line.replace(/^MENU\s*4:\s*/i, "").trim();
         } else {
-            // Ak je to dlhší text, ktorý patrí k predošlému menu (zalamovanie riadkov v PDF)
-            if (currentDay) {
-                if (parsed[currentDay].menu4 && !parsed[currentDay].menu4.endsWith("€") && !line.startsWith("MENU")) {
-                    parsed[currentDay].menu4 += " " + line;
-                } else if (parsed[currentDay].menu3 && !parsed[currentDay].menu3.endsWith("€") && !line.startsWith("MENU")) {
-                    parsed[currentDay].menu3 += " " + line;
-                } else if (parsed[currentDay].menu2 && !parsed[currentDay].menu2.endsWith("€") && !line.startsWith("MENU")) {
-                    parsed[currentDay].menu2 += " " + line;
-                } else if (parsed[currentDay].menu1 && !parsed[currentDay].menu1.endsWith("€") && !line.startsWith("MENU")) {
-                    parsed[currentDay].menu1 += " " + line;
-                }
+            // Zalamovanie riadkov pre existujúce menu
+            if (parsed[currentDay].menu4 && !parsed[currentDay].menu4.endsWith("€")) {
+                parsed[currentDay].menu4 += " " + line;
+            } else if (parsed[currentDay].menu3 && !parsed[currentDay].menu3.endsWith("€")) {
+                parsed[currentDay].menu3 += " " + line;
+            } else if (parsed[currentDay].menu2 && !parsed[currentDay].menu2.endsWith("€")) {
+                parsed[currentDay].menu2 += " " + line;
+            } else if (parsed[currentDay].menu1 && !parsed[currentDay].menu1.endsWith("€")) {
+                parsed[currentDay].menu1 += " " + line;
             }
+        }
+    });
+
+    // Spojíme pole polievok do jedného reťazca oddeleného čiarkou
+    Object.keys(parsed).forEach(day => {
+        if (Array.isArray(parsed[day].soup)) {
+            parsed[day].soup = parsed[day].soup.join(", ");
         }
     });
 
