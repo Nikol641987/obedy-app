@@ -253,8 +253,6 @@ adminWeeklyMenuButton?.addEventListener(
 
                 day.open = false;
 
-            });
-
     }
 );
 
