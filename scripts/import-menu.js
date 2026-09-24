@@ -51,32 +51,24 @@ async function getMenuFile() {
     const pageData = await fetchUrl(PAGE_URL);
     const htmlText = pageData.buffer.toString("utf8");
 
-    // Všetky odkazy na obrázky/PDF na stránke
-    const allMatches = [
-        ...htmlText.matchAll(/href=["']([^"']+\.(?:pdf|png|jpg|jpeg)(?:\?[^"']*)?)["']/gi),
-        ...htmlText.matchAll(/src=["']([^"']+\.(?:pdf|png|jpg|jpeg)(?:\?[^"']*)?)["']/gi)
-    ];
+    // Hľadáme výhradne odkaz na .pdf súbor
+    const pdfMatch = htmlText.match(/href=["']([^"']+\.pdf(?:\?[^"']*)?)["']/i);
 
-    let targetUrl = null;
-
-    for (const match of allMatches) {
-        const urlCandidate = match[1];
-        // Ignorujeme ikony, logo, favicon a malé systémové obrázky
-        if (!urlCandidate.match(/(logo|icon|favicon|assets\/images\/logo)/i)) {
-            targetUrl = new URL(urlCandidate, PAGE_URL).href;
-            break;
-        }
+    if (pdfMatch && pdfMatch[1]) {
+        const targetUrl = new URL(pdfMatch[1], PAGE_URL).href;
+        console.log("📄 Nájdený PDF súbor menu:", targetUrl);
+        return await fetchUrl(targetUrl);
     }
 
-    if (targetUrl) {
-        console.log("🔗 Nájdený odkaz na súbor menu (po filtrovaní loga):", targetUrl);
-    } else {
-        targetUrl = PAGE_URL;
-        console.log("⚠️ Nenašiel sa priamy odkaz na menu, skúšam načítať základnú URL...");
+    // Ak sa PDF nenájde v href, skúšame hľadať akýkoľvek odkaz obsahujúci '.pdf'
+    const fallbackPdfMatch = htmlText.match(/([^"'\s]+\.pdf(?:\?[^"'\s]*)?)/i);
+    if (fallbackPdfMatch && fallbackPdfMatch[1]) {
+        const targetUrl = new URL(fallbackPdfMatch[1], PAGE_URL).href;
+        console.log("📄 Nájdený PDF súbor (fallback):", targetUrl);
+        return await fetchUrl(targetUrl);
     }
 
-    const fileData = await fetchUrl(targetUrl);
-    return fileData;
+    throw new Error("Na stránke sa nenašiel žiaden PDF súbor s menu.");
 }
 
 // =====================================
