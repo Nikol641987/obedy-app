@@ -1,7 +1,7 @@
-console.log("🚀 SPUSTAM ROZŠÍRENÝ IMPORT MENU PRE SUPEROBED");
+console.log("🚀 SPUSTAM IMPORT PRIAMO Z URL DENNÉHO MENU");
 const puppeteer = require("puppeteer");
 
-const PAGE_URL = "https://superobed.sk/podnik/4m-restaurant/";
+const PAGE_URL = "https://superobed.sk/podnik/4m-restaurant/denne-menu-34?h=3be11773ba";
 const SUPABASE_URL = "https://krzouuhouzzlvsygmalb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
@@ -71,7 +71,7 @@ async function saveMenuToSupabase(parsedMenu, monday) {
 }
 
 async function main() {
-    console.log("🌐 Načítavam stránku cez Puppeteer...");
+    console.log("🌐 Načítavam čistú stránku denného menu cez Puppeteer...");
     const browser = await puppeteer.launch({
         headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"]
@@ -81,29 +81,19 @@ async function main() {
     await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
     await page.goto(PAGE_URL, { waitUntil: "networkidle2" });
 
-    // Pokúsime sa vytiahnuť jedlá priamo pomocou inteligentného parsora bežiaceho v prehliadači
-    const scrapedData = await page.evaluate(() => {
-        const result = {
-            pondelok: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
-            utorok: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
-            streda: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
-            stvrtok: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
-            piatok: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" }
-        };
-
-        // Získame celý text alebo skúsime nájsť časti s menu
-        const bodyText = document.body.innerText;
-        return { bodyText };
-    });
-
+    const pageText = await page.evaluate(() => document.body.innerText);
     await browser.close();
 
-    console.log("📄 Dnes načítaný text zo stránky (ukážka):");
-    console.log(scrapedData.bodyText.substring(0, 800));
+    console.log("========================================");
+    console.log("TEXT Z DENNÉHO MENU:");
+    console.log("========================================");
+    console.log(pageText);
+    console.log("========================================");
 
-    // Základné rozdelenie textu pre ukážku do konzoly
+    // Tu zatial necháme pripravenú štruktúru, zatiaľ čo mi pošlete výpis textu z konzoly,
+    // aby sme presne videli, ako sú tam jedlá napísané pod sebou.
     const parsedMenu = {
-        pondelok: { soup: "Polievka zistená automaticky", menu1: "Menu 1 - pozri logy", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
+        pondelok: { soup: "Test polievka", menu1: "Test menu 1", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
         utorok: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
         streda: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
         stvrtok: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
