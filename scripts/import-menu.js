@@ -223,6 +223,9 @@ async function saveMenuToSupabase(parsedMenu, monday) {
 // =====================================
 // HLAVNÁ FUNKCIA (UPRAVENÁ PRE HTML TEKST)
 // =====================================
+// =====================================
+// HLAVNÁ FUNKCIA (UPRAVENÁ PRE HTML TEXT)
+// =====================================
 async function main() {
     console.log("🔄 Kontrolujem aktuálne menu na SuperObed...");
 
@@ -251,12 +254,21 @@ async function main() {
             { encoding: "utf8", maxBuffer: 10 * 1024 * 1024 }
         );
     } else {
-        // Spracovávame priamo text z HTML stránky (bez OCR)
+        // Spracovanie HTML textu – vyčistenie značiek a úprava riadkovania
         console.log("📄 Spracovávam HTML text stránky...");
-        extractedText = fileData.buffer.toString("utf8")
+        const rawHtml = fileData.buffer.toString("utf8");
+
+        extractedText = rawHtml
             .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
             .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-            .replace(/<[^>]+>/g, "\n"); // Odstráni HTML značky a nahradí ich novými riadkami
+            .replace(/<br\s*\/?>/gi, "\n")
+            .replace(/<\/p>/gi, "\n")
+            .replace(/<\/div>/gi, "\n")
+            .replace(/<\/li>/gi, "\n")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/&nbsp;/g, " ")
+            .replace(/[ \t]+/g, " ")
+            .replace(/\n\s*\n/g, "\n");
     }
 
     if (!extractedText.trim()) {
@@ -266,7 +278,7 @@ async function main() {
     console.log("========================================");
     console.log("SPRACOVANÝ TEXT MENU");
     console.log("========================================");
-    console.log(extractedText.slice(0, 1000) + "\n... (skrátené pre prehľadnosť)");
+    console.log(extractedText);
     console.log("========================================");
 
     console.log("🔎 Spracúvam menu...");
@@ -283,8 +295,3 @@ async function main() {
     await saveMenuToSupabase(parsedMenu, monday);
     console.log("🎉 Import menu úspešne dokončený.");
 }
-
-main().catch(error => {
-    console.error("❌ Import menu zlyhal:", error);
-    process.exit(1);
-});
