@@ -1,0 +1,28 @@
+name: Import Menu to Supabase
+
+on:
+  schedule:
+    # Spustí sa automaticky každý pondelok o 6:00 ráno
+    - cron: '0 6 * * 1'
+  workflow_dispatch: # Umožní spustiť skript aj ručne tlačidlom
+
+jobs:
+  import-menu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Stiahnutie repozitára
+        uses: actions/checkout@v4
+
+      - name: Nastavenie Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Inštalácia závislostí
+        run: npm install
+
+      - name: Spustenie importu menu
+        run: node scripts/import-menu.js
+        env:
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
