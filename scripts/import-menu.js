@@ -38,30 +38,77 @@ function formatDate(date) {
     return `${year}-${month}-${day}`;
 }
 
-// Jednoduchá funkcia na základe kľúčových slov v texte z PDF
+// Inteligentné parsovanie reálneho textu z PDF pre 4M Restaurant
 function parseRealMenu(text) {
-    console.log("--- ZAČIATOK SUROVÉHO TEXTU Z PDF ---");
-    console.log(text.substring(0, 1000)); // Vypíše začiatok textu do logov pre kontrolu
-    console.log("--- KONIEC UKÁŽKY TEXTU ---");
+    const daysMap = {
+        "PONDELOK": "pondelok",
+        "UTOROK": "utorok",
+        "STREDA": "streda",
+        "ŠTVRTOK": "stvrtok",
+        "PIATOK": "piatok"
+    };
 
-    // Predvolená štruktúra pre 5 pracovných dní
-    const days = ["pondelok", "utorok", "streda", "stvrtok", "piatok"];
     const parsed = {};
-
-    days.forEach(day => {
-        parsed[day] = {
-            soup: "Polievka z PDF",
-            menu1: "Menu 1 z PDF",
-            menu2: "Menu 2 z PDF",
-            menu3: null,
-            menu4: null,
-            menu5: null,
-            menu6: null
-        };
+    Object.values(daysMap).forEach(day => {
+        parsed[day] = { soup: null, menu1: null, menu2: null, menu3: null, menu4: null, menu5: null, menu6: null };
     });
 
-    // Sem neskôr doplníme detailné rozparsovanie podľa toho,
-    // čo uvidíme v logoch z GitHub Actions.
+    const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+    let currentDay = null;
+
+    lines.forEach(line => {
+        const upperLine = line.toUpperCase();
+        
+        // Zistenie dňa v týždni
+        for (const [key, val] of Object.entries(daysMap)) {
+            if (upperLine.startsWith(key)) {
+                currentDay = val;
+                // Ak je polievka hneď na riadku s dňom (napr. "PONDELOK: Gulášová")
+                const parts = line.split(":");
+                if (parts.length > 1 && parts[1].trim()) {
+                    parsed[currentDay].soup = parts[1].trim();
+                }
+                return;
+            }
+        }
+
+        if (!currentDay) return;
+
+        // Ak riadok začína ako polievka (ak nie je na riadku s dňom)
+        if (!parsed[currentDay].soup && (upperLine.includes("POLIEVKA") || !upperLine.startsWith("MENU"))) {
+            // Ak to nie je iné menu, berieme to ako pokračovanie polievky
+            if (!upperLine.startsWith("MENU 1") && !upperLine.startsWith("MENU 2") && !upperLine.startsWith("MENU 3") && !upperLine.startsWith("MENU 4")) {
+                parsed[currentDay].soup = parsed[currentDay].soup ? parsed[currentDay].soup + ", " + line : line;
+                return;
+            }
+        }
+
+        // Parsovanie Menu 1 až 4
+        if (upperLine.startsWith("MENU 1:")) {
+            parsed[currentDay].menu1 = line.replace(/^MENU\s*1:\s*/i, "").trim();
+        } else if (upperLine.startsWith("MENU 2:")) {
+            parsed[currentDay].menu2 = line.replace(/^MENU\s*2:\s*/i, "").trim();
+        } else if (upperLine.startsWith("MENU 3:")) {
+            parsed[currentDay].menu3 = line.replace(/^MENU\s*3:\s*/i, "").trim();
+        } else if (upperLine.startsWith("MENU 4:")) {
+            parsed[currentDay].menu4 = line.replace(/^MENU\s*4:\s*/i, "").trim();
+        } else {
+            // Ak je to dlhší text, ktorý patrí k predošlému menu (zalamovanie riadkov v PDF)
+            if (currentDay) {
+                if (parsed[currentDay].menu4 && !parsed[currentDay].menu4.endsWith("€") && !line.startsWith("MENU")) {
+                    parsed[currentDay].menu4 += " " + line;
+                } else if (parsed[currentDay].menu3 && !parsed[currentDay].menu3.endsWith("€") && !line.startsWith("MENU")) {
+                    parsed[currentDay].menu3 += " " + line;
+                } else if (parsed[currentDay].menu2 && !parsed[currentDay].menu2.endsWith("€") && !line.startsWith("MENU")) {
+                    parsed[currentDay].menu2 += " " + line;
+                } else if (parsed[currentDay].menu1 && !parsed[currentDay].menu1.endsWith("€") && !line.startsWith("MENU")) {
+                    parsed[currentDay].menu1 += " " + line;
+                }
+            }
+        }
+    });
+
+    console.log("📊 Výsledok parsovania:", JSON.stringify(parsed, null, 2));
     return parsed;
 }
 
@@ -78,13 +125,13 @@ async function saveMenuToSupabase(parsedMenu, monday) {
             week_from: formatDate(monday),
             menu_date: formatDate(menuDate),
             day_of_week: index + 1,
-            soup: menu.soup,
-            menu1: menu.menu1,
-            menu2: menu.menu2,
-            menu3: menu.menu3,
-            menu4: menu.menu4,
-            menu5: menu.menu5,
-            menu6: menu.menu6
+            soup: menu.soup || "Polievka",
+            menu1: menu.menu1 || "Neuvedené",
+            menu2: menu.menu2 || null,
+            menu3: menu.menu3 || null,
+            menu4: menu.menu4 || null,
+            menu5: null,
+            menu6: null
         });
     });
 
@@ -107,7 +154,7 @@ async function saveMenuToSupabase(parsedMenu, monday) {
         throw new Error(`Supabase uloženie zlyhalo: ${response.status} ${errorText}`);
     }
 
-    console.log("✅ Menu s parsovaním úspešne uložené do Supabase!");
+    console.log("✅ Reálne menu bolo úspešne rozparsované a uložené do Supabase!");
 }
 
 async function main() {
