@@ -52,7 +52,7 @@ async function getMenuFile() {
     const pageData = await fetchUrl(PAGE_URL);
     const htmlText = pageData.buffer.toString("utf8");
 
-    // 1. Najprv skúšame nájsť PDF súbor
+    // 1. Ak existuje priamy PDF súbor s menu, stiahne ho
     const pdfMatch = htmlText.match(/href=["']([^"']+\.pdf(?:\?[^"']*)?)["']/i);
     if (pdfMatch && pdfMatch[1]) {
         const targetUrl = new URL(pdfMatch[1], PAGE_URL).href;
@@ -60,27 +60,10 @@ async function getMenuFile() {
         return await fetchUrl(targetUrl);
     }
 
-    // 2. Ak PDF nie je, vyhľadáme obrázky, ale NATVRDO ignorujeme zložku /assets/ a logá
-    const allMatches = [
-        ...htmlText.matchAll(/href=["']([^"']+\.(?:png|jpg|jpeg)(?:\?[^"']*)?)["']/gi),
-        ...htmlText.matchAll(/src=["']([^"']+\.(?:png|jpg|jpeg)(?:\?[^"']*)?)["']/gi)
-    ];
-
-    for (const match of allMatches) {
-        const urlCandidate = match[1];
-        // Úplný zákaz pre ikony, logá a systémové assets súbory
-        if (!urlCandidate.includes("assets/") && !urlCandidate.match(/(logo|icon|mini|favicon)/i)) {
-            const targetUrl = new URL(urlCandidate, PAGE_URL).href;
-            console.log("🖼️ Nájdený obrázok menu:", targetUrl);
-            return await fetchUrl(targetUrl);
-        }
-    }
-
-    // 3. Ak neexistuje samostatný obrázok menu mimo assets, spracujeme samotný HTML obsah stránky
-    console.log("ℹ️ Žiadny samostatný súbor/obrázok menu nenájdený. Spracovávam priamo HTML stránku...");
+    // 2. Ak PDF nie je, úplne ignorujeme galérie/obrázky a spracujeme priamo HTML text
+    console.log("ℹ️ Žiadne PDF nenájdené. Spracovávam priamo textový obsah HTML stránky...");
     return pageData;
 }
-
 // =====================================
 // VYČISTENIE MENU
 // =====================================
