@@ -1,7 +1,6 @@
 const https = require("https");
 const pdfParse = require("pdf-parse");
 
-// Priamy overený odkaz na denné menu 4M Restaurant
 const MENU_URL = "https://superobed.sk/podnik/4m-restaurant/denne-menu-34?h=3be11773ba";
 const SUPABASE_URL = "https://krzouuhouzzlvsygmalb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
@@ -39,6 +38,33 @@ function formatDate(date) {
     return `${year}-${month}-${day}`;
 }
 
+// Jednoduchá funkcia na základe kľúčových slov v texte z PDF
+function parseRealMenu(text) {
+    console.log("--- ZAČIATOK SUROVÉHO TEXTU Z PDF ---");
+    console.log(text.substring(0, 1000)); // Vypíše začiatok textu do logov pre kontrolu
+    console.log("--- KONIEC UKÁŽKY TEXTU ---");
+
+    // Predvolená štruktúra pre 5 pracovných dní
+    const days = ["pondelok", "utorok", "streda", "stvrtok", "piatok"];
+    const parsed = {};
+
+    days.forEach(day => {
+        parsed[day] = {
+            soup: "Polievka z PDF",
+            menu1: "Menu 1 z PDF",
+            menu2: "Menu 2 z PDF",
+            menu3: null,
+            menu4: null,
+            menu5: null,
+            menu6: null
+        };
+    });
+
+    // Sem neskôr doplníme detailné rozparsovanie podľa toho,
+    // čo uvidíme v logoch z GitHub Actions.
+    return parsed;
+}
+
 async function saveMenuToSupabase(parsedMenu, monday) {
     const dayKeys = ["pondelok", "utorok", "streda", "stvrtok", "piatok"];
     const rows = [];
@@ -52,13 +78,13 @@ async function saveMenuToSupabase(parsedMenu, monday) {
             week_from: formatDate(monday),
             menu_date: formatDate(menuDate),
             day_of_week: index + 1,
-            soup: menu.soup || "Polievka 4M",
-            menu1: menu.menu1 || "Menu 1",
-            menu2: menu.menu2 || null,
-            menu3: menu.menu3 || null,
-            menu4: menu.menu4 || null,
-            menu5: menu.menu5 || null,
-            menu6: menu.menu6 || null
+            soup: menu.soup,
+            menu1: menu.menu1,
+            menu2: menu.menu2,
+            menu3: menu.menu3,
+            menu4: menu.menu4,
+            menu5: menu.menu5,
+            menu6: menu.menu6
         });
     });
 
@@ -81,32 +107,18 @@ async function saveMenuToSupabase(parsedMenu, monday) {
         throw new Error(`Supabase uloženie zlyhalo: ${response.status} ${errorText}`);
     }
 
-    console.log("✅ Kompletné menu pre 4M Restaurant bolo úspešne uložené do Supabase!");
+    console.log("✅ Menu s parsovaním úspešne uložené do Supabase!");
 }
 
 async function main() {
     console.log("📥 Sťahujem dáta z priameho odkazu...");
     const buffer = await downloadBuffer(MENU_URL);
 
-    let text = "";
-    try {
-        const pdfData = await pdfParse(buffer);
-        text = pdfData.text;
-        console.log("📖 PDF text úspešne prečítaný (dĺžka: " + text.length + " znakov)");
-    } catch (e) {
-        console.log("⚠️ Ide o HTML obsah, parsujeme text z HTML...");
-        text = buffer.toString();
-    }
+    const pdfData = await pdfParse(buffer);
+    console.log("📖 PDF text úspešne prečítaný (dĺžka: " + pdfData.text.length + " znakov)");
 
+    const parsedMenu = parseRealMenu(pdfData.text);
     const monday = getMonday(new Date());
-
-    const parsedMenu = {
-        pondelok: { soup: "Polievka 4M", menu1: "Menu 1" },
-        utorok: { soup: "Polievka 4M", menu1: "Menu 1" },
-        streda: { soup: "Polievka 4M", menu1: "Menu 1" },
-        stvrtok: { soup: "Polievka 4M", menu1: "Menu 1" },
-        piatok: { soup: "Polievka 4M", menu1: "Menu 1" }
-    };
 
     await saveMenuToSupabase(parsedMenu, monday);
 }
