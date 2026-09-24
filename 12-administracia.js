@@ -483,10 +483,13 @@ function getWeeklyMenuData() {
 
 }
 async function recognizeWeeklyMenuImage(
-    imageBase64,
+    inputData,
     contentType,
     statusElement
 ) {
+    const imageBase64 = (typeof inputData === 'object' && inputData !== null)
+        ? (inputData.fileBase64 || inputData.imageBase64 || inputData.image)
+        : inputData;
 
     if (!window.Tesseract) {
         throw new Error(
