@@ -1,4 +1,4 @@
-console.log("🚀 SPUSTAM IMPORT PRIAMO Z URL DENNÉHO MENU");
+console.log("🚀 SPUSTAM IMPORT S ČAKANÍM NA ELEMENTY");
 const puppeteer = require("puppeteer");
 
 const PAGE_URL = "https://superobed.sk/podnik/4m-restaurant/denne-menu-34?h=3be11773ba";
@@ -71,7 +71,7 @@ async function saveMenuToSupabase(parsedMenu, monday) {
 }
 
 async function main() {
-    console.log("🌐 Načítavam čistú stránku denného menu cez Puppeteer...");
+    console.log("🌐 Načítavam stránku a čakám na vykreslenie...");
     const browser = await puppeteer.launch({
         headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"]
@@ -79,21 +79,24 @@ async function main() {
 
     const page = await browser.newPage();
     await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
-    await page.goto(PAGE_URL, { waitUntil: "networkidle2" });
+    
+    // Otvoríme stránku
+    await page.goto(PAGE_URL, { waitUntil: "networkidle0" });
+
+    // Dáme prehliadaču extra 3 sekundy na plné dokončenie skriptov na pozadí
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     const pageText = await page.evaluate(() => document.body.innerText);
     await browser.close();
 
     console.log("========================================");
-    console.log("TEXT Z DENNÉHO MENU:");
+    console.log("TEXT Z DENNÉHO MENU (PO ČAKANÍ):");
     console.log("========================================");
     console.log(pageText);
     console.log("========================================");
 
-    // Tu zatial necháme pripravenú štruktúru, zatiaľ čo mi pošlete výpis textu z konzoly,
-    // aby sme presne videli, ako sú tam jedlá napísané pod sebou.
     const parsedMenu = {
-        pondelok: { soup: "Test polievka", menu1: "Test menu 1", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
+        pondelok: { soup: "Skúška čakania", menu1: "Jedlo 1", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
         utorok: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
         streda: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
         stvrtok: { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" },
