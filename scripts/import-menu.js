@@ -12,13 +12,13 @@ if (!SUPABASE_KEY) {
 }
 
 // =====================================
-// POMOCNÉ SŤAHOVANIE SÚBOROV (HTML, PDF)
+// POMOCNÉ SŤAHOVANIE SÚBOROV
 // =====================================
 function fetchUrl(url) {
     return new Promise((resolve, reject) => {
         https.get(
             url,
-            { headers: { "User-Agent": "Mozilla/5.0 TMV-Obedy-Menu-Checker/1.0" } },
+            { headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" } },
             response => {
                 if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
                     const redirectUrl = new URL(response.headers.location, url).href;
@@ -45,14 +45,13 @@ function fetchUrl(url) {
 }
 
 // =====================================
-// STIAHNUTIE SÚBORU MENU Z PAGE_URL
+// STIAHNUTIE HTML STRÁNKY
 // =====================================
 async function getMenuFile() {
     console.log("🔍 Sťahujem HTML stránku reštaurácie...");
     const pageData = await fetchUrl(PAGE_URL);
     const htmlText = pageData.buffer.toString("utf8");
 
-    // 1. Ak existuje priamy PDF súbor s menu, stiahne ho
     const pdfMatch = htmlText.match(/href=["']([^"']+\.pdf(?:\?[^"']*)?)["']/i);
     if (pdfMatch && pdfMatch[1]) {
         const targetUrl = new URL(pdfMatch[1], PAGE_URL).href;
@@ -60,17 +59,15 @@ async function getMenuFile() {
         return await fetchUrl(targetUrl);
     }
 
-    // 2. Ak PDF nie je, ignorujeme galérie a spracujeme priamo HTML text
-    console.log("ℹ️ Žiadne PDF nenájdené. Spracovávam priamo textový obsah HTML stránky...");
+    console.log("ℹ️ Spracovávam priamo textový obsah HTML stránky...");
     return pageData;
 }
 
 // =====================================
-// VYČISTENIE MENU
+// VYČISTENIE POLOŽIEK
 // =====================================
 function cleanMenuItem(text) {
     let result = String(text || "");
-
     result = result.replace(/\s*(?:6[,.]90|9[,.]20)[€%]?[0-9]*.*$/i, "");
     result = result.replace(/\s+\d{1,2}(?:[,.]\d{1,2})?\s*$/i, "");
     result = result.replace(/[.,]?\d{1,2}(?:[.,]\d{1,2})?[.,]?(?:6[,.]90|9[,.]20)[0-9€%]*$/i, "");
@@ -78,21 +75,13 @@ function cleanMenuItem(text) {
     result = result.replace(/([)])\s*\d{1,2}\s*$/i, "$1");
     result = result.replace(/\s*[-–—:;,.\s]+$/u, "");
     result = result.replace(/\s+/g, " ").trim();
-    result = result.replace(/([a-zá-ž)])(?:1,3|1,7|3,7|1,3,7|13,7|137)\s*$/i, "$1");
-
     return result;
 }
 
 // =====================================
-// PARSOVANIE CELÉHO TÝŽDŇA
+// PARSOVANIE MENU
 // =====================================
 function parseWeeklyMenuText(text) {
-    const normalizedText = String(text || "")
-        .replace(/\r/g, "")
-        .replace(/[ \t]+/g, " ")
-        .replace(/\n{2,}/g, "\n")
-        .trim();
-
     const dayDefinitions = [
         { key: "pondelok", pattern: "Pondelok" },
         { key: "utorok", pattern: "Utorok" },
@@ -106,11 +95,12 @@ function parseWeeklyMenuText(text) {
     dayDefinitions.forEach((day, index) => {
         const nextDay = dayDefinitions[index + 1];
         const endPattern = nextDay
-            ? `(?=${nextDay.pattern}\\s*:)`
-            : `(?=Appetit Obedové menu|Polievka samostatne|Alergény:|$)`;
+            ? `(?=${nextDay.pattern})`
+            : `(?=Appetit|Polievka samostatne|Alergény:|Otváracie|$)`;
 
-        const dayRegex = new RegExp(`${day.pattern}\\s*:\\s*([\\s\\S]*?)${endPattern}`, "i");
-        const dayMatch = normalizedText.match(dayRegex);
+        // Hľadá deň s dvojbodkou aj bez nej
+        const dayRegex = new RegExp(`${day.pattern}\\s*:?\\s*([\\s\\S]*?)${endPattern}`, "i");
+        const dayMatch = text.match(dayRegex);
 
         if (!dayMatch) {
             result[day.key] = { soup: "", menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" };
@@ -119,25 +109,19 @@ function parseWeeklyMenuText(text) {
 
         const dayText = dayMatch[1].trim();
 
-        // POLIEVKA
-        const soupMatch = dayText.match(/^([\s\S]*?)(?=\s*1\.\s*\d+g?\s*\/)/i);
+        // Extrakcia polievky
+        const soupMatch = dayText.match(/^([\s\S]*?)(?=\s*1\.\s*)/i);
         let soup = soupMatch ? soupMatch[1] : "";
-
-        soup = soup.replace(/\s+/g, " ").trim();
-        soup = soup.replace(/^0[,.:]?331\b/i, "0,33l");
-        soup = soup.replace(/\s+\d+(?:[.,:]\d+)*\s*(?=\d+\s*ks\s*chlieb)/gi, " ");
-        soup = soup.replace(/\s*[,.:+]+\s*(?=\d+\s*ks\s*chlieb)/gi, " ");
-        soup = soup.replace(/\s+\d+(?:\s*[,.:]\s*\d+)*\s*$/gi, "");
         soup = soup.replace(/\s+/g, " ").trim();
 
         const parsedDay = { soup, menu1: "", menu2: "", menu3: "", menu4: "", menu5: "", menu6: "" };
 
-        // MENU 1–6
+        // Extrakcia menu 1–6
         for (let menuNumber = 1; menuNumber <= 6; menuNumber++) {
             const nextNumber = menuNumber + 1;
             const menuRegex = new RegExp(
-                `${menuNumber}\\.\\s*\\d+g?\\s*\\/([\\s\\S]*?)` +
-                (menuNumber < 6 ? `(?=\\s*${nextNumber}\\.\\s*\\d+g?\\s*\\/)` : "$"),
+                `${menuNumber}\\.\\s*([\\s\\S]*?)` +
+                (menuNumber < 6 ? `(?=\\s*${nextNumber}\\.\\s*|$)` : "$"),
                 "i"
             );
 
@@ -217,14 +201,11 @@ async function saveMenuToSupabase(parsedMenu, monday) {
         throw new Error(`Supabase uloženie zlyhalo: ${response.status} ${errorText}`);
     }
 
-    console.log("✅ Menu bolo uložené do Supabase.");
+    console.log("✅ Menu bolo úspešne uložené do Supabase.");
 }
 
 // =====================================
-// HLAVNÁ FUNKCIA (UPRAVENÁ PRE HTML TEKST)
-// =====================================
-// =====================================
-// HLAVNÁ FUNKCIA (UPRAVENÁ PRE HTML TEXT)
+// HLAVNÁ FUNKCIA
 // =====================================
 async function main() {
     console.log("🔄 Kontrolujem aktuálne menu na SuperObed...");
@@ -237,24 +218,23 @@ async function main() {
     if (fileData.contentType.includes("application/pdf")) {
         const pdfPath = "/tmp/menu.pdf";
         fs.writeFileSync(pdfPath, fileData.buffer);
-        console.log("📄 PDF uložené. Konvertujem PDF na obrázok PNG pre Tesseract...");
+        console.log("📄 PDF uložené. Konvertujem PDF na obrázok PNG...");
 
         let imagePath = pdfPath;
         try {
             execFileSync("pdftoppm", ["-png", "-r", "300", "-singlefile", pdfPath, "/tmp/menu_page"]);
             imagePath = "/tmp/menu_page.png";
         } catch (e) {
-            console.warn("⚠️ Konverzia pdftoppm zlyhala, skúšam spustiť Tesseract priamo...");
+            console.warn("⚠️ Konverzia pdftoppm zlyhala.");
         }
 
-        console.log("🔎 Spúšťam Tesseract OCR na PDF...");
+        console.log("🔎 Spúšťam Tesseract OCR...");
         extractedText = execFileSync(
             "tesseract",
             [imagePath, "stdout", "-l", "slk"],
             { encoding: "utf8", maxBuffer: 10 * 1024 * 1024 }
         );
     } else {
-        // Spracovanie HTML textu – vyčistenie značiek a úprava riadkovania
         console.log("📄 Spracovávam HTML text stránky...");
         const rawHtml = fileData.buffer.toString("utf8");
 
@@ -271,21 +251,16 @@ async function main() {
             .replace(/\n\s*\n/g, "\n");
     }
 
-    if (!extractedText.trim()) {
-        throw new Error("Nepodarilo sa získať žiadny text menu.");
-    }
-
     console.log("========================================");
-    console.log("SPRACOVANÝ TEXT MENU");
+    console.log("EXTRAHOVANÝ TEXT SO STRÁNKY:");
     console.log("========================================");
-    console.log(extractedText);
+    console.log(extractedText.slice(0, 1500));
     console.log("========================================");
 
-    console.log("🔎 Spracúvam menu...");
     const parsedMenu = parseWeeklyMenuText(extractedText);
 
     console.log("========================================");
-    console.log("SPRACOVANÉ MENU");
+    console.log("SPRACOVANÉ MENU DO DATABÁZY:");
     console.log("========================================");
     console.log(JSON.stringify(parsedMenu, null, 2));
 
@@ -295,3 +270,8 @@ async function main() {
     await saveMenuToSupabase(parsedMenu, monday);
     console.log("🎉 Import menu úspešne dokončený.");
 }
+
+main().catch(error => {
+    console.error("❌ Import menu zlyhal:", error);
+    process.exit(1);
+});
