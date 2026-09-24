@@ -2,7 +2,7 @@ const https = require("https");
 const fs = require("fs");
 const { execFileSync } = require("child_process");
 
-const PAGE_URL = "https://superobed.sk/podnik/4m-restaurant/denne-menu";
+const PAGE_URL = "https://superobed.sk/podnik/4m-restaurant/";
 const SUPABASE_URL = "https://krzouuhouzzlvsygmalb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
