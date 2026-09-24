@@ -2,6 +2,7 @@
   "name": "obedy-app",
   "version": "1.0.0",
   "dependencies": {
-    "puppeteer": "^22.0.0"
+    "puppeteer": "^22.0.0",
+    "pdf-parse": "^1.1.1"
   }
 }
