@@ -1,7 +1,7 @@
 const https = require("https");
 const pdfParse = require("pdf-parse");
 
-// Použijeme priamy overený odkaz na denné menu 4M Restaurant
+// Priamy overený odkaz na denné menu 4M Restaurant
 const MENU_URL = "https://superobed.sk/podnik/4m-restaurant/denne-menu-34?h=3be11773ba";
 const SUPABASE_URL = "https://krzouuhouzzlvsygmalb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
@@ -88,12 +88,11 @@ async function main() {
     console.log("📥 Sťahujem dáta z priameho odkazu...");
     const buffer = await downloadBuffer(MENU_URL);
 
-    // Skúsime to spracovať cez pdf-parse, ak by to bol PDF stream
     let text = "";
     try {
         const pdfData = await pdfParse(buffer);
         text = pdfData.text;
-        console.Úspešné("📖 PDF text úspešne prečítaný (dĺžka: " + text.length + " znakov)");
+        console.log("📖 PDF text úspešne prečítaný (dĺžka: " + text.length + " znakov)");
     } catch (e) {
         console.log("⚠️ Ide o HTML obsah, parsujeme text z HTML...");
         text = buffer.toString();
