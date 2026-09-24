@@ -1473,29 +1473,7 @@ saveEmailButton?.addEventListener(
 
     }
 );
-    const verifyResetCodeButton =
-    document.getElementById(
-        "verifyResetCodeButton"
-    );
-
-const cancelResetPinButton =
-    document.getElementById(
-        "cancelResetPinButton"
-    );
-
-verifyResetCodeButton?.addEventListener(
-    "click",
-    () => {
-
-        const resetCodeInput =
-            document.getElementById(
-                "resetCodeInput"
-            );
-
-        const resetCodeError =
-            document.getElementById(
-                "resetCodeError"
-            );
+    
 
         const enteredCode =
             resetCodeInput.value.trim();
