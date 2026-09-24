@@ -229,7 +229,7 @@ openDashboardButton?.addEventListener(
     }
 );
 
- adminWeeklyMenuButton?.addEventListener(
+adminWeeklyMenuButton?.addEventListener(
     "click",
     async () => {
 
@@ -243,6 +243,8 @@ openDashboardButton?.addEventListener(
 
         await loadWeeklyMenuFromDatabase();
 
+    }
+);
         document
             .querySelectorAll(
                 "#adminWeeklyMenuScreen .weekly-menu-day"
