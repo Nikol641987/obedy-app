@@ -487,8 +487,11 @@ async function recognizeWeeklyMenuImage(
     contentType,
     statusElement
 ) {
+    // Toto nám vytlačí do konzoly úplne presne to, čo prišlo z Edge Function
+    console.log("DEBUG - inputData:", inputData);
+
     const imageBase64 = (typeof inputData === 'object' && inputData !== null)
-        ? (inputData.fileBase64 || inputData.imageBase64 || inputData.image)
+        ? (inputData.fileBase64 || inputData.imageBase64 || inputData.image || inputData.data || inputData.url)
         : inputData;
 
     if (!window.Tesseract) {
@@ -498,11 +501,10 @@ async function recognizeWeeklyMenuImage(
     }
 
     if (!imageBase64) {
-        throw new Error(
-            "Edge Function neposlala obrázok menu."
-        );
+        // Toto nám namiesto všeobecnej chyby ukáže priamo na obrazovke, čo server poslal
+        throw new Error("Edge Function poslala toto: " + JSON.stringify(inputData));
     }
-
+    
     const imageDataUrl =
         `data:${contentType || "image/jpeg"};base64,${imageBase64}`;
 
