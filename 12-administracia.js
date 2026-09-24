@@ -508,7 +508,7 @@ async function recognizeWeeklyMenuImage(
     const imageDataUrl = `data:${contentType || "image/jpeg"};base64,${imageBase64}`;
 
     const worker = await Tesseract.createWorker(
-        "slk",
+        "eng",
         1,
         {
             logger: message => {
