@@ -51,17 +51,28 @@ async function getMenuFile() {
     const pageData = await fetchUrl(PAGE_URL);
     const htmlText = pageData.buffer.toString("utf8");
 
-    // Vyhľadanie odkazu na PDF alebo obrázok
-    const fileUrlMatch =
-        htmlText.match(/href=["']([^"']+\.(?:pdf|png|jpg|jpeg)(?:\?[^"']*)?)["']/i) ||
-        htmlText.match(/src=["']([^"']+\.(?:pdf|png|jpg|jpeg)(?:\?[^"']*)?)["']/i);
+    // Všetky odkazy na obrázky/PDF na stránke
+    const allMatches = [
+        ...htmlText.matchAll(/href=["']([^"']+\.(?:pdf|png|jpg|jpeg)(?:\?[^"']*)?)["']/gi),
+        ...htmlText.matchAll(/src=["']([^"']+\.(?:pdf|png|jpg|jpeg)(?:\?[^"']*)?)["']/gi)
+    ];
 
-    let targetUrl = PAGE_URL;
-    if (fileUrlMatch && fileUrlMatch[1]) {
-        targetUrl = new URL(fileUrlMatch[1], PAGE_URL).href;
-        console.log("🔗 Nájdený odkaz na súbor menu:", targetUrl);
+    let targetUrl = null;
+
+    for (const match of allMatches) {
+        const urlCandidate = match[1];
+        // Ignorujeme ikony, logo, favicon a malé systémové obrázky
+        if (!urlCandidate.match(/(logo|icon|favicon|assets\/images\/logo)/i)) {
+            targetUrl = new URL(urlCandidate, PAGE_URL).href;
+            break;
+        }
+    }
+
+    if (targetUrl) {
+        console.log("🔗 Nájdený odkaz na súbor menu (po filtrovaní loga):", targetUrl);
     } else {
-        console.log("⚠️ Nenašiel sa priamy odkaz na súbor, skúšam načítať základnú URL...");
+        targetUrl = PAGE_URL;
+        console.log("⚠️ Nenašiel sa priamy odkaz na menu, skúšam načítať základnú URL...");
     }
 
     const fileData = await fetchUrl(targetUrl);
