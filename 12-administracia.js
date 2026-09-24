@@ -548,7 +548,6 @@ async function recognizeWeeklyMenuImage(
     }
 }
 
-
     try {
         const result = await worker.recognize(imageDataUrl);
         return (result?.data?.text || "").trim();
