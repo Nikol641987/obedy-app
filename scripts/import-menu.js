@@ -12,7 +12,7 @@ if (!SUPABASE_KEY) {
 }
 
 // =====================================
-// POMOCNÉ SŤAHOVANIE SÚBOROV (HTML, PDF, OBRÁZKY)
+// POMOCNÉ SŤAHOVANIE SÚBOROV (HTML, PDF)
 // =====================================
 function fetchUrl(url) {
     return new Promise((resolve, reject) => {
@@ -60,10 +60,11 @@ async function getMenuFile() {
         return await fetchUrl(targetUrl);
     }
 
-    // 2. Ak PDF nie je, úplne ignorujeme galérie/obrázky a spracujeme priamo HTML text
+    // 2. Ak PDF nie je, ignorujeme galérie a spracujeme priamo HTML text
     console.log("ℹ️ Žiadne PDF nenájdené. Spracovávam priamo textový obsah HTML stránky...");
     return pageData;
 }
+
 // =====================================
 // VYČISTENIE MENU
 // =====================================
@@ -220,53 +221,56 @@ async function saveMenuToSupabase(parsedMenu, monday) {
 }
 
 // =====================================
-// HLAVNÁ FUNKCIA
+// HLAVNÁ FUNKCIA (UPRAVENÁ PRE HTML TEKST)
 // =====================================
 async function main() {
     console.log("🔄 Kontrolujem aktuálne menu na SuperObed...");
 
     const fileData = await getMenuFile();
-    console.log(`✅ Súbor stiahnutý: ${fileData.buffer.length} bytes (typ: ${fileData.contentType})`);
+    console.log(`✅ Dáta získané: ${fileData.buffer.length} bytes (typ: ${fileData.contentType})`);
 
-    let imagePath = "/tmp/menu.jpg";
+    let extractedText = "";
 
     if (fileData.contentType.includes("application/pdf")) {
         const pdfPath = "/tmp/menu.pdf";
         fs.writeFileSync(pdfPath, fileData.buffer);
         console.log("📄 PDF uložené. Konvertujem PDF na obrázok PNG pre Tesseract...");
 
+        let imagePath = pdfPath;
         try {
-            // Konverzia PDF na PNG pomocou pdftoppm (dostupné na Linuxe / GitHub Actions runneroch)
             execFileSync("pdftoppm", ["-png", "-r", "300", "-singlefile", pdfPath, "/tmp/menu_page"]);
             imagePath = "/tmp/menu_page.png";
         } catch (e) {
             console.warn("⚠️ Konverzia pdftoppm zlyhala, skúšam spustiť Tesseract priamo...");
-            imagePath = pdfPath;
         }
+
+        console.log("🔎 Spúšťam Tesseract OCR na PDF...");
+        extractedText = execFileSync(
+            "tesseract",
+            [imagePath, "stdout", "-l", "slk"],
+            { encoding: "utf8", maxBuffer: 10 * 1024 * 1024 }
+        );
     } else {
-        fs.writeFileSync(imagePath, fileData.buffer);
-        console.log("📸 Obrázok uložený.");
+        // Spracovávame priamo text z HTML stránky (bez OCR)
+        console.log("📄 Spracovávam HTML text stránky...");
+        extractedText = fileData.buffer.toString("utf8")
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+            .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+            .replace(/<[^>]+>/g, "\n"); // Odstráni HTML značky a nahradí ich novými riadkami
     }
 
-    console.log("🔎 Spúšťam Tesseract OCR...");
-    const recognizedText = execFileSync(
-        "tesseract",
-        [imagePath, "stdout", "-l", "slk"],
-        { encoding: "utf8", maxBuffer: 10 * 1024 * 1024 }
-    );
-
-    if (!recognizedText.trim()) {
-        throw new Error("Tesseract nerozpoznal žiadny text.");
+    if (!extractedText.trim()) {
+        throw new Error("Nepodarilo sa získať žiadny text menu.");
     }
 
     console.log("========================================");
-    console.log("ROZPOZNANÝ TEXT MENU");
+    console.log("SPRACOVANÝ TEXT MENU");
     console.log("========================================");
-    console.log(recognizedText);
+    console.log(extractedText.slice(0, 1000) + "\n... (skrátené pre prehľadnosť)");
     console.log("========================================");
 
     console.log("🔎 Spracúvam menu...");
-    const parsedMenu = parseWeeklyMenuText(recognizedText);
+    const parsedMenu = parseWeeklyMenuText(extractedText);
 
     console.log("========================================");
     console.log("SPRACOVANÉ MENU");
