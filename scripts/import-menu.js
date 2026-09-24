@@ -74,15 +74,21 @@ function parseRealMenu(text) {
 
         if (!currentDay) return;
 
-        // Ak riadok začína ako polievka (ak nie je na riadku s dňom)
-        if (!parsed[currentDay].soup && (upperLine.includes("POLIEVKA") || !upperLine.startsWith("MENU"))) {
-            // Ak to nie je iné menu, berieme to ako pokračovanie polievky
-            if (!upperLine.startsWith("MENU 1") && !upperLine.startsWith("MENU 2") && !upperLine.startsWith("MENU 3") && !upperLine.startsWith("MENU 4")) {
-                parsed[currentDay].soup = parsed[currentDay].soup ? parsed[currentDay].soup + ", " + line : line;
+       // Ak riadok začína ako polievka (alebo je to riadok hneď po dni, kde nie je "MENU")
+        if (!upperLine.startsWith("MENU")) {
+            // Ak už máme prvú polievku, a toto nie je názov dňa, tak je to druhá polievka
+            let isDay = Object.keys(daysMap).some(d => upperLine.startsWith(d));
+            if (!isDay && currentDay) {
+                if (!parsed[currentDay].soup) {
+                    parsed[currentDay].soup = line;
+                } else if (!parsed[currentDay].soup.includes(line)) {
+                    // Pripojíme druhú polievku k prvej
+                    parsed[currentDay].soup += ", " + line;
+                }
                 return;
             }
         }
-
+        
         // Parsovanie Menu 1 až 4
         if (upperLine.startsWith("MENU 1:")) {
             parsed[currentDay].menu1 = line.replace(/^MENU\s*1:\s*/i, "").trim();
