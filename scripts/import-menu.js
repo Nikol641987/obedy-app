@@ -51,24 +51,33 @@ async function getMenuFile() {
     const pageData = await fetchUrl(PAGE_URL);
     const htmlText = pageData.buffer.toString("utf8");
 
-    // Hľadáme výhradne odkaz na .pdf súbor
+    // 1. Najprv skúšame nájsť PDF súbor
     const pdfMatch = htmlText.match(/href=["']([^"']+\.pdf(?:\?[^"']*)?)["']/i);
-
     if (pdfMatch && pdfMatch[1]) {
         const targetUrl = new URL(pdfMatch[1], PAGE_URL).href;
-        console.log("📄 Nájdený PDF súbor menu:", targetUrl);
+        console.log("📄 Nájdené PDF menu:", targetUrl);
         return await fetchUrl(targetUrl);
     }
 
-    // Ak sa PDF nenájde v href, skúšame hľadať akýkoľvek odkaz obsahujúci '.pdf'
-    const fallbackPdfMatch = htmlText.match(/([^"'\s]+\.pdf(?:\?[^"'\s]*)?)/i);
-    if (fallbackPdfMatch && fallbackPdfMatch[1]) {
-        const targetUrl = new URL(fallbackPdfMatch[1], PAGE_URL).href;
-        console.log("📄 Nájdený PDF súbor (fallback):", targetUrl);
-        return await fetchUrl(targetUrl);
+    // 2. Ak PDF nie je, vyhľadáme obrázky, ale NATVRDO ignorujeme zložku /assets/ a logá
+    const allMatches = [
+        ...htmlText.matchAll(/href=["']([^"']+\.(?:png|jpg|jpeg)(?:\?[^"']*)?)["']/gi),
+        ...htmlText.matchAll(/src=["']([^"']+\.(?:png|jpg|jpeg)(?:\?[^"']*)?)["']/gi)
+    ];
+
+    for (const match of allMatches) {
+        const urlCandidate = match[1];
+        // Úplný zákaz pre ikony, logá a systémové assets súbory
+        if (!urlCandidate.includes("assets/") && !urlCandidate.match(/(logo|icon|mini|favicon)/i)) {
+            const targetUrl = new URL(urlCandidate, PAGE_URL).href;
+            console.log("🖼️ Nájdený obrázok menu:", targetUrl);
+            return await fetchUrl(targetUrl);
+        }
     }
 
-    throw new Error("Na stránke sa nenašiel žiaden PDF súbor s menu.");
+    // 3. Ak neexistuje samostatný obrázok menu mimo assets, spracujeme samotný HTML obsah stránky
+    console.log("ℹ️ Žiadny samostatný súbor/obrázok menu nenájdený. Spracovávam priamo HTML stránku...");
+    return pageData;
 }
 
 // =====================================
