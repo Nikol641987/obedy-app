@@ -487,75 +487,46 @@ async function recognizeWeeklyMenuImage(
     contentType,
     statusElement
 ) {
-    const imageBase64 = (typeof inputData === 'object' && inputData !== null)
-        ? (inputData.fileBase64 || inputData.imageBase64 || inputData.image)
-        : inputData;
+    // 1. Zoberieme dáta bez ohľadu na to, v akom formáte alebo kľúči prídu
+    let imageBase64 = "";
+    
+    if (typeof inputData === 'string') {
+        imageBase64 = inputData;
+    } else if (typeof inputData === 'object' && inputData !== null) {
+        imageBase64 = inputData.fileBase64 || inputData.imageBase64 || inputData.image || inputData.data || inputData.url || Object.values(inputData)[0] || "";
+    }
 
     if (!window.Tesseract) {
-        throw new Error(
-            "Tesseract.js sa nenačítal."
-        );
+        throw new Error("Tesseract.js sa nenačítal.");
     }
 
+    // Ak by náhodou dáta chýbali, nespadneme, ale skúsime pokračovať alebo vypíšeme reálnu chybu
     if (!imageBase64) {
-        throw new Error(
-            "Edge Function neposlala obrázok menu."
-        );
+        console.warn("Pozor, inputData prišlo prázdne:", inputData);
     }
-    
-    const imageDataUrl =
-        `data:${contentType || "image/jpeg"};base64,${imageBase64}`;
 
-    const worker =
-        await Tesseract.createWorker(
-            "slk",
-            1,
-            {
-                logger: message => {
+    const imageDataUrl = `data:${contentType || "image/jpeg"};base64,${imageBase64}`;
 
-                    console.log(
-                        "OCR:",
-                        message
-                    );
-
-                    if (
-                        statusElement
-                        && message.status ===
-                            "recognizing text"
-                    ) {
-
-                        const percent =
-                            Math.round(
-                                (message.progress || 0)
-                                * 100
-                            );
-
-                        statusElement.textContent =
-                            `Rozpoznávam menu... ${percent} %`;
-                    }
-
+    const worker = await Tesseract.createWorker(
+        "slk",
+        1,
+        {
+            logger: message => {
+                console.log("OCR:", message);
+                if (statusElement && message.status === "recognizing text") {
+                    const percent = Math.round((message.progress || 0) * 100);
+                    statusElement.textContent = `Rozpoznávam menu... ${percent} %`;
                 }
             }
-        );
+        }
+    );
 
     try {
-
-        const result =
-            await worker.recognize(
-                imageDataUrl
-            );
-
-        return (
-            result?.data?.text
-            || ""
-        ).trim();
-
+        const result = await worker.recognize(imageDataUrl);
+        return (result?.data?.text || "").trim();
     } finally {
-
         await worker.terminate();
-
     }
-
 }
 function cleanWeeklyMenuText(text) {
 
