@@ -1,3 +1,4 @@
+console.log("🚀 SPUSTAM NOVU VERZIU SKRIPTU 2026!");
 const https = require("https");
 const fs = require("fs");
 const { execFileSync } = require("child_process");
