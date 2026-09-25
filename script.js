@@ -386,7 +386,7 @@ downloadWeeklyMenuButton?.addEventListener(
     await supabaseClient
         .functions
         .invoke(
-            "check-appetit-menu",
+            "check-4m-menu",
             {
                 body: {}
             }
@@ -419,7 +419,7 @@ weeklyMenuImportResult.textContent =
 
 const recognizedText =
     await recognizeWeeklyMenuImage(
-        data.imageBase64,
+        data.fileBase64,
         data.contentType,
         weeklyMenuImportResult
     );
