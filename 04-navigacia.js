@@ -2,6 +2,8 @@
 // 4. NAVIGÁCIA
 // =====================================
 
+let isNavigationInitialized = false;
+
 async function recognizeWeeklyMenuImage(
     imageBase64,
     contentType,
