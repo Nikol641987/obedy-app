@@ -6695,7 +6695,6 @@ async function recognizeWeeklyMenuImage(
     contentType,
     statusElement
 ) {
-
     if (!window.Tesseract) {
         throw new Error(
             "Tesseract.js sa nenačítal."
@@ -6708,8 +6707,115 @@ async function recognizeWeeklyMenuImage(
         );
     }
 
-    const imageDataUrl =
-        `data:${contentType || "image/jpeg"};base64,${imageBase64}`;
+    const isPdf =
+        String(contentType || "")
+            .toLowerCase()
+            .includes("pdf");
+
+    let imagesToRecognize = [];
+
+    // -----------------------------------------
+    // PDF → obrázky pomocou PDF.js
+    // -----------------------------------------
+
+    if (isPdf) {
+
+        if (!window.pdfjsLib) {
+            throw new Error(
+                "PDF.js sa nenačítal."
+            );
+        }
+
+        const binaryString =
+            atob(imageBase64);
+
+        const bytes =
+            new Uint8Array(
+                binaryString.length
+            );
+
+        for (
+            let i = 0;
+            i < binaryString.length;
+            i++
+        ) {
+            bytes[i] =
+                binaryString.charCodeAt(i);
+        }
+
+        const pdf =
+            await pdfjsLib
+                .getDocument({
+                    data: bytes
+                })
+                .promise;
+
+        console.log(
+            "PDF počet strán:",
+            pdf.numPages
+        );
+
+        for (
+            let pageNumber = 1;
+            pageNumber <= pdf.numPages;
+            pageNumber++
+        ) {
+
+            if (statusElement) {
+                statusElement.textContent =
+                    `Načítavam stranu ${pageNumber} z ${pdf.numPages}...`;
+            }
+
+            const page =
+                await pdf.getPage(
+                    pageNumber
+                );
+
+            const viewport =
+                page.getViewport({
+                    scale: 2
+                });
+
+            const canvas =
+                document.createElement(
+                    "canvas"
+                );
+
+            const context =
+                canvas.getContext("2d");
+
+            canvas.width =
+                viewport.width;
+
+            canvas.height =
+                viewport.height;
+
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+
+            imagesToRecognize.push(
+                canvas.toDataURL(
+                    "image/png"
+                )
+            );
+        }
+
+    } else {
+
+        // -----------------------------------------
+        // Ak Edge Function pošle priamo obrázok
+        // -----------------------------------------
+
+        imagesToRecognize.push(
+            `data:${contentType || "image/jpeg"};base64,${imageBase64}`
+        );
+    }
+
+    // -----------------------------------------
+    // OCR
+    // -----------------------------------------
 
     const worker =
         await Tesseract.createWorker(
@@ -6745,22 +6851,36 @@ async function recognizeWeeklyMenuImage(
 
     try {
 
-        const result =
-            await worker.recognize(
-                imageDataUrl
-            );
+        let fullText = "";
 
-        return (
-            result?.data?.text
-            || ""
-        ).trim();
+        for (
+            let i = 0;
+            i < imagesToRecognize.length;
+            i++
+        ) {
+
+            if (statusElement) {
+                statusElement.textContent =
+                    `Rozpoznávam menu – strana ${i + 1} z ${imagesToRecognize.length}...`;
+            }
+
+            const result =
+                await worker.recognize(
+                    imagesToRecognize[i]
+                );
+
+            fullText +=
+                (result?.data?.text || "") +
+                "\n";
+        }
+
+        return fullText.trim();
 
     } finally {
 
         await worker.terminate();
 
     }
-
 }
 function cleanWeeklyMenuText(text) {
 
