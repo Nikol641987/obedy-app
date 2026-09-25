@@ -9,6 +9,8 @@ async function recognizeWeeklyMenuImage(
     contentType,
     statusElement
 ) {
+    console.log("OCR INPUT:", contentType);
+    
     console.log("NOVÁ OCR FUNKCIA SA SPUSTILA");
 
     if (!imageBase64) {
