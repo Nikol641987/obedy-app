@@ -1,6 +1,7 @@
 // =====================================
 // 4. NAVIGÁCIA
 // =====================================
+```js
 async function recognizeWeeklyMenuImage(
     imageBase64,
     contentType,
@@ -8,15 +9,9 @@ async function recognizeWeeklyMenuImage(
 ) {
     console.log("NOVÁ OCR FUNKCIA SA SPUSTILA");
 
-    if (!window.Tesseract) {
-        throw new Error(
-            "Tesseract.js sa nenačítal."
-        );
-    }
-
     if (!imageBase64) {
         throw new Error(
-            "Edge Function neposlala obrázok menu."
+            "Edge Function neposlala súbor menu."
         );
     }
 
@@ -25,23 +20,24 @@ async function recognizeWeeklyMenuImage(
             .toLowerCase()
             .includes("pdf");
 
-    let imagesToRecognize = [];
-
+    /*
+     * PDF:
+     * Najprv sa pokúsime prečítať text priamo z PDF.
+     * Tesseract použijeme iba vtedy, ak PDF nemá
+     * použiteľnú textovú vrstvu.
+     */
     if (isPdf) {
-
         if (!window.pdfjsLib) {
             throw new Error(
                 "PDF.js sa nenačítal."
             );
         }
 
-        const binaryString =
-            atob(imageBase64);
+        const binaryString = atob(imageBase64);
 
-        const bytes =
-            new Uint8Array(
-                binaryString.length
-            );
+        const bytes = new Uint8Array(
+            binaryString.length
+        );
 
         for (
             let i = 0;
@@ -53,26 +49,81 @@ async function recognizeWeeklyMenuImage(
         }
 
         const pdf =
-            await pdfjsLib
-                .getDocument({
-                    data: bytes
-                })
-                .promise;
+            await pdfjsLib.getDocument({
+                data: bytes
+            }).promise;
 
         console.log(
             "PDF počet strán:",
             pdf.numPages
         );
 
+        let directPdfText = "";
+
         for (
             let pageNumber = 1;
             pageNumber <= pdf.numPages;
             pageNumber++
         ) {
-
             if (statusElement) {
                 statusElement.textContent =
-                    `Načítavam stranu ${pageNumber} z ${pdf.numPages}...`;
+                    `Čítam text PDF – strana ${pageNumber} z ${pdf.numPages}...`;
+            }
+
+            const page =
+                await pdf.getPage(
+                    pageNumber
+                );
+
+            const textContent =
+                await page.getTextContent();
+
+            const pageText =
+                textContent.items
+                    .map(item => item.str || "")
+                    .join(" ");
+
+            directPdfText +=
+                pageText + "\n";
+        }
+
+        directPdfText =
+            directPdfText.trim();
+
+        console.log(
+            "Text priamo z PDF:",
+            directPdfText
+        );
+
+        /*
+         * Ak PDF obsahuje dostatok textu,
+         * použijeme ho priamo.
+         */
+        if (
+            directPdfText &&
+            directPdfText.length > 50
+        ) {
+            return directPdfText;
+        }
+
+        /*
+         * Ak PDF nemá textovú vrstvu,
+         * pokračujeme OCR cez Tesseract.
+         */
+        console.log(
+            "PDF nemá použiteľnú textovú vrstvu. Spúšťam OCR."
+        );
+
+        const imagesToRecognize = [];
+
+        for (
+            let pageNumber = 1;
+            pageNumber <= pdf.numPages;
+            pageNumber++
+        ) {
+            if (statusElement) {
+                statusElement.textContent =
+                    `Pripravujem OCR – strana ${pageNumber} z ${pdf.numPages}...`;
             }
 
             const page =
@@ -111,10 +162,35 @@ async function recognizeWeeklyMenuImage(
             );
         }
 
-    } else {
+        return await recognizeImagesWithTesseract(
+            imagesToRecognize,
+            statusElement
+        );
+    }
 
-        imagesToRecognize.push(
-            `data:${contentType || "image/jpeg"};base64,${imageBase64}`
+    /*
+     * Bežný obrázok menu.
+     */
+    const imageDataUrl =
+        `data:${contentType || "image/jpeg"};base64,${imageBase64}`;
+
+    return await recognizeImagesWithTesseract(
+        [imageDataUrl],
+        statusElement
+    );
+}
+
+
+/*
+ * Pomocná funkcia pre Tesseract.
+ */
+async function recognizeImagesWithTesseract(
+    images,
+    statusElement
+) {
+    if (!window.Tesseract) {
+        throw new Error(
+            "Tesseract.js sa nenačítal."
         );
     }
 
@@ -124,18 +200,16 @@ async function recognizeWeeklyMenuImage(
             1,
             {
                 logger: message => {
-
                     console.log(
                         "OCR:",
                         message
                     );
 
                     if (
-                        statusElement
-                        && message.status ===
+                        statusElement &&
+                        message.status ===
                             "recognizing text"
                     ) {
-
                         const percent =
                             Math.round(
                                 (message.progress || 0)
@@ -150,23 +224,21 @@ async function recognizeWeeklyMenuImage(
         );
 
     try {
-
         let fullText = "";
 
         for (
             let i = 0;
-            i < imagesToRecognize.length;
+            i < images.length;
             i++
         ) {
-
             if (statusElement) {
                 statusElement.textContent =
-                    `Rozpoznávam menu – strana ${i + 1} z ${imagesToRecognize.length}...`;
+                    `Rozpoznávam menu – strana ${i + 1} z ${images.length}...`;
             }
 
             const result =
                 await worker.recognize(
-                    imagesToRecognize[i]
+                    images[i]
                 );
 
             fullText +=
@@ -177,13 +249,9 @@ async function recognizeWeeklyMenuImage(
         return fullText.trim();
 
     } finally {
-
         await worker.terminate();
-
     }
 }
-
-let isNavigationInitialized = false;
 
 
 // =====================================
