@@ -1,7 +1,7 @@
 // =====================================
 // 4. NAVIGÁCIA
 // =====================================
-```js
+
 async function recognizeWeeklyMenuImage(
     imageBase64,
     contentType,
