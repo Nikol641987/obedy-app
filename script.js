@@ -6695,6 +6695,8 @@ async function recognizeWeeklyMenuImage(
     contentType,
     statusElement
 ) {
+    console.log("NOVÁ OCR FUNKCIA SA SPUSTILA");
+    
     if (!window.Tesseract) {
         throw new Error(
             "Tesseract.js sa nenačítal."
