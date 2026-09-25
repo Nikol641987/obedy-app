@@ -103,7 +103,7 @@ async function recognizeWeeklyMenuImage(
          */
         if (
             directPdfText &&
-            directPdfText.length > 50
+            directPdfText.length > 10
         ) {
             return directPdfText;
         }
