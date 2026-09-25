@@ -23,6 +23,7 @@ async function recognizeWeeklyMenuImage(
         String(contentType || "")
             .toLowerCase()
             .includes("pdf");
+    console.log("JE PDF:", isPdf);
 
     /*
      * PDF:
