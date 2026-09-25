@@ -246,14 +246,12 @@ async function recognizeImagesWithTesseract(
                 "\n";
         }
 
-        return fullText.trim();
-
+                return fullText.trim();
     } finally {
         await worker.terminate();
     }
 }
-
-
+        
 // =====================================
 // SETUP NAVIGÁCIE
 // =====================================
