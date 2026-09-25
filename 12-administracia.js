@@ -1,36 +1,37 @@
 async function renderAdminEmployees() {
     
-const searchInput =
-    document.getElementById(
-        "adminEmployeesSearch"
-    );
+    const searchInput =
+        document.getElementById(
+            "adminEmployeesSearch"
+        );
+
     const container =
         document.getElementById(
             "adminEmployeesContainer"
         );
-const employeeModal =
-    document.getElementById(
-        "employeeModal"
-    );
+
+    const employeeModal =
+        document.getElementById(
+            "employeeModal"
+        );
     
     if (!container) {
         return;
     }
 
-    
     container.innerHTML =
         "<p>Načítavam zamestnancov...</p>";
 
     try {
 
-      const { data: employees, error } =
-    await supabaseClient
-        .from("employees")
-        .select("*");
+        const { data: employees, error } =
+            await supabaseClient
+                .from("employees")
+                .select("*");
 
-if (error) {
-    throw error;
-}
+        if (error) {
+            throw error;
+        }
 
         employees.sort((a, b) => {
 
@@ -47,20 +48,7 @@ if (error) {
         });
 
         if (employees.length === 0) {
-if (employeesToRender.length === 1) {
 
-    container.classList.add(
-        "single-result"
-    );
-
-} else {
-
-    container.classList.remove(
-        "single-result"
-    );
-
-}
-            
             container.innerHTML =
                 "<p>V zozname nie sú žiadni zamestnanci.</p>";
 
@@ -68,178 +56,189 @@ if (employeesToRender.length === 1) {
         }
 
         const renderEmployeesList =
-    employeesToRender => {
-        
-        container.innerHTML =
-            employeesToRender
-                .map(employee => {
+            employeesToRender => {
 
-                    const fullName =
-                        `${employee.surname || ""} ${employee.name || ""}`.trim();
+                if (employeesToRender.length === 1) {
+                    container.classList.add(
+                        "single-result"
+                    );
+                } else {
+                    container.classList.remove(
+                        "single-result"
+                    );
+                }
 
-                   const personalNumber =
-    employee.employee_number || "-";
+                container.innerHTML =
+                    employeesToRender
+                        .map(employee => {
 
-                    const chip =
-                        employee.chip || "-";
+                            const fullName =
+                                `${employee.surname || ""} ${employee.name || ""}`.trim();
 
-                    const role =
-                        employee.role || "-";
+                            const personalNumber =
+                                employee.employee_number || "-";
 
-                    const status =
-                        employee.active
-                            ? "Aktívny"
-                            : "Neaktívny";
+                            const chip =
+                                employee.chip || "-";
 
-                    return `
-                        <article class="admin-employee-card">
+                            const role =
+                                employee.role || "-";
 
-                            <h3>
-                                ${escapeHtml(fullName)}
-                            </h3>
+                            const status =
+                                employee.active
+                                    ? "Aktívny"
+                                    : "Neaktívny";
 
-                            <p>
-                                <strong>Osobné číslo:</strong>
-                                ${escapeHtml(personalNumber)}
-                            </p>
+                            return `
+                                <article class="admin-employee-card">
 
-                            <p>
-                                <strong>Čip:</strong>
-                                ${escapeHtml(chip)}
-                            </p>
+                                    <h3>
+                                        ${escapeHtml(fullName)}
+                                    </h3>
 
-                            <p>
-                                <strong>Rola:</strong>
-                                ${escapeHtml(role)}
-                            </p>
+                                    <p>
+                                        <strong>Osobné číslo:</strong>
+                                        ${escapeHtml(personalNumber)}
+                                    </p>
 
-                            <p>
-                                <strong>Stav:</strong>
-                                ${escapeHtml(status)}
-                            </p>
-<div class="admin-employee-actions">
+                                    <p>
+                                        <strong>Čip:</strong>
+                                        ${escapeHtml(chip)}
+                                    </p>
 
-    <button
-        class="secondary-button edit-employee-button"
-        data-personal-number="${escapeHtml(personalNumber)}"
-        type="button"
-    >
-        ✏️ Upraviť
-    </button>
+                                    <p>
+                                        <strong>Rola:</strong>
+                                        ${escapeHtml(role)}
+                                    </p>
 
-</div>
+                                    <p>
+                                        <strong>Stav:</strong>
+                                        ${escapeHtml(status)}
+                                    </p>
 
-                        </article>
-                    `;
+                                    <div class="admin-employee-actions">
 
-                })
-                .join("");
-        document
-    .querySelectorAll(".edit-employee-button")
-    .forEach(button => {
+                                        <button
+                                            class="secondary-button edit-employee-button"
+                                            data-personal-number="${escapeHtml(personalNumber)}"
+                                            type="button"
+                                        >
+                                            ✏️ Upraviť
+                                        </button>
 
-        button.onclick = () => {
+                                    </div>
 
-            const personalNumber =
-                button.dataset.personalNumber;
+                                </article>
+                            `;
 
-            editingEmployee =
-                employees.find(employee =>
-                    String(
-                       employee.employee_number
-                    ) === personalNumber
-                );
-            if (!editingEmployee) {
-    return;
-}
+                        })
+                        .join("");
 
-document.getElementById(
-    "employeeNameInput"
-).value =
-    editingEmployee.name || "";
+                document
+                    .querySelectorAll(".edit-employee-button")
+                    .forEach(button => {
 
-document.getElementById(
-    "employeeSurnameInput"
-).value =
-    editingEmployee.surname || "";
+                        button.onclick = () => {
 
-document.getElementById(
-    "employeePersonalNumberInput"
-).value =
-    editingEmployee.employee_number || "";
+                            const personalNumber =
+                                button.dataset.personalNumber;
 
-document.getElementById(
-    "employeeChipInput"
-).value =
-    editingEmployee.chip || "";
+                            editingEmployee =
+                                employees.find(employee =>
+                                    String(
+                                        employee.employee_number
+                                    ) === personalNumber
+                                );
 
-document.getElementById(
-    "employeeRoleInput"
-).value =
-    editingEmployee.role || "employee";
-            
-document.getElementById(
-    "deactivateEmployeeWrapper"
-).hidden = false;
+                            if (!editingEmployee) {
+                                return;
+                            }
 
-document.getElementById(
-    "deactivateEmployeeCheckbox"
-).checked = false;
-            
-employeeModal.hidden =
-    false;
+                            document.getElementById(
+                                "employeeNameInput"
+                            ).value =
+                                editingEmployee.name || "";
 
-        };
+                            document.getElementById(
+                                "employeeSurnameInput"
+                            ).value =
+                                editingEmployee.surname || "";
 
-    });
-        };
-  const activeEmployees =
-    employees.filter(employee =>
-        employee.active !== false
-    );
+                            document.getElementById(
+                                "employeePersonalNumberInput"
+                            ).value =
+                                editingEmployee.employee_number || "";
 
-renderEmployeesList(
-    activeEmployees
-);
+                            document.getElementById(
+                                "employeeChipInput"
+                            ).value =
+                                editingEmployee.chip || "";
 
-        
-        if (searchInput) {
+                            document.getElementById(
+                                "employeeRoleInput"
+                            ).value =
+                                editingEmployee.role || "employee";
 
-    searchInput.value = "";
+                            document.getElementById(
+                                "deactivateEmployeeWrapper"
+                            ).hidden = false;
 
-    searchInput.oninput = () => {
+                            document.getElementById(
+                                "deactivateEmployeeCheckbox"
+                            ).checked = false;
 
-        const searchValue =
-            searchInput.value
-                .trim()
-                .toLowerCase();
+                            employeeModal.hidden =
+                                false;
+                        };
 
-        const filteredEmployees =
-             activeEmployees.filter(employee => {
+                    });
+            };
 
-                const fullName =
-                    `${employee.surname || ""} ${employee.name || ""}`
-                        .toLowerCase();
-
-                const personalNumber =
-    String(
-        employee.employee_number || ""
-    ).toLowerCase();
-
-                return (
-                    fullName.includes(searchValue) ||
-                    personalNumber.includes(searchValue)
-                );
-
-            });
+        const activeEmployees =
+            employees.filter(employee =>
+                employee.active !== false
+            );
 
         renderEmployeesList(
-            filteredEmployees
+            activeEmployees
         );
 
-    };
+        if (searchInput) {
 
-}
+            searchInput.value = "";
+
+            searchInput.oninput = () => {
+
+                const searchValue =
+                    searchInput.value
+                        .trim()
+                        .toLowerCase();
+
+                const filteredEmployees =
+                    activeEmployees.filter(employee => {
+
+                        const fullName =
+                            `${employee.surname || ""} ${employee.name || ""}`
+                                .toLowerCase();
+
+                        const personalNumber =
+                            String(
+                                employee.employee_number || ""
+                            ).toLowerCase();
+
+                        return (
+                            fullName.includes(searchValue) ||
+                            personalNumber.includes(searchValue)
+                        );
+
+                    });
+
+                renderEmployeesList(
+                    filteredEmployees
+                );
+            };
+        }
+
     } catch (error) {
 
         console.error(
@@ -254,6 +253,8 @@ renderEmployeesList(
         `;
     }
 }
+
+
 function renderWeeklyMenuForm() {
 
     const container =
@@ -298,26 +299,26 @@ function renderWeeklyMenuForm() {
                 <div class="weekly-menu-day-content">
 
                     <label for="${key}Soup">
-    Polievka
-</label>
+                        Polievka
+                    </label>
 
                     <textarea
-    id="${key}Soup"
-    rows="4"
-></textarea>
+                        id="${key}Soup"
+                        rows="4"
+                    ></textarea>
         `;
 
         for (let i = 1; i <= 6; i++) {
 
             html += `
-               <label for="${key}Menu${i}">
-    Menu ${i}
-</label>
+                <label for="${key}Menu${i}">
+                    Menu ${i}
+                </label>
 
                 <textarea
-    id="${key}Menu${i}"
-    rows="4"
-></textarea>
+                    id="${key}Menu${i}"
+                    rows="4"
+                ></textarea>
             `;
         }
 
@@ -335,6 +336,8 @@ function renderWeeklyMenuForm() {
     });
 
 }
+
+
 function formatDateForInput(date) {
 
     const year =
@@ -376,21 +379,22 @@ function setWeeklyMenuDateRange() {
 
         const today =
             new Date();
-const dayOfWeek =
-    today.getDay();
 
-const daysFromMonday =
-    dayOfWeek === 0
-        ? 6
-        : dayOfWeek - 1;
+        const dayOfWeek =
+            today.getDay();
 
-fromDate =
-    new Date(today);
+        const daysFromMonday =
+            dayOfWeek === 0
+                ? 6
+                : dayOfWeek - 1;
 
-fromDate.setDate(
-    today.getDate()
-    - daysFromMonday
-);
+        fromDate =
+            new Date(today);
+
+        fromDate.setDate(
+            today.getDate()
+            - daysFromMonday
+        );
 
         weeklyMenuFrom.value =
             formatDateForInput(
@@ -424,6 +428,8 @@ weeklyMenuFrom?.addEventListener(
 
     }
 );
+
+
 function getWeeklyMenuData() {
 
     const data = {};
@@ -487,17 +493,28 @@ async function recognizeWeeklyMenuImage(
     contentType,
     statusElement
 ) {
-    const imageBase64 = (typeof inputData === 'object' && inputData !== null)
-        ? (inputData.fileBase64 || inputData.imageBase64 || inputData.image)
-        : inputData;
+
+    const imageBase64 =
+        (
+            typeof inputData === "object"
+            && inputData !== null
+        )
+            ? (
+                inputData.fileBase64
+                || inputData.imageBase64
+                || inputData.image
+            )
+            : inputData;
 
     if (!window.Tesseract) {
+
         throw new Error(
             "Tesseract.js sa nenačítal."
         );
     }
 
     if (!imageBase64) {
+
         throw new Error(
             "Edge Function neposlala obrázok menu."
         );
@@ -512,11 +529,13 @@ async function recognizeWeeklyMenuImage(
             1,
             {
                 logger: message => {
+
                     if (
                         statusElement
                         && message.status ===
                             "recognizing text"
                     ) {
+
                         const percent =
                             Math.round(
                                 (message.progress || 0)
@@ -531,6 +550,7 @@ async function recognizeWeeklyMenuImage(
         );
 
     try {
+
         const result =
             await worker.recognize(
                 imageDataUrl
@@ -548,13 +568,7 @@ async function recognizeWeeklyMenuImage(
     }
 }
 
-    try {
-        const result = await worker.recognize(imageDataUrl);
-        return (result?.data?.text || "").trim();
-    } finally {
-        await worker.terminate();
-    }
-}
+
 function cleanWeeklyMenuText(text) {
 
     return String(text || "")
@@ -569,6 +583,7 @@ function cleanWeeklyMenuText(text) {
 function cleanMenuItem(text) {
 
     return String(text || "")
+
         // odstráni cenu na konci
         .replace(
             /\s*[\d.,:]*\s*(6,90|9,20)\s*€?\s*$/i,
@@ -581,7 +596,11 @@ function cleanMenuItem(text) {
             ""
         )
 
-        .replace(/\s+/g, " ")
+        .replace(
+            /\s+/g,
+            " "
+        )
+
         .trim();
 
 }
@@ -593,30 +612,40 @@ function parseWeeklyMenuText(text) {
         cleanWeeklyMenuText(text);
 
     const dayDefinitions = [
+
         {
             key: "pondelok",
             pattern: "Pondelok"
         },
+
         {
             key: "utorok",
             pattern: "Utorok"
         },
+
         {
             key: "streda",
             pattern: "Streda"
         },
+
         {
-    key: "stvrtok",
-    // OCR môže napísať Štvrtok, Štvrok, Stvrtok alebo Stvrok
-    pattern: "(?:Š|S)tv(?:rt|r)ok"
-},
+            key: "stvrtok",
+
+            // OCR môže napísať:
+            // Štvrtok, Štvrok, Stvrtok alebo Stvrok
+            pattern: "(?:Š|S)tv(?:rt|r)ok"
+        },
+
         {
             key: "piatok",
             pattern: "Piatok"
         }
+
     ];
 
+
     const result = {};
+
 
     dayDefinitions.forEach(
         (day, index) => {
@@ -624,10 +653,14 @@ function parseWeeklyMenuText(text) {
             const nextDay =
                 dayDefinitions[index + 1];
 
+
             const endPattern =
                 nextDay
+
                     ? `(?=${nextDay.pattern}\\s*:)`
+
                     : `(?=Appetit Obedové menu|Polievka samostatne|Alergény:|$)`;
+
 
             const dayRegex =
                 new RegExp(
@@ -635,28 +668,35 @@ function parseWeeklyMenuText(text) {
                     "i"
                 );
 
+
             const dayMatch =
                 normalizedText.match(
                     dayRegex
                 );
 
+
             if (!dayMatch) {
 
                 result[day.key] = {
+
                     soup: "",
+
                     menu1: "",
                     menu2: "",
                     menu3: "",
                     menu4: "",
                     menu5: "",
                     menu6: ""
+
                 };
 
                 return;
             }
 
+
             const dayText =
                 dayMatch[1].trim();
+
 
             // Polievka je všetko pred Menu 1
             const soupMatch =
@@ -664,32 +704,47 @@ function parseWeeklyMenuText(text) {
                     /^([\s\S]*?)(?=\s*1\.\s*\d+g?\s*\/)/i
                 );
 
+
             let soup =
                 soupMatch
                     ? soupMatch[1]
                     : "";
 
-            soup = soup
-                .replace(
-                    /^\s*0[,.]33[l1]\s*/i,
-                    ""
-                )
-                .replace(
-                    /\s*(?:1[.,:]*3?[.,:]*)?\s*2ks chlieb\s*$/i,
-                    ""
-                )
-                .replace(/\s+/g, " ")
-                .trim();
+
+            soup =
+                soup
+
+                    .replace(
+                        /^\s*0[,.]33[l1]\s*/i,
+                        ""
+                    )
+
+                    .replace(
+                        /\s*(?:1[.,:]*3?[.,:]*)?\s*2ks chlieb\s*$/i,
+                        ""
+                    )
+
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+
+                    .trim();
+
 
             const parsedDay = {
+
                 soup,
+
                 menu1: "",
                 menu2: "",
                 menu3: "",
                 menu4: "",
                 menu5: "",
                 menu6: ""
+
             };
+
 
             for (
                 let menuNumber = 1;
@@ -700,21 +755,32 @@ function parseWeeklyMenuText(text) {
                 const nextNumber =
                     menuNumber + 1;
 
+
                 const menuRegex =
                     new RegExp(
+
                         `${menuNumber}\\.\\s*\\d+g?\\s*\\/([\\s\\S]*?)`
+
                         + (
+
                             menuNumber < 6
+
                                 ? `(?=\\s*${nextNumber}\\.\\s*\\d+g?\\s*\\/)`
+
                                 : "$"
+
                         ),
+
                         "i"
+
                     );
+
 
                 const menuMatch =
                     dayText.match(
                         menuRegex
                     );
+
 
                 if (menuMatch) {
 
@@ -723,15 +789,18 @@ function parseWeeklyMenuText(text) {
                     ] = cleanMenuItem(
                         menuMatch[1]
                     );
+
                 }
 
             }
+
 
             result[day.key] =
                 parsedDay;
 
         }
     );
+
 
     return result;
 
@@ -741,31 +810,40 @@ function parseWeeklyMenuText(text) {
 function fillWeeklyMenuForm(menuData) {
 
     const days = [
+
         "pondelok",
         "utorok",
         "streda",
         "stvrtok",
         "piatok"
+
     ];
+
 
     days.forEach(day => {
 
         const dayData =
             menuData[day];
 
+
         if (!dayData) {
             return;
         }
+
 
         const soupInput =
             document.getElementById(
                 `${day}Soup`
             );
 
+
         if (soupInput) {
+
             soupInput.value =
                 dayData.soup || "";
+
         }
+
 
         for (
             let menuNumber = 1;
@@ -778,12 +856,14 @@ function fillWeeklyMenuForm(menuData) {
                     `${day}Menu${menuNumber}`
                 );
 
+
             if (input) {
 
                 input.value =
                     dayData[
                         `menu${menuNumber}`
                     ] || "";
+
             }
 
         }
@@ -803,15 +883,19 @@ async function loadWeeklyMenuFromDatabase() {
             "weeklyMenuImportResult"
         );
 
+
     if (!fromInput?.value) {
         return;
     }
+
 
     try {
 
         const { data, error } =
             await supabaseClient
+
                 .from("weekly_menu")
+
                 .select(`
                     day_of_week,
                     soup,
@@ -822,10 +906,12 @@ async function loadWeeklyMenuFromDatabase() {
                     menu5,
                     menu6
                 `)
+
                 .eq(
                     "week_from",
                     fromInput.value
                 )
+
                 .order(
                     "day_of_week",
                     {
@@ -833,25 +919,33 @@ async function loadWeeklyMenuFromDatabase() {
                     }
                 );
 
+
         if (error) {
             throw error;
         }
 
+
         const menuData = {
+
             pondelok: {},
             utorok: {},
             streda: {},
             stvrtok: {},
             piatok: {}
+
         };
 
+
         const dayKeys = [
+
             "pondelok",
             "utorok",
             "streda",
             "stvrtok",
             "piatok"
+
         ];
+
 
         (data || []).forEach(row => {
 
@@ -860,36 +954,67 @@ async function loadWeeklyMenuFromDatabase() {
                     Number(row.day_of_week) - 1
                 ];
 
+
             if (!key) {
                 return;
             }
 
+
             menuData[key] = {
-                soup: row.soup || "",
-                menu1: row.menu1 || "",
-                menu2: row.menu2 || "",
-                menu3: row.menu3 || "",
-                menu4: row.menu4 || "",
-                menu5: row.menu5 || "",
-                menu6: row.menu6 || ""
+
+                soup:
+                    row.soup || "",
+
+                menu1:
+                    row.menu1 || "",
+
+                menu2:
+                    row.menu2 || "",
+
+                menu3:
+                    row.menu3 || "",
+
+                menu4:
+                    row.menu4 || "",
+
+                menu5:
+                    row.menu5 || "",
+
+                menu6:
+                    row.menu6 || ""
+
             };
 
         });
+
 
         fillWeeklyMenuForm(
             menuData
         );
 
+
         if (resultElement) {
 
-            resultElement.textContent =
-                data?.length
-                    ? "Uložené menu bolo načítané."
-                    : "Pre tento týždeň ešte nie je uložené menu.";
+            if (data?.length) {
 
-            resultElement.className =
-                "message";
+                resultElement.textContent =
+                    "Uložené menu bolo načítané.";
+
+                resultElement.className =
+                    "message";
+
+            } else {
+
+                resultElement.textContent =
+                    "Pre tento týždeň ešte nie je uložené menu.";
+
+                resultElement.className =
+                    "message";
+
+            }
+
         }
+
 
     } catch (error) {
 
@@ -897,6 +1022,7 @@ async function loadWeeklyMenuFromDatabase() {
             "Chyba pri načítaní uloženého menu:",
             error
         );
+
 
         if (resultElement) {
 
@@ -906,132 +1032,9 @@ async function loadWeeklyMenuFromDatabase() {
 
             resultElement.className =
                 "message error-message";
-        }
-    }
-}
-async function loadWeeklyMenuFromDatabase() {
 
-    const fromInput =
-        document.getElementById(
-            "weeklyMenuFrom"
-        );
-
-    const resultElement =
-        document.getElementById(
-            "weeklyMenuImportResult"
-        );
-
-    if (!fromInput?.value) {
-        return;
-    }
-
-    try {
-
-        const { data, error } =
-            await supabaseClient
-                .from("weekly_menu")
-                .select(`
-                    day_of_week,
-                    soup,
-                    menu1,
-                    menu2,
-                    menu3,
-                    menu4,
-                    menu5,
-                    menu6
-                `)
-                .eq(
-                    "week_from",
-                    fromInput.value
-                )
-                .order(
-                    "day_of_week",
-                    {
-                        ascending: true
-                    }
-                );
-
-        if (error) {
-            throw error;
         }
 
-        const menuData = {
-            pondelok: {},
-            utorok: {},
-            streda: {},
-            stvrtok: {},
-            piatok: {}
-        };
-
-        const dayKeys = [
-            "pondelok",
-            "utorok",
-            "streda",
-            "stvrtok",
-            "piatok"
-        ];
-
-        (data || []).forEach(row => {
-
-            const key =
-                dayKeys[
-                    Number(row.day_of_week) - 1
-                ];
-
-            if (!key) {
-                return;
-            }
-
-            menuData[key] = {
-                soup: row.soup || "",
-                menu1: row.menu1 || "",
-                menu2: row.menu2 || "",
-                menu3: row.menu3 || "",
-                menu4: row.menu4 || "",
-                menu5: row.menu5 || "",
-                menu6: row.menu6 || ""
-            };
-
-        });
-
-        fillWeeklyMenuForm(
-            menuData
-        );
-
-        if (resultElement) {
-
-    if (data?.length) {
-
-        resultElement.textContent = "";
-        resultElement.className =
-            "message";
-
-    } else {
-
-        resultElement.textContent =
-            "Pre tento týždeň ešte nie je uložené menu.";
-
-        resultElement.className =
-            "message";
-
     }
 
-}
-    } catch (error) {
-
-        console.error(
-            "Chyba pri načítaní uloženého menu:",
-            error
-        );
-
-        if (resultElement) {
-
-            resultElement.textContent =
-                error?.message
-                || "Uložené menu sa nepodarilo načítať.";
-
-            resultElement.className =
-                "message error-message";
-        }
-    }
 }
