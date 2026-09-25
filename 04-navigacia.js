@@ -201,7 +201,7 @@ async function recognizeImagesWithTesseract(
 
     const worker =
         await Tesseract.createWorker(
-            "slk",
+            "eng",
             1,
             {
                 logger: message => {
