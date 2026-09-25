@@ -6749,7 +6749,12 @@ async function recognizeWeeklyMenuImage(
                     data: bytes
                 })
                 .promise;
-
+console.log(
+    "PDF NAČÍTANÉ:",
+    pdf.numPages,
+    "strán"
+);
+        
         console.log(
             "PDF počet strán:",
             pdf.numPages
