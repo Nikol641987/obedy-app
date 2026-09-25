@@ -82,7 +82,7 @@ async function recognizeWeeklyMenuImage(
 
             const viewport =
                 page.getViewport({
-                    scale: 2
+                    scale: 4
                 });
 
             const canvas =
