@@ -101,6 +101,25 @@ function getMenuMonday(text, now = new Date()) {
 
 // ---------- Parsovanie ----------
 
+// Odstráni alergény "(1,3,7)" a cenu "6.90€" (gramáž ako "(160gr)" ostáva)
+function cleanItem(text) {
+    if (!text) return text;
+
+    let t = text
+        .replace(/\s*\(\s*\d+(?:\s*,\s*\d+)*\s*\)/g, "")   // alergény
+        .replace(/\s*\d+(?:[.,]\d{1,2})?\s*€/g, "")         // cena
+        .replace(/\s+,/g, ",")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+
+    // V PDF býva nezatvorená zátvorka (napr. pri POKE) – doplníme ju
+    const open = (t.match(/\(/g) || []).length;
+    const close = (t.match(/\)/g) || []).length;
+    if (open > close) t += ")".repeat(open - close);
+
+    return t;
+}
+
 function parseRealMenu(text) {
     const daysMap = {
         "PONDELOK": "pondelok",
@@ -171,9 +190,10 @@ function parseRealMenu(text) {
     });
 
     Object.keys(parsed).forEach(day => {
-        if (Array.isArray(parsed[day].soup)) {
-            parsed[day].soup = parsed[day].soup.join(", ");
-        }
+        parsed[day].soup = cleanItem(parsed[day].soup.join(", "));
+        ["menu1", "menu2", "menu3", "menu4"].forEach(key => {
+            parsed[day][key] = cleanItem(parsed[day][key]);
+        });
     });
 
     console.log("📊 Výsledok parsovania:", JSON.stringify(parsed, null, 2));
