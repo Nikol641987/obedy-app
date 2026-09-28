@@ -63,16 +63,19 @@ async function recognizeWeeklyMenuImage(
             pdf.numPages
         );
 
+        // Menu je vždy len na prvej strane, druhú (napr. alergény) nečítame
+        const pagesToRead = 1;
+
         let directPdfText = "";
 
         for (
             let pageNumber = 1;
-            pageNumber <= pdf.numPages;
+            pageNumber <= pagesToRead;
             pageNumber++
         ) {
             if (statusElement) {
                 statusElement.textContent =
-                    `Čítam text PDF – strana ${pageNumber} z ${pdf.numPages}...`;
+                    `Čítam text PDF – strana ${pageNumber} z ${pagesToRead}...`;
             }
 
             const page =
@@ -123,12 +126,12 @@ async function recognizeWeeklyMenuImage(
 
         for (
             let pageNumber = 1;
-            pageNumber <= pdf.numPages;
+            pageNumber <= pagesToRead;
             pageNumber++
         ) {
             if (statusElement) {
                 statusElement.textContent =
-                    `Pripravujem OCR – strana ${pageNumber} z ${pdf.numPages}...`;
+                    `Pripravujem OCR – strana ${pageNumber} z ${pagesToRead}...`;
             }
 
             const page =
@@ -2782,8 +2785,9 @@ function initializeNavigation() {
         "click",
         () => {
 
+            // Táto adresa sa vždy presmeruje na aktuálne PDF, konkrétne odkazy s hashom rýchlo zastarajú
             window.open(
-                "https://superobed.sk/podnik/4m-restaurant/denne-menu-34?h=3be11773ba",
+                "https://superobed.sk/podnik/4m-restaurant/denne-menu",
                 "_blank"
             );
 

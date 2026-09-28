@@ -1275,8 +1275,9 @@ openRestaurantMenuButton?.addEventListener(
     "click",
     () => {
 
+        // Táto adresa sa vždy presmeruje na aktuálne PDF, konkrétne odkazy s hashom rýchlo zastarajú
         window.open(
-            "https://superobed.sk/podnik/4m-restaurant/denne-menu-34?h=3be11773ba",
+            "https://superobed.sk/podnik/4m-restaurant/denne-menu",
             "_blank"
         );
 
