@@ -2,7 +2,7 @@ const https = require("https");
 const pdfParse = require("pdf-parse");
 
 const MAIN_RESTAURANT_URL = "https://superobed.sk/podnik/4m-restaurant/";
-const SUPABASE_URL = "https://krzouuhouzzlvlsygmalb.supabase.co";
+const SUPABASE_URL = "https://krzouuhouzzlvsygmalb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 if (!SUPABASE_KEY) {
