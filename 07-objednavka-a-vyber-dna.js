@@ -416,7 +416,9 @@ async function loadMenus() {
         ]
             .map((name, index) => ({
                 id: index + 1,
-                name: String(name || "").trim()
+                name: String(name || "")
+                    .replace(/\s+\d+[,.]\d{2}\s*€?\s*$/, "")
+                    .trim()
             }))
             .filter(menu => menu.name);
 
@@ -427,36 +429,31 @@ async function loadMenus() {
             const soupCard = document.createElement("article");
             soupCard.className = "menu-card soup-card";
 
-            const dateObj = new Date(`${orderDate}T12:00:00`);
-            const isThursday = dateObj.getDay() === 4; 
+            const soupOptions = String(data.soup)
+                .split(/,\s+(?=[A-ZÁČĎÉÍĹĽŇÓŔŠŤÚÝŽ])/u)
+                .map(soup => soup.trim())
+                .filter(Boolean);
 
-            let soupOptionsHtml = "";
-
-            if (isThursday) {
-                const thursdaySoupOptions = [
-                    "Držková polievka",
-                    "Vývar so zeleninou a rezancami"
-                ];
-
-                soupOptionsHtml = `
+            const soupOptionsHtml = soupOptions.length > 1
+                ? `
                     <div class="menu-choice-box" style="margin-top: 10px;">
                         <strong>Vyberte si polievku:</strong>
-                        ${thursdaySoupOptions.map((opt) => `
+                        ${soupOptions.map(soup => `
                             <label style="display: block; margin-top: 6px; cursor: pointer;">
-                                <input type="radio" name="soup-choice" value="${escapeHtml(opt)}" class="soup-choice-radio">
-                                ${escapeHtml(opt)}
+                                <input type="radio" name="soup-choice" value="${escapeHtml(soup)}" class="soup-choice-radio">
+                                ${escapeHtml(soup)}
                             </label>
                         `).join("")}
                     </div>
-                `;
-            }
+                `
+                : "";
 
             // TENTO KÚSOK PRIDÁVA "BEZ POLIEVKY" PRIAMO POD POLIEVKU
             soupCard.innerHTML = `
                 <div class="menu-card-header">
                     <span class="menu-number">🥣 Polievka</span>
                 </div>
-                <h3>${escapeHtml(data.soup)}</h3>
+                ${soupOptions.length > 1 ? "" : `<h3>${escapeHtml(data.soup)}</h3>`}
                 ${soupOptionsHtml}
                 
                 <div style="margin-top: 12px; border-top: 1px solid #e2e8f0; padding-top: 10px;">

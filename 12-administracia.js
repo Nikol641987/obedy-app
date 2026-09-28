@@ -584,9 +584,8 @@ function cleanMenuItem(text) {
 
     return String(text || "")
 
-        // odstráni cenu na konci
         .replace(
-            /\s*[\d.,:]*\s*(6,90|9,20)\s*€?\s*$/i,
+            /\s+\d+[,.]\d{2}\s*€?\s*$/i,
             ""
         )
 
@@ -924,6 +923,30 @@ async function loadWeeklyMenuFromDatabase() {
             throw error;
         }
 
+        if (!data?.length) {
+            if (resultElement) {
+                resultElement.textContent =
+                    "Pre tento týždeň ešte nie je uložené menu.";
+                resultElement.className = "message";
+            }
+            return;
+        }
+
+        const hasMenuContent = data.some(row =>
+            String(row.soup || "").trim() ||
+            [row.menu1, row.menu2, row.menu3, row.menu4, row.menu5, row.menu6]
+                .some(menu => cleanMenuItem(menu || ""))
+        );
+
+        if (!hasMenuContent) {
+            if (resultElement) {
+                resultElement.textContent =
+                    "Uložené menu je prázdne. Spustite import menu a skúste znova.";
+                resultElement.className = "message error-message";
+            }
+            return;
+        }
+
 
         const menuData = {
 
@@ -966,22 +989,22 @@ async function loadWeeklyMenuFromDatabase() {
                     row.soup || "",
 
                 menu1:
-                    row.menu1 || "",
+                    cleanMenuItem(row.menu1 || ""),
 
                 menu2:
-                    row.menu2 || "",
+                    cleanMenuItem(row.menu2 || ""),
 
                 menu3:
-                    row.menu3 || "",
+                    cleanMenuItem(row.menu3 || ""),
 
                 menu4:
-                    row.menu4 || "",
+                    cleanMenuItem(row.menu4 || ""),
 
                 menu5:
-                    row.menu5 || "",
+                    cleanMenuItem(row.menu5 || ""),
 
                 menu6:
-                    row.menu6 || ""
+                    cleanMenuItem(row.menu6 || "")
 
             };
 
@@ -995,23 +1018,11 @@ async function loadWeeklyMenuFromDatabase() {
 
         if (resultElement) {
 
-            if (data?.length) {
+            resultElement.textContent =
+                "Uložené menu bolo načítané bez cien.";
 
-                resultElement.textContent =
-                    "Uložené menu bolo načítané.";
-
-                resultElement.className =
-                    "message";
-
-            } else {
-
-                resultElement.textContent =
-                    "Pre tento týždeň ešte nie je uložené menu.";
-
-                resultElement.className =
-                    "message";
-
-            }
+            resultElement.className =
+                "message";
 
         }
 

@@ -539,11 +539,7 @@ function initializeNavigation() {
     openWeeklyMenuButton?.addEventListener(
         "click",
         () => {
-
-            showScreen(
-                "weeklyMenuScreen"
-            );
-
+            showScreen("weeklyMenuScreen");
         }
     );
 
@@ -1340,154 +1336,35 @@ function initializeNavigation() {
     downloadWeeklyMenuButton?.addEventListener(
         "click",
         async () => {
-
             downloadWeeklyMenuButton.disabled =
                 true;
-
             downloadWeeklyMenuButton.textContent =
                 "Načítavam menu...";
 
-
             if (weeklyMenuImportResult) {
-
                 weeklyMenuImportResult.textContent =
-                    "Kontrolujem aktuálne menu na SuperObed...";
-
+                    "Načítavam uložené menu...";
             }
 
-
             try {
-
-                const {
-                    data,
-                    error
-                } =
-                    await supabaseClient
-                        .functions
-                        .invoke(
-                            "check-4m-menu",
-                            {
-                                body: {}
-                            }
-                        );
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                if (!data?.success) {
-
-                    throw new Error(
-                        data?.error ||
-                        "Menu sa nepodarilo načítať."
-                    );
-
-                }
-
-
-                if (
-                    data.menuAvailable ===
-                    false
-                ) {
-
-                    if (weeklyMenuImportResult) {
-
-                        weeklyMenuImportResult.textContent =
-                            "Aktuálne menu zatiaľ nie je dostupné.";
-
-                    }
-
-                    return;
-
-                }
-
-
-                if (weeklyMenuImportResult) {
-
-                    weeklyMenuImportResult.textContent =
-                        "Pripravujem rozpoznanie menu...";
-
-                }
-
-
-                const recognizedText =
-                    await recognizeWeeklyMenuImage(
-                        data.fileBase64,
-                        data.contentType,
-                        weeklyMenuImportResult
-                    );
-
-
-                if (!recognizedText) {
-
-                    throw new Error(
-                        "Z obrázka sa nepodarilo rozpoznať žiadny text."
-                    );
-
-                }
-
-
-                console.log(
-                    "Rozpoznaný text menu:",
-                    recognizedText
-                );
-
-
-                const parsedMenu =
-                    parseWeeklyMenuText(
-                        recognizedText
-                    );
-
-
-                console.log(
-                    "Rozdelené menu:",
-                    parsedMenu
-                );
-
-
-                fillWeeklyMenuForm(
-                    parsedMenu
-                );
-
-
-                if (weeklyMenuImportResult) {
-
-                    weeklyMenuImportResult.textContent =
-                        "✅ Menu bolo rozpoznané a vložené do formulára. Skontroluj text a klikni Uložiť menu.";
-
-                }
-
-
+                await loadWeeklyMenuFromDatabase();
             } catch (error) {
-
                 console.error(
                     "Načítanie menu zlyhalo:",
                     error
                 );
-
-
                 if (weeklyMenuImportResult) {
-
                     weeklyMenuImportResult.textContent =
                         error instanceof Error
                             ? error.message
                             : "Menu sa nepodarilo načítať.";
-
                 }
-
-
             } finally {
-
                 downloadWeeklyMenuButton.disabled =
                     false;
-
                 downloadWeeklyMenuButton.textContent =
                     "🔄 Načítať nové menu";
-
             }
-
         }
     );
 
@@ -1542,6 +1419,23 @@ function initializeNavigation() {
 
                 const menu =
                     getWeeklyMenuData();
+
+                const hasMenuContent =
+                    Object.values(menu).some(dayMenu =>
+                        Object.values(dayMenu || {}).some(value =>
+                            String(value || "").trim()
+                        )
+                    );
+
+                if (!hasMenuContent) {
+                    if (weeklyMenuImportResult) {
+                        weeklyMenuImportResult.textContent =
+                            "Formulár je prázdny. Načítajte alebo vyplňte menu pred uložením.";
+                        weeklyMenuImportResult.className =
+                            "message error-message";
+                    }
+                    return;
+                }
 
                 const weekFrom =
                     weeklyMenuFrom.value;
@@ -2770,27 +2664,16 @@ function initializeNavigation() {
 
     setupNavigation();
 
-
-    // =====================================
-    // REŠTAURÁCIA - MENU SUPEROBED
-    // =====================================
-
     const openRestaurantMenuButton =
-        document.getElementById(
-            "openRestaurantMenuButton"
-        );
-
+        document.getElementById("openRestaurantMenuButton");
 
     openRestaurantMenuButton?.addEventListener(
         "click",
         () => {
-
-            // Táto adresa sa vždy presmeruje na aktuálne PDF, konkrétne odkazy s hashom rýchlo zastarajú
             window.open(
                 "https://superobed.sk/podnik/4m-restaurant/denne-menu",
                 "_blank"
             );
-
         }
     );
 
