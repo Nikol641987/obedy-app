@@ -202,6 +202,31 @@ function parseRealMenu(text) {
 
 // ---------- Supabase ----------
 
+function supabaseHeaders(extra = {}) {
+    const headers = { "apikey": SUPABASE_KEY, ...extra };
+    // Nové kľúče (sb_secret_...) nie sú JWT a posielajú sa iba v hlavičke apikey.
+    // Starý service_role kľúč (JWT, začína "eyJ") posielame aj ako Bearer.
+    if (SUPABASE_KEY.startsWith("eyJ")) {
+        headers["Authorization"] = `Bearer ${SUPABASE_KEY}`;
+    }
+    return headers;
+}
+
+// Je už menu na daný týždeň (všetkých 5 dní) v databáze?
+async function isAlreadyLoaded(weekFrom) {
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/weekly_menu?week_from=eq.${weekFrom}&select=id`,
+            { headers: supabaseHeaders() }
+        );
+        if (!response.ok) return false;
+        const rows = await response.json();
+        return Array.isArray(rows) && rows.length >= 5;
+    } catch {
+        return false;
+    }
+}
+
 async function saveMenuToSupabase(parsedMenu, monday) {
     const dayKeys = ["pondelok", "utorok", "streda", "stvrtok", "piatok"];
     const rows = [];
@@ -225,16 +250,10 @@ async function saveMenuToSupabase(parsedMenu, monday) {
         });
     });
 
-    const headers = {
-        "apikey": SUPABASE_KEY,
+    const headers = supabaseHeaders({
         "Content-Type": "application/json",
         "Prefer": "resolution=merge-duplicates"
-    };
-    // Nové kľúče (sb_secret_...) nie sú JWT a posielajú sa iba v hlavičke apikey.
-    // Starý service_role kľúč (JWT, začína "eyJ") posielame aj ako Bearer.
-    if (SUPABASE_KEY.startsWith("eyJ")) {
-        headers["Authorization"] = `Bearer ${SUPABASE_KEY}`;
-    }
+    });
 
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/weekly_menu?on_conflict=week_from,day_of_week`,
@@ -256,22 +275,34 @@ async function saveMenuToSupabase(parsedMenu, monday) {
 // ---------- Hlavný beh ----------
 
 async function main() {
-    const buffer = await fetchMenuPdf();
+    const now = new Date();
+    const expected = formatDate(getExpectedMonday(now));
+    const force = process.env.FORCE === "true"; // ručné spustenie prepíše dáta
+
+    // Menu na očakávaný týždeň už máme -> hotovo, nič ďalšie sa nesťahuje
+    if (!force && await isAlreadyLoaded(expected)) {
+        console.log(`✅ Menu na týždeň od ${expected} už je v databáze. Hotovo.`);
+        return;
+    }
+
+    let buffer;
+    try {
+        buffer = await fetchMenuPdf();
+    } catch (error) {
+        console.log(`⏳ Menu sa zatiaľ nepodarilo stiahnuť (${error.message}). Skúsim to o hodinu.`);
+        return;
+    }
+
     const pdfData = await pdfParse(buffer);
     console.log("📖 PDF prečítané (dĺžka: " + pdfData.text.length + " znakov)");
 
-    const now = new Date();
     const menuMonday = getMenuMonday(pdfData.text, now);
-    const expectedMonday = getExpectedMonday(now);
 
-    if (formatDate(menuMonday) !== formatDate(expectedMonday)) {
-        const msg = `Na stránke je menu na týždeň od ${formatDate(menuMonday)}, ` +
-                    `očakával som týždeň od ${formatDate(expectedMonday)}.`;
-
-        // V nedeľu je to posledný pokus -> chyba, aby ti GitHub poslal upozornenie
-        if (now.getDay() === 0) throw new Error(msg);
-
-        console.log("⏳ " + msg + " Skúsim to neskôr.");
+    if (formatDate(menuMonday) !== expected) {
+        console.log(
+            `⏳ Na stránke je menu na týždeň od ${formatDate(menuMonday)}, ` +
+            `čakám na týždeň od ${expected}. Skúsim to o hodinu.`
+        );
         return;
     }
 
@@ -286,4 +317,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { getExpectedMonday, getMenuMonday, parseRealMenu, formatDate };
+module.exports = { main, getExpectedMonday, getMenuMonday, parseRealMenu, formatDate };
