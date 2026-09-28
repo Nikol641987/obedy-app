@@ -5,7 +5,7 @@ const pdfParse = require("pdf-parse");
 // takže "koncovku" netreba hľadať ručne.
 const MENU_URL = "https://superobed.sk/podnik/4m-restaurant/denne-menu";
 const SUPABASE_URL = "https://krzouuhouzzlvsygmalb.supabase.co";
-const SUPABASE_KEY = process.env.SUPABASE_KEY;
+const SUPABASE_KEY = (process.env.SUPABASE_KEY || "").replace(/\s+/g, "");
 
 if (!SUPABASE_KEY) {
     throw new Error("Chýba SUPABASE_KEY v GitHub Actions secrets.");
@@ -205,16 +205,22 @@ async function saveMenuToSupabase(parsedMenu, monday) {
         });
     });
 
+    const headers = {
+        "apikey": SUPABASE_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates"
+    };
+    // Nové kľúče (sb_secret_...) nie sú JWT a posielajú sa iba v hlavičke apikey.
+    // Starý service_role kľúč (JWT, začína "eyJ") posielame aj ako Bearer.
+    if (SUPABASE_KEY.startsWith("eyJ")) {
+        headers["Authorization"] = `Bearer ${SUPABASE_KEY}`;
+    }
+
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/weekly_menu?on_conflict=week_from,day_of_week`,
         {
             method: "POST",
-            headers: {
-                "apikey": SUPABASE_KEY,
-                "Authorization": `Bearer ${SUPABASE_KEY}`,
-                "Content-Type": "application/json",
-                "Prefer": "resolution=merge-duplicates"
-            },
+            headers,
             body: JSON.stringify(rows)
         }
     );
