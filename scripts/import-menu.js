@@ -1,12 +1,35 @@
 const https = require("https");
 const pdfParse = require("pdf-parse");
 
-const MENU_URL = "https://superobed.sk/podnik/4m-restaurant/denne-menu-34?h=3be11773ba";
-const SUPABASE_URL = "https://krzouuhouzzlvsygmalb.supabase.co";
+const MAIN_RESTAURANT_URL = "https://superobed.sk/podnik/4m-restaurant/";
+const SUPABASE_URL = "https://krzouuhouzzlvlsygmalb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 if (!SUPABASE_KEY) {
     throw new Error("Chýba SUPABASE_KEY v GitHub Actions secrets.");
+}
+
+// Funkcia na automatické získanie aktuálnej URL adresy menu z hlavnej stránky
+function getLatestMenuUrl() {
+    return new Promise((resolve, reject) => {
+        https.get(MAIN_RESTAURANT_URL, { headers: { "User-Agent": "Mozilla/5.0" } }, (res) => {
+            if (res.statusCode === 301 || res.statusCode === 302) {
+                return getLatestMenuUrl(res.headers.location).then(resolve).catch(reject);
+            }
+            let data = "";
+            res.on("data", chunk => data += chunk);
+            res.on("end", () => {
+                const match = data.match(/\/podnik\/4m-restaurant\/denne-menu-[^"']+/);
+                if (match) {
+                    const fullUrl = `https://superobed.sk${match[0]}`;
+                    console.log("🔗 Automaticky nájdený odkaz na menu:", fullUrl);
+                    resolve(fullUrl);
+                } else {
+                    reject(new Error("Nepodarilo sa automaticky nájsť odkaz na menu na stránke podniku."));
+                }
+            });
+        }).on("error", reject);
+    });
 }
 
 function downloadBuffer(url) {
@@ -60,13 +83,12 @@ function parseRealMenu(text) {
     lines.forEach(line => {
         const upperLine = line.toUpperCase();
         
-        // Zistenie dňa v týždni
         let foundDay = false;
         for (const [key, val] of Object.entries(daysMap)) {
             if (upperLine.startsWith(key)) {
                 currentDay = val;
                 foundDay = true;
-                capturingSoup = true; // Začíname zbierať polievky pre tento deň
+                capturingSoup = true;
                 
                 const parts = line.split(":");
                 if (parts.length > 1 && parts[1].trim()) {
@@ -79,18 +101,15 @@ function parseRealMenu(text) {
 
         if (!currentDay) return;
 
-        // Ak narazíme na MENU, prestávame zbierať polievky
         if (upperLine.startsWith("MENU")) {
             capturingSoup = false;
         }
 
-        // Ak práve zbierame polievky (riadky medzi dňom a prvým menu)
         if (capturingSoup && !upperLine.startsWith("MENU")) {
             parsed[currentDay].soup.push(line);
             return;
         }
 
-        // Parsovanie Menu 1 až 4
         if (upperLine.startsWith("MENU 1:")) {
             parsed[currentDay].menu1 = line.replace(/^MENU\s*1:\s*/i, "").trim();
         } else if (upperLine.startsWith("MENU 2:")) {
@@ -100,7 +119,6 @@ function parseRealMenu(text) {
         } else if (upperLine.startsWith("MENU 4:")) {
             parsed[currentDay].menu4 = line.replace(/^MENU\s*4:\s*/i, "").trim();
         } else {
-            // Zalamovanie riadkov pre existujúce menu
             if (parsed[currentDay].menu4 && !parsed[currentDay].menu4.endsWith("€")) {
                 parsed[currentDay].menu4 += " " + line;
             } else if (parsed[currentDay].menu3 && !parsed[currentDay].menu3.endsWith("€")) {
@@ -113,7 +131,6 @@ function parseRealMenu(text) {
         }
     });
 
-    // Spojíme pole polievok do jedného reťazca oddeleného čiarkou
     Object.keys(parsed).forEach(day => {
         if (Array.isArray(parsed[day].soup)) {
             parsed[day].soup = parsed[day].soup.join(", ");
@@ -170,7 +187,10 @@ async function saveMenuToSupabase(parsedMenu, monday) {
 }
 
 async function main() {
-    console.log("📥 Sťahujem dáta z priameho odkazu...");
+    console.log("🔍 Zisťujem aktuálnu adresu menu...");
+    const MENU_URL = await getLatestMenuUrl();
+
+    console.log("📥 Sťahujem dáta z adresy:", MENU_URL);
     const buffer = await downloadBuffer(MENU_URL);
 
     const pdfData = await pdfParse(buffer);
