@@ -1,7 +1,9 @@
 const https = require("https");
 const pdfParse = require("pdf-parse");
 
-const MAIN_RESTAURANT_URL = "https://superobed.sk/podnik/4m-restaurant/";
+// Táto adresa sa na serveri presmeruje na aktuálne PDF (denne-menu-XX?h=...),
+// takže "koncovku" netreba hľadať ručne.
+const MENU_URL = "https://superobed.sk/podnik/4m-restaurant/denne-menu";
 const SUPABASE_URL = "https://krzouuhouzzlvsygmalb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
@@ -9,41 +11,50 @@ if (!SUPABASE_KEY) {
     throw new Error("Chýba SUPABASE_KEY v GitHub Actions secrets.");
 }
 
-// Funkcia na automatické získanie aktuálnej URL adresy menu z hlavnej stránky
-function getLatestMenuUrl() {
-    return new Promise((resolve, reject) => {
-        https.get(MAIN_RESTAURANT_URL, { headers: { "User-Agent": "Mozilla/5.0" } }, (res) => {
-            if (res.statusCode === 301 || res.statusCode === 302) {
-                return getLatestMenuUrl(res.headers.location).then(resolve).catch(reject);
-            }
-            let data = "";
-            res.on("data", chunk => data += chunk);
-            res.on("end", () => {
-                const match = data.match(/\/podnik\/4m-restaurant\/denne-menu-[^"']+/);
-                if (match) {
-                    const fullUrl = `https://superobed.sk${match[0]}`;
-                    console.log("🔗 Automaticky nájdený odkaz na menu:", fullUrl);
-                    resolve(fullUrl);
-                } else {
-                    reject(new Error("Nepodarilo sa automaticky nájsť odkaz na menu na stránke podniku."));
-                }
-            });
-        }).on("error", reject);
-    });
-}
+// ---------- Sťahovanie ----------
 
-function downloadBuffer(url) {
+function request(url, redirects = 0) {
     return new Promise((resolve, reject) => {
+        if (redirects > 5) return reject(new Error("Príliš veľa presmerovaní."));
+
         https.get(url, { headers: { "User-Agent": "Mozilla/5.0" } }, (res) => {
-            if (res.statusCode === 301 || res.statusCode === 302) {
-                return downloadBuffer(res.headers.location).then(resolve).catch(reject);
+            if ([301, 302, 303, 307, 308].includes(res.statusCode)) {
+                res.resume();
+                // location môže byť relatívna, preto new URL(..., url)
+                const next = new URL(res.headers.location, url).href;
+                return request(next, redirects + 1).then(resolve).catch(reject);
             }
-            let chunks = [];
+            if (res.statusCode !== 200) {
+                res.resume();
+                return reject(new Error(`HTTP ${res.statusCode} pri ${url}`));
+            }
+            const chunks = [];
             res.on("data", chunk => chunks.push(chunk));
             res.on("end", () => resolve(Buffer.concat(chunks)));
         }).on("error", reject);
     });
 }
+
+const isPdf = buf => buf.subarray(0, 4).toString() === "%PDF";
+
+async function fetchMenuPdf() {
+    console.log("📥 Sťahujem menu z:", MENU_URL);
+    const buffer = await request(MENU_URL);
+    if (isPdf(buffer)) return buffer;
+
+    // Záloha: ak by sme dostali HTML stránku, skúsime v nej nájsť odkaz na denne-menu-XX
+    const html = buffer.toString("utf8");
+    const match = html.match(/["'](\/podnik\/4m-restaurant\/denne-menu-[^"']+)["']/);
+    if (!match) throw new Error("Odpoveď nie je PDF a v HTML som nenašiel odkaz na menu.");
+
+    const fallbackUrl = "https://superobed.sk" + match[1].replace(/&amp;/g, "&");
+    console.log("🔗 Záložný odkaz:", fallbackUrl);
+    const pdf = await request(fallbackUrl);
+    if (!isPdf(pdf)) throw new Error("Ani záložný odkaz nevrátil PDF.");
+    return pdf;
+}
+
+// ---------- Dátumy ----------
 
 function getMonday(date) {
     const result = new Date(date);
@@ -61,7 +72,35 @@ function formatDate(date) {
     return `${year}-${month}-${day}`;
 }
 
-// Inteligentné parsovanie reálneho textu z PDF pre 4M Restaurant
+// Ktorý pondelok očakávame: Pi/So/Ne -> budúci týždeň, Po–Št -> tento týždeň
+function getExpectedMonday(now) {
+    const d = new Date(now);
+    d.setHours(12, 0, 0, 0);
+    const day = d.getDay(); // 0 = nedeľa ... 6 = sobota
+    const addDays = day === 5 ? 3 : day === 6 ? 2 : day === 0 ? 1 : 1 - day;
+    d.setDate(d.getDate() + addDays);
+    return d;
+}
+
+// Z hlavičky PDF ("28.09.-02.10.") zistí, pre ktorý týždeň menu platí
+function getMenuMonday(text, now = new Date()) {
+    const m = text.match(/(\d{1,2})\.\s*(\d{1,2})\.\s*[-–]\s*(\d{1,2})\.\s*(\d{1,2})\./);
+    if (!m) throw new Error("V PDF som nenašiel dátum týždňa (napr. 28.09.-02.10.).");
+
+    const day = Number(m[1]);
+    const month = Number(m[2]);
+
+    // Rok nie je v PDF – vyberieme ten, pri ktorom je dátum najbližšie k dnešku
+    let best = null;
+    for (const year of [now.getFullYear() - 1, now.getFullYear(), now.getFullYear() + 1]) {
+        const candidate = new Date(year, month - 1, day, 12, 0, 0, 0);
+        if (!best || Math.abs(candidate - now) < Math.abs(best - now)) best = candidate;
+    }
+    return getMonday(best);
+}
+
+// ---------- Parsovanie ----------
+
 function parseRealMenu(text) {
     const daysMap = {
         "PONDELOK": "pondelok",
@@ -82,14 +121,14 @@ function parseRealMenu(text) {
 
     lines.forEach(line => {
         const upperLine = line.toUpperCase();
-        
+
         let foundDay = false;
         for (const [key, val] of Object.entries(daysMap)) {
             if (upperLine.startsWith(key)) {
                 currentDay = val;
                 foundDay = true;
                 capturingSoup = true;
-                
+
                 const parts = line.split(":");
                 if (parts.length > 1 && parts[1].trim()) {
                     parsed[currentDay].soup.push(parts[1].trim());
@@ -141,6 +180,8 @@ function parseRealMenu(text) {
     return parsed;
 }
 
+// ---------- Supabase ----------
+
 async function saveMenuToSupabase(parsedMenu, monday) {
     const dayKeys = ["pondelok", "utorok", "streda", "stvrtok", "piatok"];
     const rows = [];
@@ -183,26 +224,40 @@ async function saveMenuToSupabase(parsedMenu, monday) {
         throw new Error(`Supabase uloženie zlyhalo: ${response.status} ${errorText}`);
     }
 
-    console.log("✅ Reálne menu bolo úspešne rozparsované a uložené do Supabase!");
+    console.log("✅ Menu na týždeň od", formatDate(monday), "bolo uložené do Supabase!");
 }
+
+// ---------- Hlavný beh ----------
 
 async function main() {
-    console.log("🔍 Zisťujem aktuálnu adresu menu...");
-    const MENU_URL = await getLatestMenuUrl();
-
-    console.log("📥 Sťahujem dáta z adresy:", MENU_URL);
-    const buffer = await downloadBuffer(MENU_URL);
-
+    const buffer = await fetchMenuPdf();
     const pdfData = await pdfParse(buffer);
-    console.log("📖 PDF text úspešne prečítaný (dĺžka: " + pdfData.text.length + " znakov)");
+    console.log("📖 PDF prečítané (dĺžka: " + pdfData.text.length + " znakov)");
+
+    const now = new Date();
+    const menuMonday = getMenuMonday(pdfData.text, now);
+    const expectedMonday = getExpectedMonday(now);
+
+    if (formatDate(menuMonday) !== formatDate(expectedMonday)) {
+        const msg = `Na stránke je menu na týždeň od ${formatDate(menuMonday)}, ` +
+                    `očakával som týždeň od ${formatDate(expectedMonday)}.`;
+
+        // V nedeľu je to posledný pokus -> chyba, aby ti GitHub poslal upozornenie
+        if (now.getDay() === 0) throw new Error(msg);
+
+        console.log("⏳ " + msg + " Skúsim to neskôr.");
+        return;
+    }
 
     const parsedMenu = parseRealMenu(pdfData.text);
-    const monday = getMonday(new Date());
-
-    await saveMenuToSupabase(parsedMenu, monday);
+    await saveMenuToSupabase(parsedMenu, menuMonday);
 }
 
-main().catch(error => {
-    console.error("❌ Chyba:", error);
-    process.exit(1);
-});
+if (require.main === module) {
+    main().catch(error => {
+        console.error("❌ Chyba:", error);
+        process.exit(1);
+    });
+}
+
+module.exports = { getExpectedMonday, getMenuMonday, parseRealMenu, formatDate };
