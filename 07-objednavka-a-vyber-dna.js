@@ -2,7 +2,6 @@
 // 7. VÝBER DŇA OBJEDNÁVKY
 // =====================================
 
-
 function isDeadlineExempt(employeeId) {
     const select = document.getElementById("employeeSelect");
     if (!select) return false;
