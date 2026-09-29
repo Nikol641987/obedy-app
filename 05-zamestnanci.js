@@ -80,6 +80,12 @@ option.value =
                 `${employee.surname} ${employee.name}`;
 
 
+            option.dataset.id =
+                employee.id || "";
+
+            option.dataset.pinHash =
+                employee.pin_hash || "";
+
             option.dataset.name =
                 employee.name || "";
 

@@ -1,6 +1,30 @@
 // 6. PRIHLÁSENIE A VLASTNÝ PIN
 // =====================================
 
+// PIN sa neukladá v čitateľnej podobe, iba jeho hash previazaný s ID zamestnanca
+async function hashPin(employeeId, pin) {
+
+    const data =
+        new TextEncoder().encode(
+            `${employeeId}:${pin}`
+        );
+
+    const hashBuffer =
+        await crypto.subtle.digest(
+            "SHA-256",
+            data
+        );
+
+    return Array.from(
+        new Uint8Array(hashBuffer)
+    )
+        .map(byte =>
+            byte.toString(16).padStart(2, "0")
+        )
+        .join("");
+
+}
+
 function setupLogin() {
 
     const loginButton =
@@ -74,9 +98,8 @@ const forgotPinButton = document.getElementById("forgotPinButton");
 
 
         const savedPin =
-            localStorage.getItem(
-                `pin_${employeeId}`
-            );
+            select.options[select.selectedIndex]
+                ?.dataset.pinHash;
 
 
         if (savedPin) {
@@ -112,7 +135,7 @@ updatePinMode();
 
     loginButton.addEventListener(
         "click",
-        () => {
+        async () => {
 
             const employeeId =
                 select.value;
@@ -146,12 +169,16 @@ updatePinMode();
             }
 
 
-            const pinKey =
-                `pin_${employeeId}`;
+            const selectedOption =
+                select.options[select.selectedIndex];
 
             const savedPin =
-                localStorage.getItem(
-                    pinKey
+                selectedOption?.dataset.pinHash;
+
+            const pinHash =
+                await hashPin(
+                    employeeId,
+                    pin
                 );
 
 
@@ -188,15 +215,36 @@ updatePinMode();
                 }
 
 
-                localStorage.setItem(
-                    pinKey,
-                    pin
-                );
+                const { error: pinSaveError } =
+                    await supabaseClient
+                        .from("employees")
+                        .update({
+                            pin_hash: pinHash
+                        })
+                        .eq(
+                            "id",
+                            selectedOption.dataset.id
+                        );
+
+
+                if (pinSaveError) {
+
+                    showLoginError(
+                        "PIN sa nepodarilo uložiť. Skúste to znova."
+                    );
+
+                    return;
+
+                }
+
+
+                selectedOption.dataset.pinHash =
+                    pinHash;
 
             } else {
 
                 // Pri ďalšom prihlásení zadá PIN iba raz
-               if (pin !== savedPin) {
+               if (pinHash !== savedPin) {
 
     showMessageModal(
         "Nesprávny PIN",

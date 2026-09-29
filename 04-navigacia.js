@@ -2172,7 +2172,7 @@ function initializeNavigation() {
 
     savePinButton?.addEventListener(
         "click",
-        () => {
+        async () => {
 
             const newPinInput =
                 document.getElementById(
@@ -2224,10 +2224,60 @@ function initializeNavigation() {
             }
 
 
-            localStorage.setItem(
-                `pin_${employeeId}`,
-                newPin
-            );
+            const employeeSelect =
+                document.getElementById(
+                    "employeeSelect"
+                );
+
+            const employeeOption =
+                [...(employeeSelect?.options || [])].find(
+                    option => option.value === employeeId
+                );
+
+
+            if (!employeeOption) {
+
+                alert(
+                    "Nepodarilo sa zistiť zamestnanca."
+                );
+
+                return;
+
+            }
+
+
+            const pinHash =
+                await hashPin(
+                    employeeId,
+                    newPin
+                );
+
+
+            const { error: pinSaveError } =
+                await supabaseClient
+                    .from("employees")
+                    .update({
+                        pin_hash: pinHash
+                    })
+                    .eq(
+                        "id",
+                        employeeOption.dataset.id
+                    );
+
+
+            if (pinSaveError) {
+
+                alert(
+                    "PIN sa nepodarilo uložiť. Skúste to znova."
+                );
+
+                return;
+
+            }
+
+
+            employeeOption.dataset.pinHash =
+                pinHash;
 
 
             if (pinModal) {
@@ -2406,7 +2456,7 @@ function initializeNavigation() {
 
     const confirmResetCodeButton =
         document.getElementById(
-            "confirmResetCodeButton"
+            "verifyResetCodeButton"
         );
 
     const cancelResetPinButton =
