@@ -2391,46 +2391,67 @@ function initializeNavigation() {
 
 
             const employeeId =
-                sessionStorage.getItem(
-                    "loggedEmployee"
-                )
-                ||
-                localStorage.getItem(
-                    "loggedEmployee"
+                getCurrentEmployeeId();
+
+            const employeeSelect =
+                document.getElementById(
+                    "employeeSelect"
                 );
 
+            const employeeOption =
+                [...(employeeSelect?.options || [])].find(
+                    option =>
+                        option.value === employeeId
+                );
 
-            if (!employeeId) {
+            const employeeDatabaseId =
+                employeeOption?.dataset.id;
+
+            if (!employeeDatabaseId) {
+
+                alert(
+                    "Nepodarilo sa zistiť zamestnanca. Skúste sa odhlásiť a znova prihlásiť."
+                );
+
                 return;
+
             }
 
 
-            const [
-                surname,
-                name
-            ] =
-                employeeId.split("_");
+            let updateResult;
 
+            try {
 
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from(
-                        "employees"
-                    )
-                    .update({
-                        email:
-                            email
-                    })
-                    .eq(
-                        "surname",
-                        surname
-                    )
-                    .eq(
-                        "name",
-                        name
-                    );
+                updateResult =
+                    await supabaseClient
+                        .from("employees")
+                        .update({
+                            email: email
+                        })
+                        .eq(
+                            "id",
+                            employeeDatabaseId
+                        )
+                        .select("id")
+                        .single();
+
+            } catch (error) {
+
+                console.error(
+                    "Chyba pri ukladaní e-mailu:",
+                    error
+                );
+
+                alert(
+                    "E-mail sa nepodarilo uložiť."
+                );
+
+                return;
+
+            }
+
+            const { data, error } =
+                updateResult;
 
 
             if (error) {
@@ -2442,6 +2463,20 @@ function initializeNavigation() {
 
                 alert(
                     "E-mail sa nepodarilo uložiť."
+                );
+
+                return;
+
+            }
+
+            if (!data) {
+
+                console.error(
+                    "E-mail sa neuložil: databáza nepotvrdila aktualizáciu zamestnanca."
+                );
+
+                alert(
+                    "E-mail sa nepodarilo uložiť. Skúste to znova."
                 );
 
                 return;
