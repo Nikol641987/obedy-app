@@ -27,6 +27,38 @@ function getCurrentUserRole() {
 
     return option?.dataset?.role || "";
 }
+
+function canAccessIssueDashboard(role = getCurrentUserRole()) {
+    return (
+        role === "admin"
+        || role === "issue"
+        || role === "issue_admin"
+    );
+}
+
+function canAccessAdminScreen(
+    screenId = "adminScreen",
+    role = getCurrentUserRole()
+) {
+    if (role === "admin") {
+        return [
+            "adminScreen",
+            "adminEmployeesScreen",
+            "adminWeeklyMenuScreen",
+            "adminEmailOrdersScreen"
+        ].includes(screenId);
+    }
+
+    return (
+        role === "issue_admin"
+        && [
+            "adminScreen",
+            "adminWeeklyMenuScreen",
+            "adminEmailOrdersScreen"
+        ].includes(screenId)
+    );
+}
+
 function updatePermissions() {
 
    const role =
@@ -78,6 +110,21 @@ const isLoggedIn =
             "openMonthlyReportButton"
         );
 
+    const adminEmployeesButton =
+        document.getElementById(
+            "adminEmployeesButton"
+        );
+
+    const adminWeeklyMenuButton =
+        document.getElementById(
+            "adminWeeklyMenuButton"
+        );
+
+    const adminEmailOrdersButton =
+        document.getElementById(
+            "adminEmailOrdersButton"
+        );
+
 
    // VÝDAJ OBEDOV
 // Bez prihlásenia dostupný.
@@ -120,19 +167,42 @@ if (openIssueButton) {
     if (openDashboardButton) {
 
         openDashboardButton.hidden =
-            !(
-                role === "admin"
-                || role === "issue"
-            );
+            !canAccessIssueDashboard(role);
     }
 
 
     // ADMINISTRÁCIA
-    // Iba admin.
     if (openAdminButton) {
 
         openAdminButton.hidden =
-            role !== "admin";
+            !canAccessAdminScreen("adminScreen", role);
+    }
+
+    if (adminEmployeesButton) {
+
+        adminEmployeesButton.hidden =
+            !canAccessAdminScreen(
+                "adminEmployeesScreen",
+                role
+            );
+    }
+
+    if (adminWeeklyMenuButton) {
+
+        adminWeeklyMenuButton.hidden =
+            !canAccessAdminScreen(
+                "adminWeeklyMenuScreen",
+                role
+            );
+    }
+
+    if (adminEmailOrdersButton) {
+
+        adminEmailOrdersButton.hidden =
+            !canAccessAdminScreen(
+                "adminEmailOrdersScreen",
+                role
+            );
     }
 
 

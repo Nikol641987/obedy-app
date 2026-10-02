@@ -81,8 +81,18 @@ async function renderAdminEmployees() {
                             const chip =
                                 employee.chip || "-";
 
+                            const roleLabels = {
+                                employee: "Zamestnanec",
+                                issue: "Issue",
+                                issue_admin:
+                                    "Issue + týždenné menu a odosielanie objednávok",
+                                admin: "Administrátor"
+                            };
+
                             const role =
-                                employee.role || "-";
+                                roleLabels[employee.role]
+                                || employee.role
+                                || "-";
 
                             const status =
                                 employee.active

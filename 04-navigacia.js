@@ -626,6 +626,10 @@ function initializeNavigation() {
         "click",
         () => {
 
+            if (!canAccessAdminScreen("adminScreen")) {
+                return;
+            }
+
             showScreen(
                 "adminScreen"
             );
@@ -641,6 +645,14 @@ function initializeNavigation() {
     adminEmployeesButton?.addEventListener(
         "click",
         async () => {
+
+            if (
+                !canAccessAdminScreen(
+                    "adminEmployeesScreen"
+                )
+            ) {
+                return;
+            }
 
             showScreen(
                 "adminEmployeesScreen"
@@ -670,6 +682,14 @@ function initializeNavigation() {
     adminWeeklyMenuButton?.addEventListener(
         "click",
         async () => {
+
+            if (
+                !canAccessAdminScreen(
+                    "adminWeeklyMenuScreen"
+                )
+            ) {
+                return;
+            }
 
             try {
 
@@ -715,6 +735,14 @@ function initializeNavigation() {
     adminEmailOrdersButton?.addEventListener(
         "click",
         async () => {
+
+            if (
+                !canAccessAdminScreen(
+                    "adminEmailOrdersScreen"
+                )
+            ) {
+                return;
+            }
 
             showScreen(
                 "adminEmailOrdersScreen"

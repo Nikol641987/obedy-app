@@ -3,6 +3,13 @@
 
 function showScreen(screenId) {
 
+    if (
+        screenId.startsWith("admin")
+        && !canAccessAdminScreen(screenId)
+    ) {
+        screenId = "homeScreen";
+    }
+
     document
         .querySelectorAll(".app-screen")
         .forEach(screen => {
