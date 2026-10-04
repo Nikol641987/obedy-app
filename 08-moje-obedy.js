@@ -29,6 +29,7 @@ async function loadMyOrders(employeeId) {
                 menu_choice,
                 dining,
                 takeaway,
+                quantity,
                 no_soup,
                 issued
             `)
@@ -106,9 +107,12 @@ function renderFilteredOrders() {
     // Filtrovanie obedov podľa vybraného mesiaca (YYYY-MM)
     const filtered = allMyOrders.filter(order => order.order_date && order.order_date.startsWith(selectedYM));
 
-    // Aktualizácia počítadla obedov
+    // Aktualizácia počítadla obedov (počíta kusy, nie len riadky)
     if (countNumber) {
-        countNumber.textContent = filtered.length;
+        countNumber.textContent = filtered.reduce(
+            (sum, order) => sum + (Number(order.quantity) || 1),
+            0
+        );
     }
 
     if (filtered.length === 0) {
@@ -136,13 +140,15 @@ function renderFilteredOrders() {
         const itemsHtml = items
             .map(item => {
                 const methods = [];
+                const quantity = Number(item.quantity) || 1;
+                const quantitySuffix = quantity > 1 ? ` ×${quantity}` : "";
 
                 if (item.dining) {
-                    methods.push("🍽️ V jedálni");
+                    methods.push("🍽️ V jedálni" + quantitySuffix);
                 }
 
                 if (item.takeaway) {
-                    methods.push("📦 Zabaliť");
+                    methods.push("📦 Zabaliť" + quantitySuffix);
                 }
 
                 const soupText = item.no_soup ? " · bez polievky" : "";

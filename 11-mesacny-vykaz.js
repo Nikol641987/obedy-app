@@ -133,7 +133,8 @@ async function generateMonthlyReport() {
         .select(`
             employee_id,
             employee_name,
-            order_date
+            order_date,
+            quantity
         `)
         .gte(
             "order_date",
@@ -295,7 +296,10 @@ const employees =
                 employeeTotals.get(employeeKey);
 
 
-            employeeRow.total += 1;
+            const orderQuantity =
+                Number(order.quantity) || 1;
+
+            employeeRow.total += orderQuantity;
 
 
            const orderDate =
@@ -319,7 +323,7 @@ const day =
             ) {
 
                 employeeRow.days[day] =
-                    (employeeRow.days[day] || 0) + 1;
+                    (employeeRow.days[day] || 0) + orderQuantity;
 
             }
 
@@ -361,8 +365,14 @@ const day =
             lastDay;
 
 
+        const totalMealsOrdered =
+            orders.reduce(
+                (sum, order) => sum + (Number(order.quantity) || 1),
+                0
+            );
+
         summary.textContent =
-            `Spolu objednaných obedov: ${orders.length}`;
+            `Spolu objednaných obedov: ${totalMealsOrdered}`;
 
         summary.className =
             "message success-message";

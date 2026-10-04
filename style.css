@@ -390,6 +390,47 @@ select:focus-visible {
     padding: 16px;
 }
 
+/* Počet kusov (V jedálni / Zabaliť) */
+.menu-option-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.qty-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: var(--tmv-light);
+}
+
+.qty-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--tmv-blue-dark);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.qty-btn:active {
+    background: var(--tmv-light);
+}
+
+.qty-value {
+    min-width: 22px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 15px;
+}
+
 /* =========================================
    VÝDAJ
 ========================================= */

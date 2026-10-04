@@ -60,7 +60,7 @@ async function openWeekSelectionScreen(employeeId) {
     try {
         const { data, error } = await supabaseClient
             .from("meal_orders")
-            .select("order_date, menu_id, menu_name, dining, takeaway, no_soup, issued")
+            .select("order_date, menu_id, menu_name, dining, takeaway, quantity, no_soup, issued")
             .eq("employee_id", employeeId)
             .gte("order_date", mondayForDatabase)
             .lte("order_date", fridayForDatabase)
@@ -139,6 +139,8 @@ async function openWeekSelectionScreen(employeeId) {
                 meal.className = "week-order-meal";
                 const menuName = order.menu_name || `Menu ${order.menu_id}`;
                 let servingType = order.takeaway ? " 📦 Zabaliť" : (order.dining ? " 🍽️ V jedálni" : "");
+                const quantity = Number(order.quantity) || 1;
+                if (quantity > 1) servingType += ` ×${quantity}`;
 
                 meal.innerHTML = `
                     <div class="week-serving-type">${servingType.trim()}</div>
@@ -258,7 +260,7 @@ async function checkTodayOrder(employeeId) {
     try {
         const { data, error } = await supabaseClient
             .from("meal_orders")
-            .select("menu_id, menu_name, menu_choice, soup_choice, note, dining, takeaway, no_soup, issued")
+            .select("menu_id, menu_name, menu_choice, soup_choice, note, dining, takeaway, quantity, no_soup, issued")
             .eq("employee_id", employeeId)
             .eq("order_date", today);
 
@@ -306,13 +308,40 @@ async function checkTodayOrder(employeeId) {
             const menuChoice = document.querySelector(`.menu-choice[data-menu-id="${item.menu_id}"][value="${item.menu_choice}"]`);
             
             if (item.soup_choice) {
-                const soupRadio = document.querySelector(`.soup-choice-radio[value="${item.soup_choice}"]`);
-                if (soupRadio) soupRadio.checked = true;
+                String(item.soup_choice)
+                    .split(" + ")
+                    .map(soup => soup.trim())
+                    .filter(Boolean)
+                    .forEach(soup => {
+                        const soupCheckbox = document.querySelector(
+                            `.soup-choice-checkbox[value="${soup}"]`
+                        );
+                        if (soupCheckbox) soupCheckbox.checked = true;
+                    });
             }
 
             if (menuChoice) menuChoice.checked = true;
-            if (diningChoice) diningChoice.checked = Boolean(item.dining);
-            if (takeawayChoice) takeawayChoice.checked = Boolean(item.takeaway);
+            // Použijeme logický OR (nie priame priradenie), aby pri dvoch
+            // riadkoch pre to isté menu (jedna "V jedálni", druhá "Zabaliť")
+            // jeden riadok neodškrtol to, čo nastavil druhý.
+            if (diningChoice && item.dining) diningChoice.checked = true;
+            if (takeawayChoice && item.takeaway) takeawayChoice.checked = true;
+
+            // Predvyplnenie počtu kusov pri úprave existujúcej objednávky
+            if (item.dining) {
+                const diningStepper = getQtyStepper(item.menu_id, "dining");
+                if (diningStepper) {
+                    diningStepper.hidden = false;
+                    setStepperQuantity(diningStepper, item.quantity);
+                }
+            }
+            if (item.takeaway) {
+                const takeawayStepper = getQtyStepper(item.menu_id, "takeaway");
+                if (takeawayStepper) {
+                    takeawayStepper.hidden = false;
+                    setStepperQuantity(takeawayStepper, item.quantity);
+                }
+            }
             
             // Nastavenie poznámky (stačí nastaviť do spoločného pola)
             if (globalNoteInput && item.note) {
@@ -323,6 +352,8 @@ async function checkTodayOrder(employeeId) {
         if (noSoup) {
             noSoup.checked = data.some(item => Boolean(item.no_soup));
         }
+
+        updateSoupSelectionLimit();
 
         if (confirmOrderButton) {
             if (canEdit) {
@@ -387,6 +418,121 @@ function setCurrentDate() {
 }
 
 // =====================================
+// 12A. POČET KUSOV (V JEDÁLNI / ZABALIŤ)
+// =====================================
+const MAX_MEAL_QUANTITY = 10;
+
+function createQtyStepperHtml(menuId, option) {
+    return `
+        <div class="qty-stepper" data-menu-id="${menuId}" data-option="${option}" data-quantity="1" hidden>
+            <button type="button" class="qty-btn qty-minus" aria-label="Znížiť počet kusov">−</button>
+            <span class="qty-value">1</span>
+            <button type="button" class="qty-btn qty-plus" aria-label="Zvýšiť počet kusov">+</button>
+        </div>
+    `;
+}
+
+function getQtyStepper(menuId, option) {
+    return document.querySelector(`.qty-stepper[data-menu-id="${menuId}"][data-option="${option}"]`);
+}
+
+function setStepperQuantity(stepper, quantity) {
+    if (!stepper) return;
+    const clamped = Math.min(MAX_MEAL_QUANTITY, Math.max(1, Number(quantity) || 1));
+    stepper.dataset.quantity = String(clamped);
+    const valueElement = stepper.querySelector(".qty-value");
+    if (valueElement) valueElement.textContent = String(clamped);
+}
+
+function getStepperQuantity(menuId, option) {
+    const stepper = getQtyStepper(menuId, option);
+    return stepper ? Number(stepper.dataset.quantity) || 1 : 1;
+}
+
+// Celkový počet objednaných kusov (spočíta kusy zo všetkých zaškrtnutých
+// možností "V jedálni"/"Zabaliť" naprieč všetkými menu).
+function getTotalOrderedUnits() {
+    let total = 0;
+    document.querySelectorAll(".meal-choice:checked").forEach(choice => {
+        total += getStepperQuantity(choice.dataset.menuId, choice.dataset.option);
+    });
+    return total;
+}
+
+// Umožní vybrať toľko polievok, koľko je objednaných kusov (napr. pri 2
+// objednaných obedoch sa dajú zaškrtnúť 2 rôzne polievky).
+function updateSoupSelectionLimit() {
+    const checkboxes = [...document.querySelectorAll(".soup-choice-checkbox")];
+    if (checkboxes.length === 0) return;
+
+    const totalUnits = Math.max(1, getTotalOrderedUnits());
+    const checkedBoxes = checkboxes.filter(checkbox => checkbox.checked);
+
+    // Ak je zaškrtnutých viac polievok, než je aktuálne objednaných kusov,
+    // nadbytočné (od konca) odznačíme.
+    if (checkedBoxes.length > totalUnits) {
+        checkedBoxes.slice(totalUnits).forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    }
+
+    const stillCheckedCount = checkboxes.filter(checkbox => checkbox.checked).length;
+    checkboxes.forEach(checkbox => {
+        checkbox.disabled = !checkbox.checked && stillCheckedCount >= totalUnits;
+    });
+
+    const hint = document.querySelector(".soup-limit-hint");
+    if (hint) {
+        hint.textContent = totalUnits > 1
+            ? `Môžeš vybrať až ${totalUnits} polievky (podľa počtu objednaných obedov).`
+            : "";
+    }
+}
+
+// Zobrazenie/skrytie a +/- ovládanie stepperu sa napojí raz na kontajner
+// (ten istý DOM element sa pri každom načítaní menu iba vyprázdni, nie nahradí).
+function setupQuantitySteppers(container) {
+    if (!container || container.dataset.qtyBound === "true") return;
+    container.dataset.qtyBound = "true";
+
+    container.addEventListener("change", event => {
+        const checkbox = event.target.closest(".meal-choice");
+        if (checkbox) {
+            const stepper = getQtyStepper(checkbox.dataset.menuId, checkbox.dataset.option);
+            if (stepper) {
+                if (checkbox.checked) {
+                    stepper.hidden = false;
+                } else {
+                    stepper.hidden = true;
+                    setStepperQuantity(stepper, 1);
+                }
+            }
+            updateSoupSelectionLimit();
+            return;
+        }
+
+        if (event.target.classList.contains("soup-choice-checkbox")) {
+            updateSoupSelectionLimit();
+        }
+    });
+
+    container.addEventListener("click", event => {
+        const button = event.target.closest(".qty-btn");
+        if (!button) return;
+
+        event.preventDefault();
+
+        const stepper = button.closest(".qty-stepper");
+        if (!stepper) return;
+
+        const current = Number(stepper.dataset.quantity) || 1;
+        const next = button.classList.contains("qty-plus") ? current + 1 : current - 1;
+        setStepperQuantity(stepper, next);
+        updateSoupSelectionLimit();
+    });
+}
+
+// =====================================
 // 12. NAČÍTANIE MENU
 // =====================================
 async function loadMenus() {
@@ -440,10 +586,11 @@ async function loadMenus() {
                         <strong>Vyberte si polievku:</strong>
                         ${soupOptions.map(soup => `
                             <label style="display: block; margin-top: 6px; cursor: pointer;">
-                                <input type="radio" name="soup-choice" value="${escapeHtml(soup)}" class="soup-choice-radio">
+                                <input type="checkbox" value="${escapeHtml(soup)}" class="soup-choice-checkbox">
                                 ${escapeHtml(soup)}
                             </label>
                         `).join("")}
+                        <div class="soup-limit-hint" style="margin-top: 8px; font-size: 0.85rem; color: #64748b;"></div>
                     </div>
                 `
                 : "";
@@ -509,18 +656,27 @@ async function loadMenus() {
                         : ""
                 }
                 <div class="menu-options" style="margin-top: 10px;">
-                    <label class="menu-option">
-                        <input type="checkbox" class="meal-choice" data-menu-id="${menu.id}" data-option="dining">
-                        <span>V jedálni</span>
-                    </label>
-                    <label class="menu-option">
-                        <input type="checkbox" class="meal-choice" data-menu-id="${menu.id}" data-option="takeaway">
-                        <span>Zabaliť</span>
-                    </label>
+                    <div class="menu-option-wrapper">
+                        <label class="menu-option">
+                            <input type="checkbox" class="meal-choice" data-menu-id="${menu.id}" data-option="dining">
+                            <span>V jedálni</span>
+                        </label>
+                        ${createQtyStepperHtml(menu.id, "dining")}
+                    </div>
+                    <div class="menu-option-wrapper">
+                        <label class="menu-option">
+                            <input type="checkbox" class="meal-choice" data-menu-id="${menu.id}" data-option="takeaway">
+                            <span>Zabaliť</span>
+                        </label>
+                        ${createQtyStepperHtml(menu.id, "takeaway")}
+                    </div>
                 </div>
             `;
             container.appendChild(card);
         });
+
+        setupQuantitySteppers(container);
+        updateSoupSelectionLimit();
 
         // Spoločné pole pre poznámku pod všetkými menu
         const globalNoteContainer = document.createElement("div");
@@ -582,10 +738,14 @@ function setupOrderButton() {
         const globalNoteValue = globalNoteInput ? globalNoteInput.value.trim() : "";
 
         const soupCardElement = document.querySelector(".soup-card");
-        const soupRadio = soupCardElement ? soupCardElement.querySelector('input[name="soup-choice"]:checked') : null;
-        const selectedSoupChoice = soupRadio ? soupRadio.value : null;
+        const selectedSoupCheckboxes = soupCardElement
+            ? [...soupCardElement.querySelectorAll(".soup-choice-checkbox:checked")]
+            : [];
+        const selectedSoupChoice = selectedSoupCheckboxes.length > 0
+            ? selectedSoupCheckboxes.map(checkbox => checkbox.value).join(" + ")
+            : null;
 
-        if (soupCardElement && soupCardElement.querySelector('input[name="soup-choice"]') && !soupRadio && !noSoup) {
+        if (soupCardElement && soupCardElement.querySelector('.soup-choice-checkbox') && selectedSoupCheckboxes.length === 0 && !noSoup) {
             if (orderMessage) {
                 orderMessage.textContent = "🥣 Vyberte si, prosím, polievku alebo zaškrtnite 'Bez polievky'.";
                 orderMessage.className = "message error-message";
@@ -633,12 +793,20 @@ function setupOrderButton() {
             if (!menuSelections[menuId]) {
                 menuSelections[menuId] = {
                     dining: false,
-                    takeaway: false
+                    takeaway: false,
+                    diningQty: 1,
+                    takeawayQty: 1
                 };
             }
 
-            if (option === "dining") menuSelections[menuId].dining = true;
-            if (option === "takeaway") menuSelections[menuId].takeaway = true;
+            if (option === "dining") {
+                menuSelections[menuId].dining = true;
+                menuSelections[menuId].diningQty = getStepperQuantity(menuId, "dining");
+            }
+            if (option === "takeaway") {
+                menuSelections[menuId].takeaway = true;
+                menuSelections[menuId].takeawayQty = getStepperQuantity(menuId, "takeaway");
+            }
         });
 
         Object.keys(menuSelections).forEach(menuId => {
@@ -661,6 +829,7 @@ function setupOrderButton() {
                     note: globalNoteValue,
                     dining: true,
                     takeaway: false,
+                    quantity: selection.diningQty,
                     no_soup: noSoup,
                     issued: false
                 });
@@ -679,6 +848,7 @@ function setupOrderButton() {
                     note: globalNoteValue,
                     dining: false,
                     takeaway: true,
+                    quantity: selection.takeawayQty,
                     no_soup: noSoup,
                     issued: false
                 });

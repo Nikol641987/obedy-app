@@ -1,3 +1,9 @@
+// Pripojí "×N" k spôsobu výdaja, ak je objednaný viac než 1 kus.
+function formatServingMethod(label, quantity) {
+    const qty = Number(quantity) || 1;
+    return qty > 1 ? `${label} ×${qty}` : label;
+}
+
 function setupManualIssue() {
 
     const noChipButton =
@@ -111,6 +117,7 @@ function setupManualIssue() {
     menu_choice,
     dining,
     takeaway,
+    quantity,
     issued
     `
 )
@@ -170,11 +177,11 @@ function setupManualIssue() {
                 const methods = [];
 
                 if (item.dining) {
-                    methods.push("V jedálni");
+                    methods.push(formatServingMethod("V jedálni", item.quantity));
                 }
 
                 if (item.takeaway) {
-                    methods.push("Zabaliť");
+                    methods.push(formatServingMethod("Zabaliť", item.quantity));
                 }
 
                return `${(item.menu_name || "").replace(/\s*\([^)]*\)/g, "").trim()} – ${methods.join(" + ")}`;
@@ -253,13 +260,13 @@ function setupManualIssue() {
 
                             if (item.dining) {
                                 methods.push(
-                                    "V jedálni"
+                                    formatServingMethod("V jedálni", item.quantity)
                                 );
                             }
 
                             if (item.takeaway) {
                                 methods.push(
-                                    "Zabaliť"
+                                    formatServingMethod("Zabaliť", item.quantity)
                                 );
                             }
 
@@ -645,6 +652,7 @@ const totalCount =
     menu_choice,
     dining,
     takeaway,
+    quantity,
     issued
 `)
                 .eq("order_date", today);
@@ -735,14 +743,14 @@ const issuedMeals =
     ).length;
 
 const diningMeals =
-    orders.filter(order =>
-        !order.takeaway
-    ).length;
+    orders
+        .filter(order => !order.takeaway)
+        .reduce((sum, order) => sum + (Number(order.quantity) || 1), 0);
 
 const takeawayMeals =
-    orders.filter(order =>
-        order.takeaway
-    ).length;
+    orders
+        .filter(order => order.takeaway)
+        .reduce((sum, order) => sum + (Number(order.quantity) || 1), 0);
         
 // Horné karty – rozdelenie výdaja
 diningCount.textContent =
@@ -752,14 +760,12 @@ takeawayCount.textContent =
     takeawayMeals;
 
 
-// Tu vypočítame reálny súčet všetkých menu cez menu_id
-
-// Tu vypočítame reálny súčet všetkých menu cez menu_id
+// Tu vypočítame reálny súčet všetkých menu cez menu_id (vrátane počtu kusov)
 const menuCountsTemp = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
 orders.forEach(order => {
     const menuNumber = Number(order.menu_id);
     if (menuCountsTemp[menuNumber] !== undefined) {
-        menuCountsTemp[menuNumber]++;
+        menuCountsTemp[menuNumber] += Number(order.quantity) || 1;
     }
 });
 const totalPortions = Object.values(menuCountsTemp).reduce((a, b) => a + b, 0);
@@ -798,7 +804,7 @@ if (todayMenuSummary) {
 
             menuCounts[
                 menuNumber
-            ]++;
+            ] += Number(order.quantity) || 1;
 
         }
 
@@ -943,8 +949,8 @@ const todayFormattedCapitalized =
         <div class="issue-type">
             ${
                 order.takeaway
-                    ? "📦 Zabaliť"
-                    : "🍽️ V jedálni"
+                    ? formatServingMethod("📦 Zabaliť", order.quantity)
+                    : formatServingMethod("🍽️ V jedálni", order.quantity)
             }
         </div>
 
@@ -1198,6 +1204,7 @@ function setupChipIssue() {
     menu_choice,
     dining,
     takeaway,
+    quantity,
     issued
     `
 )
@@ -1252,11 +1259,11 @@ function setupChipIssue() {
                 const methods = [];
 
                 if (item.dining) {
-                    methods.push("V jedálni");
+                    methods.push(formatServingMethod("V jedálni", item.quantity));
                 }
 
                 if (item.takeaway) {
-                    methods.push("Zabaliť");
+                    methods.push(formatServingMethod("Zabaliť", item.quantity));
                 }
 
                 return `
@@ -1327,13 +1334,13 @@ function setupChipIssue() {
 
                         if (item.dining) {
                             methods.push(
-                                "V jedálni"
+                                formatServingMethod("V jedálni", item.quantity)
                             );
                         }
 
                         if (item.takeaway) {
                             methods.push(
-                                "Zabaliť"
+                                formatServingMethod("Zabaliť", item.quantity)
                             );
                         }
 
