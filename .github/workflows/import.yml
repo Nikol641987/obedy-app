@@ -2,8 +2,10 @@ name: Import Menu to Supabase
 
 on:
   schedule:
-    # Spustí sa automaticky každý pondelok o 6:00 ráno
-    - cron: '0 6 * * 1'
+    # Posledný záložný pokus, ak by sa nepodarilo načítať menu už cez
+    # nedeľné spustenia v main.yml (skript je idempotentný, takže sa nič
+    # neprepíše, ak je menu už uložené).
+    - cron: '13 6 * * 1'
   workflow_dispatch: # Umožní spustiť skript aj ručne tlačidlom
 
 jobs:
