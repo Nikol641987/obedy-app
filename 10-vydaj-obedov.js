@@ -1030,13 +1030,12 @@ const todayFormattedCapitalized =
                                 ${escapeHtml(
                                     employee.employeeName
                                 )}
+                                ${
+                                    employeeSoupLabel
+                                        ? `<span class="issue-soup">🥣 ${escapeHtml(employeeSoupLabel)}</span>`
+                                        : ""
+                                }
                             </div>
-
-                            ${
-                                employeeSoupLabel
-                                    ? `<div class="issue-soup">🥣 ${escapeHtml(employeeSoupLabel)}</div>`
-                                    : ""
-                            }
 
                             ${mealsHtml}
 
