@@ -653,6 +653,7 @@ const totalCount =
     dining,
     takeaway,
     quantity,
+    soup_choice,
     issued
 `)
                 .eq("order_date", today);
@@ -851,6 +852,30 @@ return `
                 }
             )
             .join("");
+
+    // Polievky sa počítajú raz na zamestnanca (je uložená rovnako na
+    // všetkých jeho riadkoch), rozpočítame ich podľa názvu zvlášť.
+    const soupCounts = {};
+    const soupCountedEmployeeIds = new Set();
+
+    orders.forEach(order => {
+        if (order.soup_choice && !soupCountedEmployeeIds.has(order.employee_id)) {
+            soupCountedEmployeeIds.add(order.employee_id);
+            parseSoupChoiceString(order.soup_choice).forEach(({ name, qty }) => {
+                soupCounts[name] = (soupCounts[name] || 0) + qty;
+            });
+        }
+    });
+
+    const soupRows = Object.entries(soupCounts)
+        .map(([name, qty]) => `
+            <div class="today-menu-row">
+                <span>🥣 ${escapeHtml(name)}</span>
+                <strong>${qty} ks</strong>
+            </div>
+        `)
+        .join("");
+
 const todayFormatted =
     new Date(today + "T12:00:00")
         .toLocaleDateString(
@@ -881,6 +906,13 @@ const todayFormattedCapitalized =
                 ${totalPortions} ks
             </strong>
         </div>
+
+        ${soupRows ? `
+            <div class="today-menu-soups" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0;">
+                <strong>Výber polievok:</strong>
+                ${soupRows}
+            </div>
+        ` : ""}
 
         <div class="today-menu-list">
             ${menuRows}
@@ -975,6 +1007,18 @@ const todayFormattedCapitalized =
                             .join("");
 
 
+                    const employeeSoupOrder =
+                        employee.orders.find(order => order.soup_choice);
+
+                    // Skrátený názov (prvé slovo každej polievky), nech sa
+                    // zmestí jednoducho vedľa mena zamestnanca.
+                    const employeeSoupLabel =
+                        employeeSoupOrder
+                            ? parseSoupChoiceString(employeeSoupOrder.soup_choice)
+                                .map(({ name }) => name.split(" ")[0])
+                                .join(" + ")
+                            : "";
+
                     return `
                         <div class="issue-item ${
                             employee.isIssued
@@ -987,6 +1031,12 @@ const todayFormattedCapitalized =
                                     employee.employeeName
                                 )}
                             </div>
+
+                            ${
+                                employeeSoupLabel
+                                    ? `<div class="issue-soup">🥣 ${escapeHtml(employeeSoupLabel)}</div>`
+                                    : ""
+                            }
 
                             ${mealsHtml}
 

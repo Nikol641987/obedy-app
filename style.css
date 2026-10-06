@@ -752,6 +752,15 @@ select:focus-visible {
     margin-bottom:10px;
 
 }
+
+.issue-soup{
+    font-size:14px;
+    font-weight:600;
+    color: var(--muted, #64748b);
+    margin-top:-6px;
+    margin-bottom:10px;
+}
+
 .issue-menu{
 
     font-size:15px;
