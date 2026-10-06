@@ -162,7 +162,7 @@ Deno.serve(async (req) => {
 
         const { data: orders, error: ordersError } = await supabase
             .from("meal_orders")
-            .select("menu_id, menu_name, menu_choice, soup_choice, note, dining, takeaway, no_soup, quantity")
+            .select("employee_id, menu_id, menu_name, menu_choice, soup_choice, note, dining, takeaway, no_soup, quantity")
             .eq("order_date", orderDate);
 
         if (ordersError) throw ordersError;
@@ -171,7 +171,24 @@ Deno.serve(async (req) => {
         const diningMap: Record<string, any> = {};
         const takeawayMap: Record<string, any> = {};
         const soupChoiceMap: Record<string, number> = {};
+        const soupCountedEmployees = new Set<string>();
         let diningOrders = 0, takeawayOrders = 0, noSoupOrders = 0;
+
+        // Rozloží uložený reťazec typu "Polievka A x2 + Polievka B x1" na
+        // jednotlivé polievky s počtom kusov (staršie dáta bez "xN" berie ako 1 ks).
+        function parseSoupChoiceString(value: string): { name: string; qty: number }[] {
+            return String(value || "")
+                .split(" + ")
+                .map(part => part.trim())
+                .filter(Boolean)
+                .map(part => {
+                    const match = part.match(/^(.*)\sx(\d+)$/);
+                    if (match) {
+                        return { name: match[1].trim(), qty: Number(match[2]) || 1 };
+                    }
+                    return { name: part, qty: 1 };
+                });
+        }
 
         allOrders.forEach(order => {
             const menuId = Number(order.menu_id);
@@ -197,8 +214,15 @@ Deno.serve(async (req) => {
             }
 
             if (order.no_soup) noSoupOrders += quantity;
-            if (order.soup_choice) {
-                soupChoiceMap[order.soup_choice] = (soupChoiceMap[order.soup_choice] || 0) + quantity;
+
+            // Polievka je rovnaká pre celú dennú objednávku zamestnanca (je
+            // uložená na každom jeho riadku rovnako), preto ju spočítame
+            // len raz na zamestnanca, nie za každý riadok zvlášť.
+            if (order.soup_choice && !soupCountedEmployees.has(order.employee_id)) {
+                soupCountedEmployees.add(order.employee_id);
+                parseSoupChoiceString(order.soup_choice).forEach(({ name, qty }) => {
+                    soupChoiceMap[name] = (soupChoiceMap[name] || 0) + qty;
+                });
             }
         });
 

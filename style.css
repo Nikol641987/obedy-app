@@ -431,6 +431,27 @@ select:focus-visible {
     font-size: 15px;
 }
 
+.soup-option-row {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+
+.soup-option-row:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.soup-qty-stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.soup-qty-stepper .qty-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 /* =========================================
    VÝDAJ
 ========================================= */
