@@ -739,7 +739,7 @@ async function loadMenus() {
         globalNoteContainer.className = "global-note-container";
         globalNoteContainer.style.cssText = "margin: 20px 0; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;";
         globalNoteContainer.innerHTML = `
-            <label for="globalOrderNote" style="display: block; font-weight: 600; margin-bottom: 6px; color: #334155;">💬 Poznámka k objednávke (napr. makové buchty, bez cibule...):</label>
+            <label for="globalOrderNote" style="display: block; font-weight: 600; margin-bottom: 6px; color: #334155;">💬 (napr. makové buchty, bez cibule...):</label>
             <input type="text" id="globalOrderNote" placeholder="Sem napíšte poznámku..." style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; box-sizing: border-box;">
         `;
         container.appendChild(globalNoteContainer);

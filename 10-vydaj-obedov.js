@@ -1010,12 +1010,12 @@ const todayFormattedCapitalized =
                     const employeeSoupOrder =
                         employee.orders.find(order => order.soup_choice);
 
-                    // Skrátený názov (prvé slovo každej polievky), nech sa
-                    // zmestí jednoducho vedľa mena zamestnanca.
+                    // Skrátený názov (prvé slovo každej polievky) + počet
+                    // kusov, nech sa zmestí jednoducho vedľa mena zamestnanca.
                     const employeeSoupLabel =
                         employeeSoupOrder
                             ? parseSoupChoiceString(employeeSoupOrder.soup_choice)
-                                .map(({ name }) => name.split(" ")[0])
+                                .map(({ name, qty }) => `${name.split(" ")[0]} ×${qty}`)
                                 .join(" + ")
                             : "";
 
