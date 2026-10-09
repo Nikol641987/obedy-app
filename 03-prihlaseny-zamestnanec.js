@@ -70,6 +70,12 @@ function updatePermissions() {
 
 const isLoggedIn =
     Boolean(role);
+    const automaticEmailCheckbox =
+    document.getElementById("automaticOrderEmailEnabled");
+
+if (automaticEmailCheckbox) {
+    automaticEmailCheckbox.disabled = role !== "admin";
+}
     console.log(
         "Aktuálna rola:",
         role
