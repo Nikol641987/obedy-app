@@ -107,10 +107,22 @@ function updateAutomaticOrderEmailPermission(
         "automaticOrderEmailEnabled"
     );
 
-    if (checkbox) {
-        checkbox.disabled = role !== "admin";
+    if (!checkbox) {
+        console.log(
+            "Políčko automaticOrderEmailEnabled sa nenašlo."
+        );
+        return;
     }
+
+    checkbox.disabled = role !== "admin";
+
+    console.log(
+        "Automatické odosielanie:",
+        "Rola =", role,
+        "| Zakázané =", checkbox.disabled
+    );
 }
+
 function updatePermissions() {
 
     const role = getCurrentUserRole();
