@@ -100,11 +100,25 @@ function getCurrentUserRole() {
 
     return option?.dataset?.role || "";
 }
+function updateAutomaticOrderEmailPermission(
+    role = getCurrentUserRole()
+) {
+    const checkbox = document.getElementById(
+        "automaticOrderEmailEnabled"
+    );
+
+    if (checkbox) {
+        checkbox.disabled = role !== "admin";
+    }
+}
 function updatePermissions() {
 
     const role = getCurrentUserRole();
+    updateAutomaticOrderEmailPermission(role);
 
     console.log("Aktuálna rola:", role);
+
+    updateAutomaticOrderEmailPermission(role);
 
     const openIssueButton =
         document.getElementById("openIssueButton");
