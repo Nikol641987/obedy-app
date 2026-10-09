@@ -40,6 +40,7 @@ function canAccessAdminScreen(
     screenId = "adminScreen",
     role = getCurrentUserRole()
 ) {
+    // ADMIN má prístup do celej administrácie.
     if (role === "admin") {
         return [
             "adminScreen",
@@ -49,8 +50,11 @@ function canAccessAdminScreen(
         ].includes(screenId);
     }
 
+    // ISSUE a ISSUE_ADMIN môžu vstúpiť
+    // do administrácie, ale iba do povolených častí.
     if (role === "issue" || role === "issue_admin") {
         return [
+            "adminScreen",
             "adminWeeklyMenuScreen",
             "adminEmailOrdersScreen"
         ].includes(screenId);
