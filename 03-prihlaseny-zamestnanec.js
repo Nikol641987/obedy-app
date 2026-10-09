@@ -67,6 +67,25 @@ function updatePermissions() {
 
    const role =
     getCurrentUserRole();
+        const employeeId = getCurrentEmployeeId();
+    const employeeSelect = document.getElementById("employeeSelect");
+    const nameContainer = document.getElementById("loggedInUserName");
+    const nameValue = document.getElementById("loggedInUserNameValue");
+
+    if (employeeSelect && employeeId && nameContainer && nameValue) {
+        const selectedOption = [...employeeSelect.options].find(
+            option => option.value === employeeId
+        );
+
+        if (selectedOption) {
+            nameValue.textContent = selectedOption.textContent.trim();
+            nameContainer.hidden = false;
+        } else {
+            nameContainer.hidden = true;
+        }
+    } else if (nameContainer) {
+        nameContainer.hidden = true;
+    }
 
 const isLoggedIn =
     Boolean(role);
