@@ -49,14 +49,14 @@ function canAccessAdminScreen(
         ].includes(screenId);
     }
 
-    return (
-        role === "issue_admin"
-        && [
-            "adminScreen",
+    if (role === "issue" || role === "issue_admin") {
+        return [
             "adminWeeklyMenuScreen",
             "adminEmailOrdersScreen"
-        ].includes(screenId)
-    );
+        ].includes(screenId);
+    }
+
+    return false;
 }
 
 function updatePermissions() {
