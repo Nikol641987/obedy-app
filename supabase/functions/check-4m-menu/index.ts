@@ -190,7 +190,8 @@ async function fetchMenuFile() {
         return {
             buffer: await fileResponse.arrayBuffer(),
             contentType,
-            finalUrl: fileResponse.url
+            finalUrl: fileResponse.url,
+            isPdf
         };
     }
 
@@ -233,7 +234,12 @@ Deno.serve(async request => {
     }
 
     try {
-        const { buffer, contentType, finalUrl } = await fetchMenuFile();
+        const {
+            buffer,
+            contentType,
+            finalUrl,
+            isPdf
+        } = await fetchMenuFile();
         if (!isPdf) {
             return Response.json({
                 success: true,
