@@ -199,10 +199,7 @@ async function fetchMenuFile() {
 }
 
 async function saveMenu(text: string, monday: Date): Promise<void> {
-    const supabase = createClient(
-        Deno.env.get("SUPABASE_URL")!,
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const supabase = getSupabaseClient();
     const dayKeys = ["pondelok", "utorok", "streda", "stvrtok", "piatok"];
     const rows = dayKeys.map((day, index) => {
         const date = new Date(monday);
@@ -228,12 +225,46 @@ async function saveMenu(text: string, monday: Date): Promise<void> {
     if (error) throw error;
 }
 
+function getSupabaseClient() {
+    return createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+}
+
+async function isMenuAlreadyImported(monday: Date): Promise<boolean> {
+    const { count, error } = await getSupabaseClient()
+        .from("weekly_menu")
+        .select("id", { count: "exact", head: true })
+        .eq("week_from", formatDate(monday));
+
+    if (error) throw error;
+    return count !== null && count >= 5;
+}
+
 Deno.serve(async request => {
     if (request.method === "OPTIONS") {
         return new Response("ok", { headers: corsHeaders });
     }
 
     try {
+        const body = await request.json().catch(() => ({}));
+        const automated = body?.automated === true;
+        const expectedMonday = getExpectedMonday();
+
+        if (
+            automated &&
+            await isMenuAlreadyImported(expectedMonday)
+        ) {
+            return Response.json({
+                success: true,
+                menuAvailable: true,
+                imported: false,
+                alreadyImported: true,
+                weekFrom: formatDate(expectedMonday)
+            }, { headers: corsHeaders });
+        }
+
         const {
             buffer,
             contentType,
@@ -253,8 +284,6 @@ Deno.serve(async request => {
 
         const parsedPdf = await pdf(new Uint8Array(buffer));
         const monday = getMenuMonday(parsedPdf.text);
-        const expectedMonday = getExpectedMonday();
-
         if (formatDate(monday) !== formatDate(expectedMonday)) {
             return Response.json({
                 success: true,
