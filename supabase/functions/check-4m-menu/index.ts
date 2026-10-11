@@ -75,8 +75,10 @@ function parseMenu(text: string) {
         PIATOK: "piatok"
     } as const;
     const result: Record<string, Record<string, string | null>> = {};
+    const soupLines: Record<string, string[]> = {};
 
     Object.values(days).forEach(day => {
+        soupLines[day] = [];
         result[day] = {
             soup: "",
             menu1: null,
@@ -106,7 +108,7 @@ function parseMenu(text: string) {
             currentDay = days[dayName as keyof typeof days];
             readingSoup = true;
             const soup = line.split(":").slice(1).join(":").trim();
-            if (soup) result[currentDay].soup += `${soup} `;
+            if (soup) soupLines[currentDay].push(soup);
             continue;
         }
 
@@ -119,7 +121,7 @@ function parseMenu(text: string) {
         }
 
         if (readingSoup) {
-            result[currentDay].soup += `${line} `;
+            soupLines[currentDay].push(line);
         } else {
             const menuKeys = ["menu4", "menu3", "menu2", "menu1"];
             const key = menuKeys.find(menuKey =>
@@ -131,7 +133,24 @@ function parseMenu(text: string) {
     }
 
     for (const day of Object.values(days)) {
+        const soups: string[] = [];
+        let currentSoup = "";
+
+        for (const line of soupLines[day]) {
+            currentSoup = `${currentSoup} ${line}`.trim();
+
+            if (/\(\s*\d+(?:\s*,\s*\d+)*\s*\)\s*$/.test(line)) {
+                soups.push(cleanItem(currentSoup));
+                currentSoup = "";
+            }
+        }
+
+        if (currentSoup) soups.push(cleanItem(currentSoup));
+
+        result[day].soup = soups.filter(Boolean).join(", ");
+
         for (const key of Object.keys(result[day])) {
+            if (key === "soup") continue;
             result[day][key] = cleanItem(result[day][key]);
         }
     }
