@@ -2,21 +2,16 @@ name: Automaticke nacitanie menu
 
 # Skript (scripts/import-menu.js) je idempotentny - ak uz je menu na dany
 # tyzden ulozene v Supabase, beh sa hned skonci bez zmeny. Preto je bezpecne
-# mat viac pokusov/casov v rovnakom tyzdni - realne zapise iba ten prvy,
+# skusat import kazdych 10 minut - realne zapise iba ten prvy,
 # ktoremu sa podari najst spravne menu na superobed.sk.
 #
 # GitHub Actions cron pouziva vzdy UTC a nepozna letny/zimny cas, preto je
-# nedelny cas 15:00 na Slovensku pokryty dvoma riadkami (CEST aj CET).
+# nedelny zaciatok o 17:00 na Slovensku v letnom case zodpoveda 15:00 UTC.
 # GitHub navyse negarantuje presne spustenie naplanovanej akcie - pri nizsej
-# aktivite repozitara moze byt spustenie oneskorene aj o niekolko hodin,
-# preto su tu aj nasledne "zalozne" pokusy v ten isty den.
+# aktivite repozitara moze byt spustenie oneskorene.
 on:
   schedule:
-    - cron: '7 13 * * 5'   # piatok ~13:07 UTC - skory pokus (menu casto este nie je na webe)
-    - cron: '7 13 * * 0'   # nedela 13:07 UTC = 15:07 na Slovensku (letny cas, CEST, UTC+2)
-    - cron: '7 14 * * 0'   # nedela 14:07 UTC = 15:07 na Slovensku (zimny cas, CET, UTC+1)
-    - cron: '7 15 * * 0'   # nedela 15:07 UTC - zalozny pokus (pre pripad oneskoreneho spustenia)
-    - cron: '7 17 * * 0'   # nedela 17:07 UTC - dalsi zalozny pokus
+    - cron: '*/10 15-19 * * 0' # nedela 17:00-21:50 na Slovensku (letny cas)
   workflow_dispatch:
 
 jobs:

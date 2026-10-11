@@ -367,7 +367,9 @@ function formatDateForInput(date) {
 }
 
 
-function setWeeklyMenuDateRange() {
+function setWeeklyMenuDateRange(
+    resetToCurrentWeek = false
+) {
 
     if (
         !weeklyMenuFrom
@@ -378,7 +380,7 @@ function setWeeklyMenuDateRange() {
 
     let fromDate;
 
-    if (weeklyMenuFrom.value) {
+    if (weeklyMenuFrom.value && !resetToCurrentWeek) {
 
         fromDate =
             new Date(
@@ -393,17 +395,17 @@ function setWeeklyMenuDateRange() {
         const dayOfWeek =
             today.getDay();
 
-        const daysFromMonday =
-            dayOfWeek === 0
-                ? 6
-                : dayOfWeek - 1;
+        const daysUntilMonday =
+            dayOfWeek >= 5
+                ? 8 - dayOfWeek
+                : 1 - dayOfWeek;
 
         fromDate =
             new Date(today);
 
         fromDate.setDate(
             today.getDate()
-            - daysFromMonday
+            + daysUntilMonday
         );
 
         weeklyMenuFrom.value =

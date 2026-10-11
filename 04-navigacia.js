@@ -695,7 +695,7 @@ function initializeNavigation() {
 
                 renderWeeklyMenuForm();
 
-                setWeeklyMenuDateRange();
+                setWeeklyMenuDateRange(true);
 
                 showScreen(
                     "adminWeeklyMenuScreen"
