@@ -14,12 +14,12 @@ jobs:
 
     steps:
       - name: Stiahnutie repozitára
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Nastavenie Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Inštalácia závislostí
         run: npm install
