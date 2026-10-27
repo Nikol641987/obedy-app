@@ -476,6 +476,20 @@ function getTotalSelectedSoupUnits() {
         .reduce((sum, stepper) => sum + (Number(stepper.dataset.quantity) || 0), 0);
 }
 
+// Slovenské skloňovanie slov "obed" a "polievka" podľa počtu (1 / 2-4 / 5+),
+// aby upozornenie na chýbajúce polievky znelo prirodzene.
+function mealWordForCount(count) {
+    if (count === 1) return "obed";
+    if (count >= 2 && count <= 4) return "obedy";
+    return "obedov";
+}
+
+function soupWordForCount(count) {
+    if (count === 1) return "polievku";
+    if (count >= 2 && count <= 4) return "polievky";
+    return "polievok";
+}
+
 // Rozloží uložený reťazec typu "Polievka A x2 + Polievka B x1" na jednotlivé
 // polievky s počtom kusov. Pre staršie dáta bez "xN" berie počet kusov ako 1.
 function parseSoupChoiceString(value) {
@@ -809,6 +823,22 @@ function setupOrderButton() {
                 orderMessage.className = "message error-message";
             }
             return;
+        }
+
+        // Ak si niekto objedná viac obedov (napr. aj "V jedálni", aj "Zabaliť",
+        // alebo zvýši počet kusov), ale pri polievke to hore nezohľadní, pri ukladaní
+        // ho na to upozorníme namiesto tichého uloženia neúplného počtu polievok.
+        if (soupCardElement && soupCardElement.querySelector('.soup-qty-stepper') && !noSoup) {
+            const totalOrderedUnits = getTotalOrderedUnits();
+            const totalSelectedSoupUnits = selectedSoups.reduce((sum, soup) => sum + soup.qty, 0);
+            if (totalSelectedSoupUnits < totalOrderedUnits) {
+                const missing = totalOrderedUnits - totalSelectedSoupUnits;
+                if (orderMessage) {
+                    orderMessage.textContent = `🥣 Objednali ste si ${totalOrderedUnits} ${mealWordForCount(totalOrderedUnits)}, no vybrali ste len ${totalSelectedSoupUnits} ${soupWordForCount(totalSelectedSoupUnits)}. Vráťte sa, prosím, hore a doplňte si ešte ${missing} ${soupWordForCount(missing)}.`;
+                    orderMessage.className = "message error-message";
+                }
+                return;
+            }
         }
 
         const hasForbiddenMenu = [...selectedChoices].some(
